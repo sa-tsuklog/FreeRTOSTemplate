@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/CWD/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/CWD/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/CWD/value=${ProjDirPath}
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/PATH/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/PATH/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/PATH/value=${eclipse_home}\\yagarto\\bin
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/PWD/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/PWD/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/PWD/value=${ProjDirPath}
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/append=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.93844385/appendContributed=true
