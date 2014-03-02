@@ -37,7 +37,6 @@
 #include "semphr.h"
 #include "Mpu-9250/HalI2c2.h"
 #include "Adis16488/HalSpi.hpp"
-#include "test/tasktest.hpp"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -248,9 +247,7 @@ void RTC_WKUP_IRQHandler(){}               /* RTC Wakeup through the EXTI line *
 void FLASH_IRQHandler(){}                  /* FLASH                        */
 void EXTI0_IRQHandler(){
 	if(EXTI_GetITStatus(EXTI_Line0) != RESET){
-		xSemaphoreGiveFromISR(testSemaphore,pdTRUE);
 		EXTI_ClearITPendingBit(EXTI_Line0);
-		portEND_SWITCHING_ISR(testSemaphore);
 	}
 }                  /* EXTI Line0                   */
 void EXTI1_IRQHandler(){}                  /* EXTI Line1                   */

@@ -32,7 +32,6 @@ all: libstm32f4xx startup bin\main.hex
 
 SRC_DIRS = src
 SRC_DIRS += src\Stdout
-SRC_DIRS += src\test
 SRC_DIRS += src\Adis16488
 SRC_DIRS += src\Mpu-9250
 SRC_DIRS += src\Servo

@@ -6,7 +6,6 @@
 
 
 #include "Stdout/HalUsart.h"
-#include "test/tasktest.hpp"
 #include "Adis16488/HalSpi.hpp"
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
@@ -30,7 +29,7 @@ void prvTaskA(void *pvParameters){
 		vTaskDelay(100);
 		GPIO_Write(GPIOD, 0);
 		vTaskDelay(2000);
-		//printf("taskA\n\r");
+		printf("taskA\n\r");
 	}
 }
 void prvTaskB(void *pvParameters){
@@ -39,7 +38,7 @@ void prvTaskB(void *pvParameters){
 		vTaskDelay(100);
 		GPIO_Write(GPIOD, 0);
 		vTaskDelay(100);
-		//printf("taskB\n\r");
+		printf("taskB\n\r");
 	}
 }
 
@@ -58,7 +57,6 @@ int main(void) {
 	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",1024,USART2,1,NULL);
 	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
 	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,2,NULL);
-	xTaskCreate(prvTestTask,(signed portCHAR*)"test",512,NULL,4,NULL);
 	
 	vTaskStartScheduler();
 
