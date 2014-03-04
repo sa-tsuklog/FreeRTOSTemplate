@@ -10,6 +10,7 @@
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
 #include "AD7176-2/HalSpi2.h"
+#include "ADC/ADC.h"
 
 #include "stdio.h"
 #include <vector>
@@ -80,33 +81,36 @@ EXTI
 
 void prvTaskA(void *pvParameters){
 	while(1){
-
-		GPIO_Write(GPIOD, GPIO_Pin_12);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 		vTaskDelay(100);
-		GPIO_Write(GPIOD, 0);
-		vTaskDelay(2000);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
+		vTaskDelay(100);
 		//printf("taskA\n\r");
 	}
 }
 void prvTaskB(void *pvParameters){
 	while(1){
-		GPIO_Write(GPIOD, GPIO_Pin_13);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
 		vTaskDelay(100);
-		GPIO_Write(GPIOD, 0);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
 		vTaskDelay(100);
 		//printf("taskB\n\r");
 	}
 }
 
-
 int main(void) {
-	SystemInit();
-	GPIO_Configuration();
-	initUart(USART2);
+
+  SystemInit();
+  GPIO_Configuration();
+
+  GPIO_Write(GPIOD, 0);
+
+    initUart(USART2);
 	initSpi1();
 	initSpi2();
 	initI2c2();
 	initTim();
+	initADC();
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,2,NULL);
 	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
@@ -115,10 +119,11 @@ int main(void) {
 	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
 	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,2,NULL);
 	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad7176",512,NULL,1,NULL);
-	
+	xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
+
+
 	vTaskStartScheduler();
 
-	/* Blink LED */
 	while (1)
 	{
 
@@ -134,13 +139,7 @@ void vApplicationMallocFailedHook(void){
 	while(1);
 }
 void vApplicationStackOverflowHook(void* ptr, signed char* taskname){
-	volatile char c1=taskname[0];
-	volatile char c2=taskname[1];
-	volatile char c3=taskname[2];
-	volatile char c4=taskname[3];
-	printf("stack overflow at %s\n\r",taskname);
-	while(1){
-	}
+	while(1);
 }
 void vApplicationTickHook(){
 
