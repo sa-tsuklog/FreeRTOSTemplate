@@ -145,7 +145,6 @@ void prvTxTask(void *pvParameters){
 void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
 		if(xQueueSendToBackFromISR(usart2Que,&c,pdFALSE)!=pdPASS){
-			while(1){}
 		}
 	}
 }

@@ -13,7 +13,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include "HalSpi.hpp"
+#include "HalSpi1.hpp"
 
 #define SPI_BUFFERSIZE 32
 
@@ -21,7 +21,7 @@ short* spi1TxBuf;
 short* spi1RxBuf;
 
 
-void initSpi(){
+void initSpi1(){
 	spi1TxBuf = (short*)malloc(sizeof(short)*SPI_BUFFERSIZE);
 	spi1RxBuf = (short*)malloc(sizeof(short)*SPI_BUFFERSIZE);
 	
@@ -134,15 +134,23 @@ void initSpi(){
 	DMA_Init(DMA2_Stream3,&dma2_3);
 	
 	
+	//SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource0);
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
+	
 	GPIO_InitTypeDef pa0def;
-			
+	
 	GPIO_StructInit(&pa0def);
 	pa0def.GPIO_Pin = GPIO_Pin_0;
 	pa0def.GPIO_Mode = GPIO_Mode_IN;
 	pa0def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	pa0def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA,&pa0def);
+	//GPIO_Init(GPIOA,&pa0def);
+	GPIO_Init(GPIOC,&pa0def);
 
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource0);
+	
 	EXTI_InitTypeDef exti0def;
 	EXTI_StructInit(&exti0def);
 	exti0def.EXTI_Line = EXTI_Line0;
@@ -151,6 +159,7 @@ void initSpi(){
 	exti0def.EXTI_LineCmd = ENABLE;
 	
 	EXTI_Init(&exti0def);
+	
 	
 	NVIC_InitTypeDef nvicdef;
 	nvicdef.NVIC_IRQChannel = EXTI0_IRQn;

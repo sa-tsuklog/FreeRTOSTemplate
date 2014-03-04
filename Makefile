@@ -35,6 +35,7 @@ SRC_DIRS += src\Stdout
 SRC_DIRS += src\Adis16488
 SRC_DIRS += src\Mpu-9250
 SRC_DIRS += src\Servo
+SRC_DIRS += src\AD7176-2
 
 # main.o is compiled by suffix rule automatucally
 bin\main.hex: $(patsubst %.c,%.o,$(wildcard $(addsuffix /*.c, $(SRC_DIRS)))) \

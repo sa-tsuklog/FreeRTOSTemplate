@@ -8,8 +8,7 @@
 #ifndef HALSPI_HPP_
 #define HALSPI_HPP_
 
-void initSpi();
-void initSpi2();
+void initSpi1();
 void prvAdis16488Task(void *pvParameters);
 
 #endif /* HALSPI_HPP_ */

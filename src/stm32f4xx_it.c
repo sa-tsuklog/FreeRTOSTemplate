@@ -36,7 +36,10 @@
 #include "queue.h"
 #include "semphr.h"
 #include "Mpu-9250/HalI2c2.h"
-#include "Adis16488/HalSpi.hpp"
+#include "Adis16488/HalSpi1.hpp"
+#include "AD7176-2/HalSpi2.h"
+
+#include "stdio.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -248,6 +251,7 @@ void FLASH_IRQHandler(){}                  /* FLASH                        */
 void EXTI0_IRQHandler(){
 	if(EXTI_GetITStatus(EXTI_Line0) != RESET){
 		EXTI_ClearITPendingBit(EXTI_Line0);
+		printf("irq0\n\r");
 	}
 }                  /* EXTI Line0                   */
 void EXTI1_IRQHandler(){}                  /* EXTI Line1                   */
@@ -259,7 +263,9 @@ void DMA1_Stream1_IRQHandler(){}           /* DMA1 Stream 1                */
 void DMA1_Stream2_IRQHandler(){
 	myDMA1_Stream2_IRQHandler();
 }           /* DMA1 Stream 2                */
-void DMA1_Stream3_IRQHandler(){}           /* DMA1 Stream 3                */
+void DMA1_Stream3_IRQHandler(){
+	myDMA1_Stream3_IRQHandler();
+}           /* DMA1 Stream 3                */
 void DMA1_Stream4_IRQHandler(){}           /* DMA1 Stream 4                */
 void DMA1_Stream5_IRQHandler(){}           /* DMA1 Stream 5                */
 void DMA1_Stream6_IRQHandler(){}           /* DMA1 Stream 6                */
@@ -292,7 +298,28 @@ void SPI2_IRQHandler(){}                   /* SPI2                         */
 void USART1_IRQHandler(){}                 /* USART1                       */
 void USART2_IRQHandler(){}                 /* USART2                       */
 void USART3_IRQHandler(){}                 /* USART3                       */
-void EXTI15_10_IRQHandler(){}              /* External Line[15:10]s        */
+void EXTI15_10_IRQHandler(){
+	if(EXTI_GetITStatus(EXTI_Line14)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line14);
+		myEXTI14_IRQHandler();
+	}
+	if(EXTI_GetITStatus(EXTI_Line10)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line10);
+		myEXTI14_IRQHandler();
+	}
+	if(EXTI_GetITStatus(EXTI_Line11)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line11);
+		myEXTI14_IRQHandler();
+	}
+	if(EXTI_GetITStatus(EXTI_Line12)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line12);
+		myEXTI14_IRQHandler();
+	}
+	if(EXTI_GetITStatus(EXTI_Line13)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line13);
+		myEXTI14_IRQHandler();
+	}
+}              /* External Line[15:10]s        */
 void RTC_Alarm_IRQHandler(){}              /* RTC Alarm (A and B) through EXTI Line */
 void OTG_FS_WKUP_IRQHandler(){}            /* USB OTG FS Wakeup through EXTI line */
 void TIM8_BRK_TIM12_IRQHandler(){}         /* TIM8 Break and TIM12         */

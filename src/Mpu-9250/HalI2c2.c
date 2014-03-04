@@ -44,6 +44,9 @@ void initI2c2(){
 		while(1){}
 	}
 	
+	vSemaphoreCreateBinary(i2c2Sem);
+	xSemaphoreTake(i2c2Sem,1);
+	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 	
 	GPIO_InitTypeDef pb10_11def;
@@ -149,8 +152,6 @@ void initI2c2(){
 }
 
 void prvI2C2SendTask(void *pvParameters){
-	vSemaphoreCreateBinary(i2c2Sem);
-	xSemaphoreTake(i2c2Sem,1);
 	
 	char* tmp = (char*)malloc(sizeof(char)*16);
 	
