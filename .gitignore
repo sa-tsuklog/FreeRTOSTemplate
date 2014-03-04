@@ -1,4 +1,8 @@
 *.o
 *.elf
 *.hex
+*.map
+*.bin
 /Libraries
+/objs
+/bin
