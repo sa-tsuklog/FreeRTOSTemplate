@@ -1,21 +1,20 @@
+OBJDIR = objs
+BINDIR = bin
+
 ifeq ($(OS),Windows_NT)
 	SHELL = cmd.exe
-	RM_CMD = del
-	RM_OPTS = /f /q
+	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
 	TOOLDIR = ../../yagarto/bin/
-	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f4xx.s
+	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
 else
 	SHELL = sh
-	RM_CMD = rm
-	RM_OPTS = -f
+	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
 	TOOLDIR = 
 	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
 endif
 
 VPATH = src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC
 FREERTOS_DIR = ./Libraries/FreeRTOS
-OBJDIR = ./objs
-BINDIR = ./bin
 
 TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 INCLUDE_DIRS  = -I ./Libraries \
@@ -81,4 +80,4 @@ startup:
 	$(AS) -o $(OBJDIR)/startup_stm32f4xx.o $(ASFLAGS) $(STARTUP_ASM)
 
 clean:
-	$(RM_CMD) $(RM_OPTS) $(BINDIR)/* $(OBJDIR)/*
+	$(REMOVE)
