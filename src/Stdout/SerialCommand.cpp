@@ -23,11 +23,11 @@ char buf[1024];
 void handleSerialCommand(char* line){
 	
 	
-	if(strncmp(line,"vTaskList",9)==0){
+  /*if(strncmp(line,"vTaskList",9)==0){
 		vTaskList((signed portCHAR*)buf);
 		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
 		printf(buf);
-	}else{
+		}else*/{
 		printf("invalid command:%s\n\r",line);
 	}
 }
