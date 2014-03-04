@@ -6,13 +6,15 @@ ifeq ($(OS),Windows_NT)
 	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
 	TOOLDIR = ../../yagarto/bin/
 	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
-	MKOBJDIR = 	$(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
-	MKBINDIR = 	$(shell if not exist $(BINDIR) mkdir $(BINDIR))
+	MKOBJDIR = $(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
+	MKBINDIR = $(shell if not exist $(BINDIR) mkdir $(BINDIR))
 else
 	SHELL = sh
 	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
 	TOOLDIR = 
 	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
+	MKOBJDIR = $(shell if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi;)
+	MKBINDIR = $(shell if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi;)
 endif
 
 VPATH = src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC
