@@ -4,11 +4,12 @@
 #include "task.h"
 #include "queue.h"
 
-
 #include "Stdout/HalUsart.h"
+// #include "test/tasktest.hpp"
 #include "Adis16488/HalSpi.hpp"
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
+#include "ADC/ADC.h"
 
 #include "stdio.h"
 #include <vector>
@@ -21,46 +22,50 @@ void GPIO_Configuration(void);
 void Delay(uint32_t nCount);
 void Delay2(uint32_t nCount);
 
-
 void prvTaskA(void *pvParameters){
 	while(1){
-
-		GPIO_Write(GPIOD, GPIO_Pin_12);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 		vTaskDelay(100);
-		GPIO_Write(GPIOD, 0);
-		vTaskDelay(2000);
-		printf("taskA\n\r");
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
+		vTaskDelay(100);
+		//printf("taskA\n\r");
 	}
 }
 void prvTaskB(void *pvParameters){
 	while(1){
-		GPIO_Write(GPIOD, GPIO_Pin_13);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
 		vTaskDelay(100);
-		GPIO_Write(GPIOD, 0);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
 		vTaskDelay(100);
-		printf("taskB\n\r");
+		//printf("taskB\n\r");
 	}
 }
 
-
 int main(void) {
-	SystemInit();
-	GPIO_Configuration();
-	initUart(USART2);
+
+  SystemInit();
+  GPIO_Configuration();
+
+  GPIO_Write(GPIOD, 0);
+
+    initUart(USART2);
 	initSpi();
 	initI2c2();
 	initTim();
+  initADC();
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,2,NULL);
-	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
+	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
+
 	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",192,USART2,4,NULL);
 	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",1024,USART2,1,NULL);
 	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
 	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,2,NULL);
-	
+	xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
+	//xTaskCreate(prvTestTask,(signed portCHAR*)"test",512,NULL,4,NULL);
+
 	vTaskStartScheduler();
 
-	/* Blink LED */
 	while (1)
 	{
 
