@@ -6,6 +6,8 @@ ifeq ($(OS),Windows_NT)
 	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
 	TOOLDIR = ../../yagarto/bin/
 	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
+	MKOBJDIR = 	$(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
+	MKBINDIR = 	$(shell if not exist $(BINDIR) mkdir $(BINDIR))
 else
 	SHELL = sh
 	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
@@ -65,6 +67,7 @@ LIB_OBJS = $(addprefix $(OBJDIR)/,$(notdir $(LIB_SRCS:.c=.o)))
 all: libstm32f4xx startup $(BINDIR)/main.hex
 
 $(BINDIR)/main.hex: $(OBJS) $(OBJDIR)/startup_stm32f4xx.o $(OBJDIR)/libstm32f4xx.a
+	$(MKBINDIR)
 	$(LD) $(LDFLAGS) $(TARGET_ARCH) $^ -o $(BINDIR)/main.elf 
 	$(OBJCOPY) -O ihex $(BINDIR)/main.elf $(BINDIR)/main.hex
 	$(OBJCOPY) -O binary $(BINDIR)/main.elf $(BINDIR)/main.bin
@@ -73,6 +76,7 @@ libstm32f4xx: $(LIB_OBJS)
 	$(AR) cr $(OBJDIR)/libstm32f4xx.a $^
 
 $(OBJDIR)/$(notdir %) : $(SRCS) $(CPPSRCS) $(LIB_SRCS)
+	$(MKOBJDIR)
 	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ \
 	$(filter %$(notdir $(basename $@)).c,$^) $(filter %$(notdir $(basename $@)).cpp,$^)
 
