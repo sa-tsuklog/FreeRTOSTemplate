@@ -50,6 +50,10 @@ Pin list.
 	PB14 SPI2_MISO
 	PB15 SPI2_MOSI
 
+  ADC - Internal A/D converter
+	PC1 ADC3_1
+	PC2 ADC3_2
+
   Main
   	PD12 LED
   	PD13 LED
@@ -73,6 +77,9 @@ DMA list
   HalSpi2
     DMA1Stream3
     DMA1Stream4
+    
+  ADC
+    DMA2Stream0
     
 EXTI 
 	EXTI0	Spi1
