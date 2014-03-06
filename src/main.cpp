@@ -10,6 +10,7 @@
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
 #include "AD7176-2/HalSpi2.h"
+#include "AD7176-2/Ad7176-2Seeker.h"
 #include "ADC/ADC.h"
 
 #include "stdio.h"
@@ -112,13 +113,13 @@ int main(void) {
 	initTim();
 	initADC();
 
-	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,2,NULL);
-	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
-	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",512,USART2,3,NULL);
-	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",1024,USART2,1,NULL);
+	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,4,NULL);
+	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,4,NULL);
+	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",512,USART2,1,NULL);
+	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",1024,USART2,4,NULL);
 	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
-	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,2,NULL);
-	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad7176",512,NULL,1,NULL);
+	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
+	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad7176",1024,NULL,1,NULL);
 	xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
 
 

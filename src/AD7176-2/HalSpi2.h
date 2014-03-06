@@ -9,10 +9,11 @@
 #define HALSPI2_H_
 
 void initSpi2();
-void prvAd7176Task(void *pvParameters);
 
 void myEXTI14_IRQHandler();
 void myDMA1_Stream3_IRQHandler();
+int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
+void waitForDataReady();
 //void myDMA1_Stream4_IRQHandler();
 //void mySPI2_IRQHandler();
 
