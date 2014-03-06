@@ -72,7 +72,8 @@ void initSpi2(){
 	pa15def.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOB,&pa15def);
 	
-	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_SET);
+	//GPIO_PinAFConfig(GPIOB,GPIO_PinSource12,GPIO_AF_SPI2);
+	GPIO_SetBits(GPIOB,GPIO_Pin_12);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource13,GPIO_AF_SPI2);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource14,GPIO_AF_SPI2);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource15,GPIO_AF_SPI2);
@@ -155,6 +156,8 @@ void initSpi2(){
 	NVIC_Init(&exti_nvicdef);
 	NVIC_SetPriority(EXTI15_10_IRQn,0xAA);
 	
+	NVIC_DisableIRQ(EXTI15_10_IRQn);
+	
 	NVIC_InitTypeDef dma_nvicdef;
 	dma_nvicdef.NVIC_IRQChannel  = DMA1_Stream3_IRQn;
 	dma_nvicdef.NVIC_IRQChannelPreemptionPriority = 0x00;
@@ -164,8 +167,8 @@ void initSpi2(){
 	NVIC_SetPriority(DMA1_Stream3_IRQn,0xFF);
 }
 
-int spi2ReadWrite(char* outReadData,char* writeData,int byteRwLength){
-	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_RESET);
+int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength){
+	GPIO_ResetBits(GPIOB,GPIO_Pin_12);
 	
 	DMA_Cmd(DMA1_Stream3,DISABLE);
 	DMA_Cmd(DMA1_Stream4,DISABLE);
@@ -182,12 +185,10 @@ int spi2ReadWrite(char* outReadData,char* writeData,int byteRwLength){
 	
 	xSemaphoreTake(rwSem,portMAX_DELAY);
 	
-	
-	
 	for(int i=0;i<byteRwLength && i < SPI_BUFFERSIZE;i++){
 		outReadData[i] = spi2RxBuf[i];
 	}
-	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_SET);
+	
 	if(byteRwLength < SPI_BUFFERSIZE){
 		return byteRwLength;
 	}else{
@@ -195,32 +196,16 @@ int spi2ReadWrite(char* outReadData,char* writeData,int byteRwLength){
 	}
 }
 
-
-void prvAd7176Task(void *pvParameters){
-	char rx[4];
-	char tx[4];
-	
-	tx[0] = 0xAA;
-	tx[1] = 0x55;
-	tx[2] = 0xF0;
-	tx[3] = 0x0F;
-	
-	while(1){
-		//printf("%x,%x,%x,%x,%x,%x\n\r",spi1RxBuf[0],spi1RxBuf[1],spi1RxBuf[2],spi1RxBuf[3]
-		        //,spi1RxBuf[4],spi1RxBuf[5]);
-		
-		spi2ReadWrite(rx,tx,4);
-		spi2ReadWrite(rx,tx,2);
-		spi2ReadWrite(rx,tx,4);
-		
-		printf("spi2\n\r");
-		
-		vTaskDelay(500);
-	}
+void waitForDataReady(){
+	EXTI_ClearITPendingBit(EXTI_Line14);
+	NVIC_EnableIRQ(EXTI15_10_IRQn);
+	xSemaphoreTake(dataReadySem,portMAX_DELAY);
 }
 
 void myEXTI14_IRQHandler(){
-	printf("EXTI14\n\r");
+	xSemaphoreGiveFromISR(dataReadySem,pdTRUE);
+	portEND_SWITCHING_ISR(pdTRUE);
+	NVIC_DisableIRQ(EXTI15_10_IRQn);
 }
 
 void myDMA1_Stream3_IRQHandler(){
