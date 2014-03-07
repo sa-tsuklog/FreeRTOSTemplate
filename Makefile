@@ -1,3 +1,7 @@
+### You only have to modify here when you add a new file.
+SRCPATH += src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC src/AD7176-2
+###
+
 OBJDIR = objs
 BINDIR = bin
 
@@ -17,8 +21,13 @@ else
 	MKBINDIR = $(shell if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi;)
 endif
 
-VPATH = src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC src/AD7176-2
 FREERTOS_DIR = ./Libraries/FreeRTOS
+VPATH = ./Libraries/STM32F4xx_StdPeriph_Driver/src/ \
+ $(FREERTOS_DIR)/Source/portable/MemMang/ \
+ $(FREERTOS_DIR)/Source/ \
+ $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/ \
+ $(FREERTOS_DIR)/Demo/Common/Minimal/ \
+ $(SRCPATH)
 
 TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 INCLUDE_DIRS  = -I ./Libraries \
@@ -48,10 +57,10 @@ CXXFLAGS= $(COMPILE_OPTS)
 ASFLAGS = -x assembler-with-cpp -c $(TARGET_ARCH) $(COMPILE_OPTS) 
 LDFLAGS = -Wl,--gc-sections,-Map=$(BINDIR)/main.map,-cref -T stm32_flash.ld -lstdc++ -L $(TOOLDIR)../arm-none-eabi/lib/thumb -L $(OBJDIR)
 
-SRCS = $(wildcard $(addsuffix /*.c, $(VPATH)))
-CPPSRCS = $(wildcard $(addsuffix /*.cpp, $(VPATH)))
-OBJS = $(addprefix $(OBJDIR)/,$(notdir $(patsubst %.c,%.o,$(SRCS))))
-OBJS += $(addprefix $(OBJDIR)/,$(notdir $(patsubst %.cpp,%.o,$(CPPSRCS))))
+SRCS = $(wildcard $(addsuffix /*.c, $(SRCPATH)))
+CPPSRCS = $(wildcard $(addsuffix /*.cpp, $(SRCPATH)))
+OBJS = $(notdir $(patsubst %.c,%.o,$(SRCS)))
+OBJS += $(notdir $(patsubst %.cpp,%.o,$(CPPSRCS)))
 
 LIB_SRCS = \
  $(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c) \
@@ -63,27 +72,29 @@ LIB_SRCS = \
  $(FREERTOS_DIR)/Demo/Common/Minimal/blocktim.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/QPeek.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/PollQ.c
-LIB_OBJS = $(addprefix $(OBJDIR)/,$(notdir $(LIB_SRCS:.c=.o)))
-SRC_DIRS += src\AD7176-2
+LIB_OBJS = $(notdir $(LIB_SRCS:.c=.o))
 
 
-all: libstm32f4xx startup $(BINDIR)/main.hex
+all: main
 
-$(BINDIR)/main.hex: $(OBJS) $(OBJDIR)/startup_stm32f4xx.o $(OBJDIR)/libstm32f4xx.a
+main: $(addprefix $(OBJDIR)/,$(OBJS)) $(OBJDIR)/libstm32f4xx.a $(OBJDIR)/startup_stm32f4xx.o
 	$(MKBINDIR)
 	$(LD) $(LDFLAGS) $(TARGET_ARCH) $^ -o $(BINDIR)/main.elf 
 	$(OBJCOPY) -O ihex $(BINDIR)/main.elf $(BINDIR)/main.hex
 	$(OBJCOPY) -O binary $(BINDIR)/main.elf $(BINDIR)/main.bin
 
-libstm32f4xx: $(LIB_OBJS)
+$(OBJDIR)/%.o : %.c
+	$(MKOBJDIR)
+	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
+
+$(OBJDIR)/%.o : %.cpp
+	$(MKOBJDIR)
+	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
+
+$(OBJDIR)/libstm32f4xx.a: $(addprefix $(OBJDIR)/,$(LIB_OBJS))
 	$(AR) cr $(OBJDIR)/libstm32f4xx.a $^
 
-$(OBJDIR)/$(notdir %) : $(SRCS) $(CPPSRCS) $(LIB_SRCS)
-	$(MKOBJDIR)
-	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ \
-	$(filter %$(notdir $(basename $@)).c,$^) $(filter %$(notdir $(basename $@)).cpp,$^)
-
-startup:
+$(OBJDIR)/startup_stm32f4xx.o:
 	$(AS) -o $(OBJDIR)/startup_stm32f4xx.o $(ASFLAGS) $(STARTUP_ASM)
 
 clean:
