@@ -26,6 +26,7 @@ void initSpi1(){
 	spi1RxBuf = (short*)malloc(sizeof(short)*SPI_BUFFERSIZE);
 	
 	if(spi1RxBuf == NULL || spi1TxBuf == NULL){
+		printf("malloc error at initSpi1\n\r");
 		while(1){}
 	}
 	

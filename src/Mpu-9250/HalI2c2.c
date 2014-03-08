@@ -44,9 +44,6 @@ void initI2c2(){
 		while(1){}
 	}
 	
-	vSemaphoreCreateBinary(i2c2Sem);
-	xSemaphoreTake(i2c2Sem,1);
-	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 	
 	GPIO_InitTypeDef pb10_11def;
@@ -152,8 +149,19 @@ void initI2c2(){
 }
 
 void prvI2C2SendTask(void *pvParameters){
+	i2c2Sem = xSemaphoreCreateBinary();
+	if(i2c2Sem == NULL){
+		printf("malloc error at initI2c2\n\r");
+		while(1){}
+	}
+	xSemaphoreTake(i2c2Sem,1);
 	
 	char* tmp = (char*)malloc(sizeof(char)*16);
+	if(tmp == NULL){
+		printf("malloc error at prvI2C2SendTask.\n\r");
+		while(1){}
+	}
+	
 	
 	i2c2Write1(MPU9150ADDR,PWR_MGMT_1,0x80);
 	i2c2Write1(MPU9150ADDR,SIGNAL_PATH_RESET,0x07);

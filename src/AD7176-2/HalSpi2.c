@@ -15,23 +15,29 @@
 char* spi2TxBuf;
 char* spi2RxBuf;
 
-xSemaphoreHandle rwSem;
-xSemaphoreHandle dataReadySem;
+xSemaphoreHandle rwSem=NULL;
+xSemaphoreHandle dataReadySem=NULL;
 
 void initSpi2(){
 	spi2TxBuf = (char*)malloc(sizeof(char)*SPI_BUFFERSIZE);
 	spi2RxBuf = (char*)malloc(sizeof(char)*SPI_BUFFERSIZE);
 	
 	if(spi2RxBuf == NULL || spi2TxBuf == NULL){
+		printf("malloc error at initSpi2\n\r");
 		while(1){}
 	}
 	
 	rwSem = xSemaphoreCreateBinary();
-	xSemaphoreTake(rwSem,0);
 	dataReadySem = xSemaphoreCreateBinary();
-	xSemaphoreTake(dataReadySem,0);
+	if(rwSem == NULL || dataReadySem == NULL){
+		printf("malloc error at initSpi2\n\r");
+		while(1){}
+	}
 	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE,ENABLE);
+	
+	GPIO_DeInit(GPIOB);
 	
 	GPIO_InitTypeDef pb12def;
 	
@@ -39,9 +45,19 @@ void initSpi2(){
 	pb12def.GPIO_Pin = GPIO_Pin_12;
 	pb12def.GPIO_Mode = GPIO_Mode_OUT;
 	pb12def.GPIO_OType = GPIO_OType_PP;
-	pb12def.GPIO_PuPd = GPIO_PuPd_UP;
+	pb12def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	pb12def.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOB,&pb12def);
+	
+	GPIO_InitTypeDef pe9def;
+	//GPIO_DeInit(GPIOE);
+	GPIO_StructInit(&pe9def);
+	pe9def.GPIO_Pin = GPIO_Pin_9;
+	pe9def.GPIO_Mode = GPIO_Mode_OUT;
+	pe9def.GPIO_OType = GPIO_OType_PP;
+	pe9def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pe9def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOE,&pe9def);
 	
 	GPIO_InitTypeDef pb13def;
 		
@@ -58,7 +74,7 @@ void initSpi2(){
 	GPIO_StructInit(&pb14def);
 	pb14def.GPIO_Pin = GPIO_Pin_14;
 	pb14def.GPIO_Mode = GPIO_Mode_AF;
-	pb14def.GPIO_PuPd = GPIO_PuPd_UP;
+	pb14def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	pb14def.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOB,&pb14def);
 	
@@ -72,8 +88,9 @@ void initSpi2(){
 	pa15def.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOB,&pa15def);
 	
-	//GPIO_PinAFConfig(GPIOB,GPIO_PinSource12,GPIO_AF_SPI2);
-	GPIO_SetBits(GPIOB,GPIO_Pin_12);
+	GPIO_PinAFConfig(GPIOB,GPIO_PinSource12,GPIO_AF_SPI2);
+	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_SET);
+	//GPIO_SetBits(GPIOB,GPIO_Pin_12);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource13,GPIO_AF_SPI2);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource14,GPIO_AF_SPI2);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource15,GPIO_AF_SPI2);
@@ -82,7 +99,7 @@ void initSpi2(){
 	SPI_InitTypeDef spi2;
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
-	spi2.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+	spi2.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
 	spi2.SPI_CPHA = SPI_CPHA_2Edge;
 	spi2.SPI_CPOL = SPI_CPOL_High;
 	spi2.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
@@ -154,7 +171,7 @@ void initSpi2(){
 	exti_nvicdef.NVIC_IRQChannelSubPriority = 0x00;
 	exti_nvicdef.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&exti_nvicdef);
-	NVIC_SetPriority(EXTI15_10_IRQn,0xAA);
+	NVIC_SetPriority(EXTI15_10_IRQn,0x08);
 	
 	NVIC_DisableIRQ(EXTI15_10_IRQn);
 	
@@ -164,11 +181,16 @@ void initSpi2(){
 	dma_nvicdef.NVIC_IRQChannelSubPriority = 0x00;
 	dma_nvicdef.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&dma_nvicdef);
-	NVIC_SetPriority(DMA1_Stream3_IRQn,0xFF);
+	NVIC_SetPriority(DMA1_Stream3_IRQn,0x08);
+}
+
+void clearSemaphres(){
+	xSemaphoreTake(dataReadySem,0);
+	xSemaphoreTake(rwSem,0);
 }
 
 int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength){
-	GPIO_ResetBits(GPIOB,GPIO_Pin_12);
+	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_RESET);
 	
 	DMA_Cmd(DMA1_Stream3,DISABLE);
 	DMA_Cmd(DMA1_Stream4,DISABLE);
@@ -180,14 +202,19 @@ int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRw
 	DMA_SetCurrDataCounter(DMA1_Stream4,byteRwLength);
 	DMA_ClearITPendingBit(DMA1_Stream4,DMA_IT_TCIF4);
 	
+	
 	DMA_Cmd(DMA1_Stream3,ENABLE);
 	DMA_Cmd(DMA1_Stream4,ENABLE);
 	
 	xSemaphoreTake(rwSem,portMAX_DELAY);
 	
+	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_SET);
+	
 	for(int i=0;i<byteRwLength && i < SPI_BUFFERSIZE;i++){
 		outReadData[i] = spi2RxBuf[i];
 	}
+	
+	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_RESET);
 	
 	if(byteRwLength < SPI_BUFFERSIZE){
 		return byteRwLength;
@@ -199,13 +226,17 @@ int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRw
 void waitForDataReady(){
 	EXTI_ClearITPendingBit(EXTI_Line14);
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
-	xSemaphoreTake(dataReadySem,portMAX_DELAY);
+	if(dataReadySem!=NULL){
+		xSemaphoreTake(dataReadySem,portMAX_DELAY);
+	}
 }
 
 void myEXTI14_IRQHandler(){
-	xSemaphoreGiveFromISR(dataReadySem,pdTRUE);
-	portEND_SWITCHING_ISR(pdTRUE);
+	if(dataReadySem!=NULL){
+		xSemaphoreGiveFromISR(dataReadySem,pdTRUE);
+	}
 	NVIC_DisableIRQ(EXTI15_10_IRQn);
+	portEND_SWITCHING_ISR(pdTRUE);
 }
 
 void myDMA1_Stream3_IRQHandler(){
