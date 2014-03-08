@@ -82,7 +82,7 @@ void initSpi2(){
 	SPI_InitTypeDef spi2;
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
-	spi2.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+	spi2.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
 	spi2.SPI_CPHA = SPI_CPHA_2Edge;
 	spi2.SPI_CPOL = SPI_CPOL_High;
 	spi2.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
