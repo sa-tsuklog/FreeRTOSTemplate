@@ -108,10 +108,10 @@ void prvTaskB(void *pvParameters){
 
 int main(void) {
 
-  SystemInit();
-  GPIO_Configuration();
+	SystemInit();
+	GPIO_Configuration();
 
-  GPIO_Write(GPIOD, 0);
+	GPIO_Write(GPIOD, 0);
 
     initUart(USART2);
 	initSpi1();

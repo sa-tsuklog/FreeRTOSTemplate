@@ -86,39 +86,35 @@ unsigned int read32(char cmd){
 void initAd7176(){
 	write16(GPIOCON,0x000D);
 	
-	write16(IFMODE,0x0040);		//DATA_STAT ON
+	write16(IFMODE,0x0000);			//DATA_STAT OFF
+	//write16(IFMODE,0x0040);		//DATA_STAT ON
+	
 	
 	write16(SETUPCON0,0x1000);
 	
 	write16(FILTCON0,0x0005);	//25ksps
 	
 	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4
-	//write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
-	//write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
-	//write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
+	write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
+	write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
+	write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
 	
-	write16(ADCMODE,0x8003);
+	write16(ADCMODE,0x800C);
 }
 
 
 void prvAd7176Task(void *pvParameters){
 	initAd7176();
 	
-	int loop = 128;
-	
-	int* buf = (int*)malloc(sizeof(int)*loop);
+	char sts;
+	int* buf = (int*)malloc(sizeof(int)*4);
 	
 	while(1){
-		for(int i=0;i<loop;i++){
-			waitForDataReady();
-			buf[i] = read24(DATA);
+		waitForDataReady();
+		sts = read8(STATUS);
+		buf[sts&0x03] = read24(DATA);
+		if(sts&0x03 == 3){
+			
 		}
-		
-		for(int i=0;i<loop;i++){
-			printf("%d %d\n\r",i,buf[i]);
-			vTaskDelay(1);
-		}
-		
-		vTaskDelay(1000);
 	}
 }
