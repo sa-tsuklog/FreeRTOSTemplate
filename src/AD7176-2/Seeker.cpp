@@ -20,10 +20,10 @@
 xQueueHandle adDataQueue;
 xSemaphoreHandle seekerDataMutex;
 
-float* intensity;
+float intensity;
 
 void prvSeekerTask(void *pvParameters){
-	adDataQueue = xQueueCreate(256,sizeof(AdData));
+	adDataQueue = xQueueCreate(256,sizeof(float));
 	seekerDataMutex = xSemaphoreCreateMutex();
 	
 	if(adDataQueue == NULL || seekerDataMutex == NULL){
@@ -31,25 +31,18 @@ void prvSeekerTask(void *pvParameters){
 	}
 	
 	
-	Filter* filter[4];
-	for(int i=0;i<4;i++){
-		filter[i] = new Filter(1.591/(10/4.0),100);
+	Filter* filter;
+	filter = new Filter(1.591/(15.625/2),100);
 		
-		if(filter[i] == NULL){
-			printf("malloc error at prvSeekerTask\n\r");
-			while(1){}
-		}
-		
-	}
-	intensity = (float*)malloc(sizeof(float)*4);
-	if(intensity == NULL){
+	if(filter == NULL){
 		printf("malloc error at prvSeekerTask\n\r");
 		while(1){}
 	}
 	
-	float bandpass[4];
-	float allpass[4];
-	AdData adData;
+	
+	float bandpass;
+	float allpass;
+	float adData;
 	
 	portTickType xLastWakeTime = xTaskGetTickCount();
 	
@@ -62,36 +55,33 @@ void prvSeekerTask(void *pvParameters){
 	}
 	
 	int decimate =0;
-	
 	while(1){
 		while(xQueueReceive(adDataQueue,&adData,0) != errQUEUE_EMPTY){
-			for(int i=0;i<4;i++){
-				bandpass[i] = filter[i]->bandpass(adData.ch[i]);
-				allpass[i] = filter[i]->allpass(bandpass[i]);
+			bandpass = filter->bandpass(adData);
+			allpass = filter->allpass(bandpass);
+			if(decimate <128){
+				printf("%d %d %d\n\r",decimate,(int)adData,(int)bandpass);
 			}
+			decimate=(decimate+1)%8196;
 		}
 		
-		for(int i=0;i<4;i++){
-			intensity[i] = filter[i]->myAbs(bandpass[i],allpass[i]);
-		}
-		if(decimate%100 == 0){
-			printf("%f\n\r",intensity[0]);
+		
+		intensity = filter->myAbs(bandpass,allpass);
+		
+		if(decimate%200 == 0){
+			//printf("%d\n\r",(int)intensity[0]);
 		}
 		
-		decimate++;
+		
 		
 		vTaskDelayUntil(&xLastWakeTime,TASK_WAIT_TIME);
 	}
 }
 
-void enqueAdData(float* data){
+void enqueAdData(float data){
 	if(adDataQueue == NULL){
 		return;
 	}
 	
-	AdData adData;
-	for(int i=0;i<4;i++){
-		adData.ch[i] = data[i];
-	}
-	xQueueSendToBack(adDataQueue,&adData,0);
+	xQueueSendToBack(adDataQueue,&data,0);
 }

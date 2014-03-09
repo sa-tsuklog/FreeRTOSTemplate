@@ -100,10 +100,7 @@ void prvTaskA(void *pvParameters){
 }
 void prvTaskB(void *pvParameters){
 	while(1){
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
-		vTaskDelay(100);
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
-		vTaskDelay(100);
+		
 		//printf("taskB\n\r");
 	}
 }
@@ -123,7 +120,6 @@ int main(void) {
 	initADC();
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
-	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
 	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
 	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
 	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
@@ -140,9 +136,16 @@ int main(void) {
 	}
 }
 
+#define CYCLE 1000
 void vApplicationIdleHook(void){
 	static int idle_count=0;
-	idle_count++;
+	idle_count=(idle_count+1)%CYCLE;
+	if(idle_count<CYCLE/2){
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
+	}else{
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
+	}
+	
 }
 
 void vApplicationMallocFailedHook(void){

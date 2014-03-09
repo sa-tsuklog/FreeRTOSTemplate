@@ -10,6 +10,6 @@
 
 
 void prvSeekerTask(void *pvParameters);
-void enqueAdData(float* data);
+void enqueAdData(float data);
 
 #endif /* SEEKER_HPP_ */

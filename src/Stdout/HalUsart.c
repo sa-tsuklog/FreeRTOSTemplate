@@ -16,7 +16,7 @@
 #include "HalUsart.h"
 #include "SerialCommand.hpp"
 
-#define TX_BUFFERSIZE 1024
+#define TX_BUFFERSIZE 4096
 #define RX_BUFFERSIZE 64
 #define LINE_BUF_SIZE 64
 
