@@ -10,6 +10,7 @@
 #include "Servo/HalTim.h"
 #include "AD7176-2/HalSpi2.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
+#include "AD7176-2/Seeker.hpp"
 #include "ADC/ADC.h"
 
 #include "stdio.h"
@@ -85,6 +86,7 @@ EXTI
 	EXTI14	Spi2
 */
 
+volatile char stackoverflowTaskname[16];
 
 void prvTaskA(void *pvParameters){
 	while(1){
@@ -107,10 +109,10 @@ void prvTaskB(void *pvParameters){
 
 int main(void) {
 
-  SystemInit();
-  GPIO_Configuration();
+	SystemInit();
+	GPIO_Configuration();
 
-  GPIO_Write(GPIOD, 0);
+	GPIO_Write(GPIOD, 0);
 
     initUart(USART2);
 	initSpi1();
@@ -118,15 +120,15 @@ int main(void) {
 	initI2c2();
 	initTim();
 
-	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,4,NULL);
-	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,4,NULL);
-	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",512,USART2,1,NULL);
-	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",1024,USART2,4,NULL);
-	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
-	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
-	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad7176",1024,NULL,1,NULL);
-	xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
-
+	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
+	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
+	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
+	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
+	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
+	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
+	//xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL)!=pdPASS)
+	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
+	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
 
 	vTaskStartScheduler();
 
@@ -145,6 +147,11 @@ void vApplicationMallocFailedHook(void){
 	while(1);
 }
 void vApplicationStackOverflowHook(void* ptr, signed char* taskname){
+	int i=0;
+	while(taskname[i]!=0){
+		stackoverflowTaskname[i] = taskname[i];
+		i++;
+	}
 	while(1);
 }
 void vApplicationTickHook(){

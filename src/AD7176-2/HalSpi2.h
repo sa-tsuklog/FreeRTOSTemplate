@@ -14,6 +14,7 @@ void myEXTI14_IRQHandler();
 void myDMA1_Stream3_IRQHandler();
 int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 void waitForDataReady();
+void clearSemaphores();
 //void myDMA1_Stream4_IRQHandler();
 //void mySPI2_IRQHandler();
 
