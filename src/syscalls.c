@@ -41,6 +41,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "Stdout/HalUsart.h"
+#include "Stdout/HalUsart2.h"
 #include "stm32f4xx.h"
 
 #ifdef __cplusplus
@@ -78,7 +79,7 @@ int _write_r (struct _reent *r, int file, char * ptr, int len)
 {
 	if(file == 1){
 		for(int i=0;i<len;i++){
-			uputc(USART2,ptr[i]);
+			uputc2(USART2,ptr[i]);
 		}
 	}
 	

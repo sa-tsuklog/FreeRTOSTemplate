@@ -151,12 +151,12 @@ void vPortSVCHandler();
 void xPortPendSVHandler();
 void xPortSysTickHandler();
 
-
+/*
 void SVC_Handler(void)
 {
 	vPortSVCHandler();
 }
-
+*/
 /**
   * @brief  This function handles Debug Monitor exception.
   * @param  None
@@ -173,10 +173,12 @@ void DebugMon_Handler(void)
   * @retval None
   * moved to Libraries/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
   */
+/*
 void PendSV_Handler(void)
 {
 	xPortPendSVHandler();
 }
+*/
 
 /**
   * @brief  This function handles SysTick Handler.
@@ -184,11 +186,12 @@ void PendSV_Handler(void)
   * @retval None
   * moved to Libraries/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
   */
-
+/*
 void SysTick_Handler(void)
 {
 	xPortSysTickHandler();
 }
+*/
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */

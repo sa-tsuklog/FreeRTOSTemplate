@@ -24,7 +24,7 @@ void handleSerialCommand(char* line){
 	
 	
 	if(strncmp(line,"vTaskList",9)==0){
-		vTaskList((signed portCHAR*)buf);
+		//vTaskList((signed portCHAR*)buf);
 		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
 		printf(buf);
 	}else{

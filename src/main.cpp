@@ -4,7 +4,6 @@
 #include "task.h"
 #include "queue.h"
 
-
 #include "Stdout/HalUsart.h"
 #include "Adis16488/HalSpi1.hpp"
 #include "Mpu-9250/HalI2c2.h"
@@ -118,7 +117,6 @@ int main(void) {
 	initSpi2();
 	initI2c2();
 	initTim();
-	initADC();
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,4,NULL);
 	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,4,NULL);
