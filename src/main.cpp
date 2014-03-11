@@ -120,14 +120,14 @@ int main(void) {
 	initTim();
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
-	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
+	//xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
 	xTaskCreate(prvTxTask2,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
 	xTaskCreate(prvRxTask2,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
 	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
 	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
-	//xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL)!=pdPASS)
-	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
-	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
+	xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
+	//xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
+	//xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
 
 	vTaskStartScheduler();
 
