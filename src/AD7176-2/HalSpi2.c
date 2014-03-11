@@ -90,7 +90,7 @@ void initSpi2(){
 	
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource12,GPIO_AF_SPI2);
 	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_SET);
-	//GPIO_SetBits(GPIOB,GPIO_Pin_12);
+	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_SET);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource13,GPIO_AF_SPI2);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource14,GPIO_AF_SPI2);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource15,GPIO_AF_SPI2);
@@ -191,6 +191,7 @@ void clearSemaphres(){
 
 int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength){
 	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_RESET);
+	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_RESET);
 	
 	DMA_Cmd(DMA1_Stream3,DISABLE);
 	DMA_Cmd(DMA1_Stream4,DISABLE);
@@ -209,12 +210,14 @@ int spi2ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRw
 	xSemaphoreTake(rwSem,portMAX_DELAY);
 	
 	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_SET);
+	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_SET);
 	
 	for(int i=0;i<byteRwLength && i < SPI_BUFFERSIZE;i++){
 		outReadData[i] = spi2RxBuf[i];
 	}
 	
 	GPIO_WriteBit(GPIOE,GPIO_Pin_9,Bit_RESET);
+	GPIO_WriteBit(GPIOB,GPIO_Pin_12,Bit_RESET);
 	
 	if(byteRwLength < SPI_BUFFERSIZE){
 		return byteRwLength;

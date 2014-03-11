@@ -112,12 +112,13 @@ int main(void) {
 
 	GPIO_Write(GPIOD, 0);
 
-    initUart(USART2);
-	initSpi1();
-	initSpi2();
 	initI2c2();
 	initTim();
 	initADC();
+    initUart(USART2);
+	initSpi1();
+	initSpi2();
+	
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
 	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
