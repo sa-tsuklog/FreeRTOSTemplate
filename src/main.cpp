@@ -87,7 +87,6 @@ EXTI
 	EXTI14	Spi2
 */
 
-volatile char stackoverflowTaskname[16];
 
 void prvTaskA(void *pvParameters){
 	while(1){
@@ -95,13 +94,6 @@ void prvTaskA(void *pvParameters){
 		vTaskDelay(100);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
 		vTaskDelay(100);
-		//printf("taskA\n\r");
-	}
-}
-void prvTaskB(void *pvParameters){
-	while(1){
-		
-		//printf("taskB\n\r");
 	}
 }
 
@@ -120,14 +112,14 @@ int main(void) {
 	initSpi2();
 	
 
-	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
-	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
-	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
+	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",256,NULL,1,NULL);
+	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",256,USART2,1,NULL);
+	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",256,USART2,1,NULL);
 	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
 	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
 	//xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL)!=pdPASS)
-	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
-	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
+	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",256,NULL,4,NULL);
+	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",256,NULL,2,NULL);
 
 	vTaskStartScheduler();
 
@@ -154,10 +146,6 @@ void vApplicationMallocFailedHook(void){
 }
 void vApplicationStackOverflowHook(void* ptr, signed char* taskname){
 	int i=0;
-	while(taskname[i]!=0){
-		stackoverflowTaskname[i] = taskname[i];
-		i++;
-	}
 	while(1);
 }
 void vApplicationTickHook(){
