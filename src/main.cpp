@@ -6,15 +6,11 @@
 
 #include "Stdout/SerialCommand.h"
 #include "Mpu-9250/HalI2c2.h"
-#include "Servo/HalTim.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
 #include "AD7176-2/Seeker.hpp"
 #include "Tasks.h"
 
 #include "stdio.h"
-#include <vector>
-
-using namespace std;
 
 uint32_t Count = 0xFFFFF;
 
@@ -113,7 +109,6 @@ int main(void) {
 	GPIO_Write(GPIOD, 0);
 
 	initI2c2();
-	initTim();
 
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
 	//xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
