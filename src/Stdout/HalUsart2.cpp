@@ -134,7 +134,7 @@ void USART2Class::Rx()
 	}
 }
 
-void prvTxTask2(void *pvParameters){
+void prvTxTask(void *pvParameters){
 	portTickType xLastWakeTime = xTaskGetTickCount();
 
 	if((USART_TypeDef*)pvParameters == USART2){
@@ -145,7 +145,7 @@ void prvTxTask2(void *pvParameters){
 	}
 }
 
-void prvRxTask2(void *pvParameters){
+void prvRxTask(void *pvParameters){
 	if((USART_TypeDef*)pvParameters == USART2){
 		while(1){
 			USART2Class::GetInstance()->Rx();
@@ -155,13 +155,13 @@ void prvRxTask2(void *pvParameters){
 	}
 }
 
-void uputc2(USART_TypeDef* ch,char c){
+void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
 		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,pdFALSE)!=pdPASS){
 		}
 	}
 }
 
-void callbackUsart2CrReceived2(char* line){
+void callbackUsart2CrReceived(char* line){
 	handleSerialCommand(line);
 }
