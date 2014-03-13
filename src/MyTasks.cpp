@@ -20,7 +20,7 @@
 #include "AD7176-2/Ad7176-2RegisterDef.h"
 #include "AD7176-2/AdData.hpp"
 
-#include "Tasks.h"
+#include "MyTasks.h"
 
 void prvADCTask(void *pvParameters){
 
