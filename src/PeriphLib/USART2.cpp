@@ -1,7 +1,4 @@
-#include "HalUsart.h"
-#include "SerialCommand.hpp"
-
-#include "task.h"
+#include "USART2.h"
 
 USART2Class::USART2Class(){
 	m_queue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
@@ -99,7 +96,7 @@ void USART2Class::Tx()
 	if(DMA_GetCmdStatus(DMA1_Stream6)==DISABLE && (numTx = uxQueueMessagesWaiting(m_queue)) != 0){
 		for(int i=0;i<numTx;i++){
 			char c;
-			portBASE_TYPE xStatus = xQueueReceive(m_queue,&c,0);
+			xQueueReceive(m_queue,&c,0);
 			m_txBuf[i] = c;
 		}
 
@@ -122,7 +119,7 @@ void USART2Class::Rx()
 		}else if(c=='\r'){
 			m_lineBuf[lineBufIndex]=0;
 
-			callbackUsart2CrReceived(m_lineBuf);
+			HandleSerialCommand(m_lineBuf);
 			lineBufIndex=0;
 
 		}else{
@@ -132,36 +129,4 @@ void USART2Class::Rx()
 
 		rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 	}
-}
-
-void prvTxTask(void *pvParameters){
-	portTickType xLastWakeTime = xTaskGetTickCount();
-
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Tx();
-			vTaskDelayUntil(&xLastWakeTime,1);
-		}
-	}
-}
-
-void prvRxTask(void *pvParameters){
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Rx();
-			vTaskDelay(100);
-
-		}
-	}
-}
-
-void uputc(USART_TypeDef* ch,char c){
-	if(ch == USART2){
-		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,pdFALSE)!=pdPASS){
-		}
-	}
-}
-
-void callbackUsart2CrReceived(char* line){
-	handleSerialCommand(line);
 }

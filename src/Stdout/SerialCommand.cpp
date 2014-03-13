@@ -1,35 +1,48 @@
-/*
- * SerialCommand.cpp
- *
- *  Created on: 2014/02/16
- *      Author: sa
- */
+#include <stdio.h>
+#include <string.h>
 
-#include "string.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
 #include "FreeRTOS.h"
-#include "task.h"
 #include "queue.h"
-#include "semphr.h"
-#include "HalUsart.h"
-#include "SerialCommand.hpp"
+#include "task.h"
 
+#include "SerialCommand.h"
+#include "PeriphLib/USART2.h"
 
-char buf[1024]; 
+void prvTxTask(void *pvParameters){
+	portTickType xLastWakeTime = xTaskGetTickCount();
 
-void handleSerialCommand(char* line){
-	
-	
+	if((USART_TypeDef*)pvParameters == USART2){
+		while(1){
+			USART2Class::GetInstance()->Tx();
+			vTaskDelayUntil(&xLastWakeTime,1);
+		}
+	}
+}
+
+void prvRxTask(void *pvParameters){
+	if((USART_TypeDef*)pvParameters == USART2){
+		while(1){
+			USART2Class::GetInstance()->Rx();
+			vTaskDelay(100);
+
+		}
+	}
+}
+
+void uputc(USART_TypeDef* ch,char c){
+	if(ch == USART2){
+		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,pdFALSE)!=pdPASS){
+		}
+	}
+}
+
+void HandleSerialCommand(char* line){
+	char buf[1024];
 	if(strncmp(line,"vTaskList",9)==0){
-		//vTaskList((signed portCHAR*)buf);
+		vTaskList((signed portCHAR*)buf);
 		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
 		printf(buf);
 	}else{
 		printf("invalid command:%s\n\r",line);
 	}
 }
-
-

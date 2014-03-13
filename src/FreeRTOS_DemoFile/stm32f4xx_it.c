@@ -32,12 +32,9 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
 #include "Mpu-9250/HalI2c2.h"
 #include "Adis16488/HalSpi1.hpp"
-#include "AD7176-2/HalSpi2.h"
+#include "IRQHandlerInterface.h"
 
 #include "stdio.h"
 

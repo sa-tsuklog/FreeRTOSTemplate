@@ -4,14 +4,14 @@
 #include "task.h"
 #include "queue.h"
 
-#include "Stdout/HalUsart.h"
+#include "Stdout/SerialCommand.h"
 #include "Adis16488/HalSpi1.hpp"
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
-#include "AD7176-2/HalSpi2.h"
+#include "PeriphLib/SPI2.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
 #include "AD7176-2/Seeker.hpp"
-#include "ADC/ADC.h"
+#include "PeriphLib/ADC.h"
 
 #include "stdio.h"
 #include <vector>
@@ -115,7 +115,6 @@ int main(void) {
 	GPIO_Write(GPIOD, 0);
 
 	initSpi1();
-	initSpi2();
 	initI2c2();
 	initTim();
 

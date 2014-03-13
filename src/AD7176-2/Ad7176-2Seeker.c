@@ -13,7 +13,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include "AD7176-2/HalSpi2.h"
+#include "PeriphLib/SPI2.h"
 #include "Ad7176-2Seeker.h"
 #include "Ad7176-2RegisterDef.h"
 #include "Seeker.hpp"
@@ -25,7 +25,7 @@ void write8(char cmd,char data){
 	txBuf[0] = cmd;
 	txBuf[1] = data;
 	
-	spi2ReadWrite(rxBuf,txBuf,2);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,2);
 }
 
 void write16(char cmd,unsigned short data){
@@ -33,7 +33,7 @@ void write16(char cmd,unsigned short data){
 	txBuf[1] = (unsigned char)(data>>8);
 	txBuf[2] = (unsigned char)(data&0xFF);
 	
-	spi2ReadWrite(rxBuf,txBuf,3);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,3);
 }
 void write24(char cmd,int data){
 	txBuf[0] = cmd;
@@ -41,13 +41,13 @@ void write24(char cmd,int data){
 	txBuf[2] = (unsigned char)((data>>8)&0xFF);
 	txBuf[3] = (unsigned char)(data&0xFF);
 	
-	spi2ReadWrite(rxBuf,txBuf,4);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,4);
 }
 unsigned char read8(char cmd){
 	txBuf[0] = cmd|0x40;
 	txBuf[1] = 0x00;
 	
-	spi2ReadWrite(rxBuf,txBuf,2);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,2);
 	
 	return rxBuf[1];
 }
@@ -56,7 +56,7 @@ unsigned short read16(char cmd){
 	txBuf[1] = 0x00;
 	txBuf[2] = 0x00;
 	
-	spi2ReadWrite(rxBuf,txBuf,3);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,3);
 	
 	return ((unsigned short)rxBuf[1])<<8 | rxBuf[2];
 }
@@ -66,7 +66,7 @@ unsigned int read24(char cmd){
 	txBuf[2] = 0x00;
 	txBuf[3] = 0x00;
 	
-	spi2ReadWrite(rxBuf,txBuf,4);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,4);
 	
 	return ((unsigned int)rxBuf[1])<<16 | ((unsigned int)rxBuf[2]<<8) | rxBuf[3];
 }
@@ -78,7 +78,7 @@ unsigned int read32(char cmd){
 	txBuf[3] = 0x00;
 	txBuf[4] = 0x00;
 	
-	spi2ReadWrite(rxBuf,txBuf,4);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,4);
 	
 	return ((unsigned int)rxBuf[1])<<24 | ((unsigned int)rxBuf[2]<<16) 
 			|((unsigned int)rxBuf[3]<<8) | rxBuf[4];
@@ -94,7 +94,7 @@ void resetIf(){
 	txBuf[6]=0xFF;
 	txBuf[7]=0xFF;
 	
-	spi2ReadWrite(rxBuf,txBuf,8);
+	SPI2Class::GetInstance()->ReadWrite(rxBuf,txBuf,8);
 }
 
 void initAd7176(){
@@ -142,7 +142,6 @@ void prvAd7176Task(void *pvParameters){
 	initAd7176();
 	
 	unsigned char sts=0;
-	unsigned short id;
 	float* buf = (float*)malloc(sizeof(float)*4);
 	if(buf == NULL){
 		printf("malloc error at prvAd7176Task\n\r");
@@ -150,9 +149,9 @@ void prvAd7176Task(void *pvParameters){
 	}
 	
 	
-	int i=0;
+//	int i=0;
 	while(1){
-		waitForDataReady();
+		SPI2Class::GetInstance()->WaitForDataReady();
 		buf[0] = read24(DATA);
 		sts = read8(STATUS);
 		
@@ -161,7 +160,7 @@ void prvAd7176Task(void *pvParameters){
 //		}
 //		
 //		i=(i+1)%400;
-		if(sts&0x03 == 3){
+		if((sts&0x03) == 3){
 			enqueAdData(buf);
 		}
 	}

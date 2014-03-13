@@ -1,5 +1,5 @@
-#ifndef __HAL_USART_H__
-#define __HAL_USART_H__
+#ifndef __PERIPHLIB_USART2_H__
+#define __PERIPHLIB_USART2_H__
 
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
@@ -28,15 +28,11 @@ private:
 	char m_rxBuf[RX_BUFFERSIZE];
 	char m_lineBuf[LINE_BUF_SIZE];
 public:
-	void Tx();
-	void Rx();
+	virtual void Tx();
+	virtual void Rx();
 	xQueueHandle GetQueue(){ return m_queue; }
 };
 
-void prvTxTask(void *pvParameters);
-void prvRxTask(void *pvParameters);
-
-void uputc(USART_TypeDef* ch,char c);
-void callbackUsart2CrReceived(char* line);
+void HandleSerialCommand(char* line);
 
 #endif
