@@ -135,33 +135,3 @@ void initAd7176(){
 	vTaskDelay(1);
 	
 }
-
-
-void prvAd7176Task(void *pvParameters){
-	void clearSemaphores();
-	initAd7176();
-	
-	unsigned char sts=0;
-	float* buf = (float*)malloc(sizeof(float)*4);
-	if(buf == NULL){
-		printf("malloc error at prvAd7176Task\n\r");
-		while(1){}
-	}
-	
-	
-//	int i=0;
-	while(1){
-		SPI2Class::GetInstance()->WaitForDataReady();
-		buf[0] = read24(DATA);
-		sts = read8(STATUS);
-		
-//		if(i<4){
-//			printf("%f %x\n\r",buf[0],sts);
-//		}
-//		
-//		i=(i+1)%400;
-		if((sts&0x03) == 3){
-			enqueAdData(buf);
-		}
-	}
-}

@@ -8,8 +8,40 @@
 #ifndef SEEKER_HPP_
 #define SEEKER_HPP_
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 
-void prvSeekerTask(void *pvParameters);
-void enqueAdData(float* data);
+#include "Filter.hpp"
+
+class Seeker {
+	// Singleton pattern definition
+private:
+	Seeker();
+	Seeker(const Seeker& rhs);
+	Seeker& operator=(const Seeker& rhs);
+	virtual ~Seeker() {}
+public:
+	static Seeker* GetInstance() {
+    	static Seeker instance;
+    	return &instance;
+	}
+
+	// Class definition
+private:
+	float m_intensity[4];
+	int m_decimate;
+	xQueueHandle m_adDataQueue;
+	xSemaphoreHandle m_seekerDataMutex;
+	Filter* m_filter[4];
+	portTickType m_xLastWakeTime;
+
+public:
+	static const int TASK_WAIT_TIME = 1;
+	portTickType DoTask();
+	void EnqueAdData(float* data);
+};
+
 
 #endif /* SEEKER_HPP_ */

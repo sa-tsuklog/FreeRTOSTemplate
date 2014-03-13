@@ -10,7 +10,7 @@
 
 extern "C"{
 
-void ADCTask(void *pvParameters);
+void prvADCTask(void *pvParameters);
 
 void prvTxTask(void *pvParameters);
 void prvRxTask(void *pvParameters);
@@ -18,6 +18,9 @@ void prvRxTask(void *pvParameters);
 void prvAdis16488Task(void *pvParameters);
 
 void prvI2C2SendTask(void *pvParameters);
+
+void prvAd7176Task(void *pvParameters);
+void prvSeekerTask(void *pvParameters);
 
 }
 
