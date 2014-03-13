@@ -8,10 +8,9 @@
 #include "Adis16488/HalSpi1.hpp"
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
-#include "PeriphLib/SPI2.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
 #include "AD7176-2/Seeker.hpp"
-#include "PeriphLib/ADC.h"
+#include "Tasks.h"
 
 #include "stdio.h"
 #include <vector>

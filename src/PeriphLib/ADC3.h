@@ -23,6 +23,4 @@ public:
 	uint16_t GetData(int pinNum);
 };
 
-void ADCTask(void *pvParameters);
-
 #endif

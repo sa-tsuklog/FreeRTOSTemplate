@@ -8,27 +8,6 @@
 #include "SerialCommand.h"
 #include "PeriphLib/USART2.h"
 
-void prvTxTask(void *pvParameters){
-	portTickType xLastWakeTime = xTaskGetTickCount();
-
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Tx();
-			vTaskDelayUntil(&xLastWakeTime,1);
-		}
-	}
-}
-
-void prvRxTask(void *pvParameters){
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Rx();
-			vTaskDelay(100);
-
-		}
-	}
-}
-
 void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
 		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,pdFALSE)!=pdPASS){
