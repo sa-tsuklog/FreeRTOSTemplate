@@ -33,7 +33,6 @@
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "Mpu-9250/HalI2c2.h"
-#include "Adis16488/HalSpi1.hpp"
 #include "IRQHandlerInterface.h"
 
 #include "stdio.h"

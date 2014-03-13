@@ -12,6 +12,7 @@
 
 #include "PeriphLib/ADC3.h"
 #include "PeriphLib/USART2.h"
+#include "PeriphLib/SPI1.h"
 
 #include "Tasks.h"
 
@@ -61,3 +62,12 @@ void prvRxTask(void *pvParameters){
 	}
 }
 
+void prvAdis16488Task(void *pvParameters){
+	while(1){
+		//printf("%x,%x,%x,%x,%x,%x\n\r",spi1RxBuf[0],spi1RxBuf[1],spi1RxBuf[2],spi1RxBuf[3]
+		        //,spi1RxBuf[4],spi1RxBuf[5]);
+		//SPI1Class::GetInstance()->ReadWrite(); ????
+
+		vTaskDelay(100);
+	}
+}

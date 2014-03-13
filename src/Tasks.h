@@ -15,7 +15,7 @@ void ADCTask(void *pvParameters);
 void prvTxTask(void *pvParameters);
 void prvRxTask(void *pvParameters);
 
-
+void prvAdis16488Task(void *pvParameters);
 
 }
 

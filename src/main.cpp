@@ -5,7 +5,6 @@
 #include "queue.h"
 
 #include "Stdout/SerialCommand.h"
-#include "Adis16488/HalSpi1.hpp"
 #include "Mpu-9250/HalI2c2.h"
 #include "Servo/HalTim.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
@@ -113,7 +112,6 @@ int main(void) {
 
 	GPIO_Write(GPIOD, 0);
 
-	initSpi1();
 	initI2c2();
 	initTim();
 

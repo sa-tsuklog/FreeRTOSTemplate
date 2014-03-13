@@ -1,4 +1,12 @@
-#include "HalSPI1_2.h"
+#include "stdio.h"
+#include "stm32f4xx.h"
+#include "stm32f4xx_conf.h"
+
+#include "SPI1.h"
+
+#include "task.h"
+#include "queue.h"
+
 
 SPI1Class::SPI1Class(){
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
@@ -142,27 +150,17 @@ SPI1Class::SPI1Class(){
 	NVIC_SetPriority(EXTI0_IRQn,0xFF);
 }
 
-void SPI1Class::Send(char* sendData, int size)
+int SPI1Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength)
 {
-	m_txBuf[0] = sendData[0];
-	m_txBuf[1] = sendData[1];
-	m_txBuf[2] = sendData[2];
-	m_txBuf[3] = sendData[3];
+	m_txBuf[0] = writeData[0];
+	m_txBuf[1] = writeData[1];
+	m_txBuf[2] = writeData[2];
+	m_txBuf[3] = writeData[3];
 
 	DMA_Cmd(DMA2_Stream3,DISABLE);
 	DMA_SetCurrDataCounter(DMA2_Stream3,4);
 	DMA_ClearFlag(DMA2_Stream3,DMA_FLAG_TCIF3);
 	DMA_Cmd(DMA2_Stream3,ENABLE);
-}
 
-int SPI1Class::Recv(char* recvData)
-{
-	recvData[0] = m_rxBuf[0];
-	recvData[1] = m_rxBuf[1];
-	recvData[2] = m_rxBuf[2];
-	recvData[3] = m_rxBuf[3];
-	recvData[4] = m_rxBuf[4];
-	recvData[5] = m_rxBuf[5];
-	// memcpy is better?
-	return 6;
+	return 0;
 }

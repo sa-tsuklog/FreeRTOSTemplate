@@ -1,7 +1,8 @@
 #ifndef __HALSPI1_H__
 #define __HALSPI1_H__
 
-#include "stm32f4xx.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 class SPI1Class {
 	// Singleton pattern definition
@@ -19,12 +20,12 @@ public:
 	// Class definition
 private:
 	static const int SPI_BUFFERSIZE = 32;
-
 	char m_txBuf[SPI_BUFFERSIZE];
 	char m_rxBuf[SPI_BUFFERSIZE];
+	xSemaphoreHandle m_rwSem;
+	xSemaphoreHandle m_dataReadySem;
 public:
-	void Send(char* sendData, int size);
-	int Recv(char* recvData);
+	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 };
 
 #endif /* __HALSPI1_H__ */
