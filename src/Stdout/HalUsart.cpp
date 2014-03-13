@@ -1,4 +1,4 @@
-#include "HalUsart2.h"
+#include "HalUsart.h"
 #include "SerialCommand.hpp"
 
 #include "task.h"
@@ -122,7 +122,7 @@ void USART2Class::Rx()
 		}else if(c=='\r'){
 			m_lineBuf[lineBufIndex]=0;
 
-			callbackUsart2CrReceived2(m_lineBuf);
+			callbackUsart2CrReceived(m_lineBuf);
 			lineBufIndex=0;
 
 		}else{

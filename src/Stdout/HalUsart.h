@@ -33,10 +33,10 @@ public:
 	xQueueHandle GetQueue(){ return m_queue; }
 };
 
-void prvTxTask2(void *pvParameters);
-void prvRxTask2(void *pvParameters);
+void prvTxTask(void *pvParameters);
+void prvRxTask(void *pvParameters);
 
-void uputc2(USART_TypeDef* ch,char c);
-void callbackUsart2CrReceived2(char* line);
+void uputc(USART_TypeDef* ch,char c);
+void callbackUsart2CrReceived(char* line);
 
 #endif
