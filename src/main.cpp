@@ -5,7 +5,7 @@
 #include "queue.h"
 
 #include "Stdout/SerialCommand.h"
-#include "Mpu-9250/HalI2c2.h"
+#include "Mpu-9250/MPU9250.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
 #include "AD7176-2/Seeker.hpp"
 #include "Tasks.h"
@@ -108,17 +108,15 @@ int main(void) {
 
 	GPIO_Write(GPIOD, 0);
 
-	initI2c2();
-
 	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
-	//xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
+	xTaskCreate(prvTaskB,(signed portCHAR*)"TaskB",512,NULL,1,NULL);
 	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
 	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
-	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
-	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
+	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
+	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
 	xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
-	//xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
-	//xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
+	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
+	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
 
 	vTaskStartScheduler();
 

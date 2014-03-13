@@ -32,7 +32,6 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
-#include "Mpu-9250/HalI2c2.h"
 #include "IRQHandlerInterface.h"
 
 #include "stdio.h"

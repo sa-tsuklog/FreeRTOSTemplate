@@ -13,6 +13,7 @@
 #include "PeriphLib/ADC3.h"
 #include "PeriphLib/USART2.h"
 #include "PeriphLib/SPI1.h"
+#include "Mpu-9250/MPU9250.h"
 
 #include "Tasks.h"
 
@@ -69,5 +70,13 @@ void prvAdis16488Task(void *pvParameters){
 		//SPI1Class::GetInstance()->ReadWrite(); ????
 
 		vTaskDelay(100);
+	}
+}
+
+void prvI2C2SendTask(void *pvParameters){
+	MPU9250InitSend();
+	while(1){
+		MPU9250Send();
+		vTaskDelay(50);
 	}
 }

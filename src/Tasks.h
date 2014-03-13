@@ -17,6 +17,8 @@ void prvRxTask(void *pvParameters);
 
 void prvAdis16488Task(void *pvParameters);
 
+void prvI2C2SendTask(void *pvParameters);
+
 }
 
 

@@ -13,6 +13,11 @@ extern "C"{
 void myEXTI14_IRQHandler();
 void myDMA1_Stream3_IRQHandler();
 
+void myI2C2_EV_IRQHandler();
+void myI2C2_ER_IRQHandler();
+void myDMA1_Stream2_IRQHandler();
+void myDMA1_Stream7_IRQHandler();
+
 }
 
 #endif /* IRQHANDLERINTERFACE_H_ */
