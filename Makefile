@@ -1,6 +1,10 @@
 ### You only have to modify here when you add a new file.
-SRCPATH += src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC src/AD7176-2 src/PeriphLib src/FreeRTOS_DemoFile
+OSPATH = src/OS src/OS/Stdout src/OS/FreeRTOS_DemoFile
+DRVPATH = src/Drivers src/Drivers/PeriphLib
+MIDDLEPATH = src/Middle src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2
 ###
+
+SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH)
 
 OBJDIR = objs
 BINDIR = bin
@@ -38,7 +42,8 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I $(FREERTOS_DIR)/Source/include \
 					-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
 					-I $(FREERTOS_DIR)/Demo/Common/include \
-					-I ./src/FreeRTOS_DemoFile \
+					-I ./src/OS/FreeRTOS_DemoFile \
+					-I ./src/OS \
 					-I ./src
 
 BOARD_OPTS = -DHSE_VALUE=8000000 -DSTM32F4XX -DSTM32F40_41xxx

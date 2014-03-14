@@ -3,9 +3,9 @@
 #include "task.h"
 
 #include "Stdout/SerialCommand.h"
-#include "Mpu-9250/MPU9250.h"
-#include "AD7176-2/Ad7176-2Seeker.h"
-#include "AD7176-2/Seeker.hpp"
+#include "Middle/Mpu-9250/MPU9250.h"
+#include "Middle/AD7176-2/Ad7176-2Seeker.h"
+#include "Middle/AD7176-2/Seeker.hpp"
 #include "MyTasks.h"
 
 #include "stdio.h"

@@ -32,7 +32,7 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
-#include "IRQHandlerInterface.h"
+#include "Drivers/IRQHandlerInterface.h"
 
 #include "stdio.h"
 

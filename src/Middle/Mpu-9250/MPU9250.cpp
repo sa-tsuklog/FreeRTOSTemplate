@@ -15,7 +15,7 @@
 #include "semphr.h"
 #include "MPU9250.h"
 #include "Mpu9150RegisterDef.h"
-#include "PeriphLib/I2C2.h"
+#include "Drivers/PeriphLib/I2C2.h"
 
 void MPU9250InitSend(){
 

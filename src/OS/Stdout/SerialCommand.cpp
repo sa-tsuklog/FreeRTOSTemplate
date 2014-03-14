@@ -6,7 +6,7 @@
 #include "task.h"
 
 #include "SerialCommand.h"
-#include "PeriphLib/USART2.h"
+#include "Drivers/PeriphLib/USART2.h"
 
 void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
