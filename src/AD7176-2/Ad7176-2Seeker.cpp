@@ -18,6 +18,7 @@
 #include "Ad7176-2RegisterDef.h"
 #include "Seeker.hpp"
 
+/*
 unsigned char txBuf[8];
 unsigned char rxBuf[8];
 
@@ -135,3 +136,4 @@ void initAd7176(){
 	vTaskDelay(1);
 	
 }
+*/

@@ -8,7 +8,5 @@
 #ifndef ADIS16488_HPP_
 #define ADIS16488_HPP_
 
-void prvAdis16488Task(void *pvParameters);
-
 
 #endif /* ADIS16488_HPP_ */
