@@ -32,12 +32,7 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-#include "Mpu-9250/HalI2c2.h"
-#include "Adis16488/HalSpi1.hpp"
-#include "AD7176-2/HalSpi2.h"
+#include "IRQHandlerInterface.h"
 
 #include "stdio.h"
 
@@ -151,12 +146,12 @@ void vPortSVCHandler();
 void xPortPendSVHandler();
 void xPortSysTickHandler();
 
-
+/*
 void SVC_Handler(void)
 {
 	vPortSVCHandler();
 }
-
+*/
 /**
   * @brief  This function handles Debug Monitor exception.
   * @param  None
@@ -173,10 +168,12 @@ void DebugMon_Handler(void)
   * @retval None
   * moved to Libraries/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
   */
+/*
 void PendSV_Handler(void)
 {
 	xPortPendSVHandler();
 }
+*/
 
 /**
   * @brief  This function handles SysTick Handler.
@@ -184,11 +181,12 @@ void PendSV_Handler(void)
   * @retval None
   * moved to Libraries/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
   */
-
+/*
 void SysTick_Handler(void)
 {
 	xPortSysTickHandler();
 }
+*/
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */

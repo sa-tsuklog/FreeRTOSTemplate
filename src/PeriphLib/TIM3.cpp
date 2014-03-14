@@ -5,17 +5,11 @@
  *      Author: sa
  */
 
-#include "stdlib.h"
-#include "stdio.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-#include "HalTim.h"
+#include "TIM3.h"
 
-void initTim(){
+TIM3Class::TIM3Class(){
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
 	GPIO_InitTypeDef gpiob5;
 	GPIO_StructInit(&gpiob5);

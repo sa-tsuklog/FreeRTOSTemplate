@@ -1,30 +1,14 @@
 #include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
 
-
-#include "Stdout/HalUsart.h"
-#include "Adis16488/HalSpi1.hpp"
-#include "Mpu-9250/HalI2c2.h"
-#include "Servo/HalTim.h"
-#include "AD7176-2/HalSpi2.h"
+#include "Stdout/SerialCommand.h"
+#include "Mpu-9250/MPU9250.h"
 #include "AD7176-2/Ad7176-2Seeker.h"
 #include "AD7176-2/Seeker.hpp"
-#include "ADC/ADC.h"
+#include "MyTasks.h"
 
 #include "stdio.h"
-#include <vector>
-
-using namespace std;
-
-uint32_t Count = 0xFFFFF;
-
-void GPIO_Configuration(void);
-void Delay(uint32_t nCount);
-void Delay2(uint32_t nCount);
-
 
 /*
 Pin list.
@@ -87,72 +71,17 @@ EXTI
 	EXTI14	Spi2
 */
 
-
 void prvTaskA(void *pvParameters){
 	while(1){
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 		vTaskDelay(100);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
 		vTaskDelay(100);
+		//printf("taskA\n\r");
 	}
 }
 
-int main(void) {
-
-	SystemInit();
-	GPIO_Configuration();
-
-	GPIO_Write(GPIOD, 0);
-
-	initI2c2();
-	initTim();
-	initADC();
-    initUart(USART2);
-	initSpi1();
-	initSpi2();
-	
-
-	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",256,NULL,1,NULL);
-	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",256,USART2,1,NULL);
-	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",256,USART2,1,NULL);
-	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
-	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
-	//xTaskCreate(ADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL)!=pdPASS)
-	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",256,NULL,4,NULL);
-	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",256,NULL,2,NULL);
-
-	vTaskStartScheduler();
-
-	while (1)
-	{
-
-	}
-}
-
-#define CYCLE 1000
-void vApplicationIdleHook(void){
-	static int idle_count=0;
-	idle_count=(idle_count+1)%CYCLE;
-	if(idle_count<CYCLE/2){
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
-	}else{
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
-	}
-	
-}
-
-void vApplicationMallocFailedHook(void){
-	while(1);
-}
-void vApplicationStackOverflowHook(void* ptr, signed char* taskname){
-	int i=0;
-	while(1);
-}
-void vApplicationTickHook(){
-
-}
-
-void GPIO_Configuration(void) {
+void LEDInit(void) {
 	//Supply AHB1 Clock
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 
@@ -165,15 +94,29 @@ void GPIO_Configuration(void) {
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+	GPIO_Write(GPIOD, 0);
 }
 
-void Delay(uint32_t nCount) {
-	volatile uint32_t cnt = nCount;
-	for (; cnt != 0; cnt--)
-		;
-}
-void Delay2(uint32_t nCount){
-	for(;nCount !=0 ; nCount--){
+int main(void) {
+
+	SystemInit();
+	LEDInit();
+
+	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
+	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
+	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
+	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
+	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
+	xTaskCreate(prvADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
+	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
+	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
+
+	vTaskStartScheduler();
+
+	while (1)
+	{
 
 	}
 }
+

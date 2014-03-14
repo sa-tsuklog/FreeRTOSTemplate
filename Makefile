@@ -1,5 +1,5 @@
 ### You only have to modify here when you add a new file.
-SRCPATH += src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC src/AD7176-2
+SRCPATH += src src/Stdout src/Adis16488 src/Mpu-9250 src/Servo src/ADC src/AD7176-2 src/PeriphLib src/FreeRTOS_DemoFile
 ###
 
 OBJDIR = objs
@@ -30,20 +30,19 @@ VPATH = ./Libraries/STM32F4xx_StdPeriph_Driver/src/ \
  $(SRCPATH)
 
 TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
-INCLUDE_DIRS  = -I ./Libraries \
-				-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
-				-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
-				-I ./Libraries/CMSIS/Include \
-				-I $(TOOLDIR)../arm-none-eabi/include \
-				-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
-				-I $(FREERTOS_DIR)/Source \
-				-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
-				-I $(FREERTOS_DIR)/Source/include \
-				-I $(FREERTOS_DIR)/Demo/Common/include \
-				-I ./src
+INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
+					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
+					-I ./Libraries/CMSIS/Include \
+					-I $(TOOLDIR)../arm-none-eabi/include \
+					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
+					-I $(FREERTOS_DIR)/Source/include \
+					-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
+					-I $(FREERTOS_DIR)/Demo/Common/include \
+					-I ./src/FreeRTOS_DemoFile \
+					-I ./src
 
 BOARD_OPTS = -DHSE_VALUE=8000000 -DSTM32F4XX -DSTM32F40_41xxx
-FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
+FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER -DconfigUSE_TRACE_FACILITY -DconfigUSE_STATS_FORMATTING_FUNCTIONS
 COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-rtti -fno-exceptions -Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -fpermissive -mfpu=fpv4-sp-d16
 
 CC      = $(TOOLDIR)arm-none-eabi-g++

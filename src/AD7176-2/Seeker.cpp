@@ -8,80 +8,61 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "Seeker.hpp"
-#include "Filter.hpp"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
 #include "AdData.hpp"
 
-#define TASK_WAIT_TIME 1
+Seeker::Seeker() :
+m_intensity(0),
+m_filter(1.591/(15.625/2),100){
+	m_adDataQueue = xQueueCreate(256,sizeof(AdData));
+	m_seekerDataMutex = xSemaphoreCreateMutex();
 
-xQueueHandle adDataQueue;
-xSemaphoreHandle seekerDataMutex;
+	if(m_adDataQueue == NULL || m_seekerDataMutex == NULL){
 
-float intensity;
-
-void prvSeekerTask(void *pvParameters){
-	adDataQueue = xQueueCreate(256,sizeof(float));
-	seekerDataMutex = xSemaphoreCreateMutex();
-	
-	if(adDataQueue == NULL || seekerDataMutex == NULL){
-		
 	}
-	
-	
-	Filter* filter;
-	filter = new Filter(1.591/(15.625/2),100);
-		
-	if(filter == NULL){
-		printf("malloc error at prvSeekerTask\n\r");
-		while(1){}
-	}
-	
-	
-	float bandpass;
-	float allpass;
-	float adData;
-	
-	portTickType xLastWakeTime = xTaskGetTickCount();
-	
-	int j;
+
+
+	m_xLastWakeTime = xTaskGetTickCount();
+
 	float* buf1 = (float*)malloc(sizeof(float)*128);
 	float* buf2 = (float*)malloc(sizeof(float)*128);
 	for(int i=0;i<128;i++){
 		buf1[i] = 0;
 		buf2[i] = 0;
 	}
-	
-	int decimate =0;
-	while(1){
-		while(xQueueReceive(adDataQueue,&adData,0) != errQUEUE_EMPTY){
-			bandpass = filter->bandpass(adData);
-			allpass = filter->allpass(bandpass);
-			if(decimate <128){
-				printf("%d %d %d\n\r",decimate,(int)adData,(int)bandpass);
-			}
-			decimate=(decimate+1)%8196;
-		}
-		
-		
-		intensity = filter->myAbs(bandpass,allpass);
-		
-		if(decimate%200 == 0){
-			//printf("%d\n\r",(int)intensity[0]);
-		}
-		
-		
-		
-		vTaskDelayUntil(&xLastWakeTime,TASK_WAIT_TIME);
-	}
+	m_decimate = 0;
 }
 
-void enqueAdData(float data){
-	if(adDataQueue == NULL){
+void Seeker::EnqueAdData(float* data){
+	if(m_adDataQueue == NULL){
 		return;
 	}
 	
-	xQueueSendToBack(adDataQueue,&data,0);
+	xQueueSendToBack(m_adDataQueue,&data,0);
+}
+
+
+portTickType Seeker::DoTask(){
+	float bandpass;
+	float allpass;
+	float adData;
+
+	while(xQueueReceive(m_adDataQueue,&adData,0) != errQUEUE_EMPTY){
+		bandpass = m_filter.bandpass(adData);
+		allpass = m_filter.allpass(bandpass);
+		if(m_decimate <128){
+			printf("%d %d %d\n\r",m_decimate,(int)adData,(int)bandpass);
+		}
+		m_decimate=(m_decimate+1)%8196;
+	}
+	
+	
+	m_intensity = m_filter.myAbs(bandpass,allpass);
+	
+	if(m_decimate%200 == 0){
+		//printf("%d\n\r",(int)intensity[0]);
+	}
+	
+	m_decimate++;
+
+	return m_xLastWakeTime;
 }

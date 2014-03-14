@@ -3,6 +3,7 @@
 *.hex
 *.map
 *.bin
+.cproject
 /Libraries
 /objs
 /bin

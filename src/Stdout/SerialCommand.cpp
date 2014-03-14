@@ -1,29 +1,22 @@
-/*
- * SerialCommand.cpp
- *
- *  Created on: 2014/02/16
- *      Author: sa
- */
+#include <stdio.h>
+#include <string.h>
 
-#include "string.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
 #include "FreeRTOS.h"
-#include "task.h"
 #include "queue.h"
-#include "semphr.h"
-#include "HalUsart.h"
-#include "SerialCommand.hpp"
+#include "task.h"
 
+#include "SerialCommand.h"
+#include "PeriphLib/USART2.h"
 
+void uputc(USART_TypeDef* ch,char c){
+	if(ch == USART2){
+		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,pdFALSE)!=pdPASS){
+		}
+	}
+}
 
-char buf[1024]; 
-
-void handleSerialCommand(char* line){
-	
-	
+void HandleSerialCommand(char* line){
+	char buf[1024];
 	if(strncmp(line,"vTaskList",9)==0){
 		vTaskList((signed portCHAR*)buf);
 		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
@@ -32,5 +25,3 @@ void handleSerialCommand(char* line){
 		printf("invalid command:%s\n\r",line);
 	}
 }
-
-
