@@ -44,9 +44,8 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I $(FREERTOS_DIR)/Source/include \
 					-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
 					-I $(FREERTOS_DIR)/Demo/Common/include \
-					-I ./src/OS/FreeRTOS_DemoFile \
 					-I ./src/OS \
-					-I ./src/Drivers \
+					-I ./src/Drivers/FreeRTOS_DemoFile \
 					-I ./src/Middle \
 					-I ./src
 
