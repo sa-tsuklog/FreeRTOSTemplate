@@ -82,6 +82,16 @@ void prvTaskA(void *pvParameters){
 	}
 }
 
+void prvTaskB(void *pvParameters){
+	while(1){
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
+		vTaskDelay(100);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
+		vTaskDelay(100);
+		//printf("taskA\n\r");
+	}
+}
+
 void LEDInit(void) {
 	//Supply AHB1 Clock
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
@@ -102,16 +112,21 @@ void LEDInit(void) {
 int main(void) {
 
 	SystemInit();
-	//LEDInit();
+	LEDInit();
 
-	//xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
-	//xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
-	//xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
-	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
-	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
-	//xTaskCreate(prvADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
-	//xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
-	//xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
+	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
+
+	xTaskCreate(prvTaskA,"TaskA",512,NULL,1,NULL);
+	xTaskCreate(prvTaskB,"TaskB",512,NULL,1,NULL);
+
+	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
+	xTaskCreate(prvTxTask,"u3tx",4096,USART2,1,NULL);
+	xTaskCreate(prvRxTask,"u3rx",4096,USART2,1,NULL);
+	xTaskCreate(prvADCTask,"ADC",512,NULL,2,NULL);
+//	xTaskCreate(prvAdis16488Task,"adis",512,NULL,1,NULL);
+//	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
+//	xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
+//	xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);
 
 	vTaskStartScheduler();
 

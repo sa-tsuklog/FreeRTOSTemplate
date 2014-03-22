@@ -21,7 +21,6 @@ public:
 	float bandpass(float x);
 	float allpass(float x);
 	float getPrewarpedCenter();
-	#pragma inline(Filter::myAbs)
 	static float myAbs(float re,float im);
 };
 

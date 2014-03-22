@@ -212,7 +212,7 @@ void I2C2Class::EV_IRQ_Write(){
 
 		I2C_GenerateSTOP(I2C2,ENABLE);
 
-		xSemaphoreGiveFromISR(m_sem,pdTRUE);
+		xSemaphoreGiveFromISR(m_sem,(BaseType_t *)pdTRUE);
 		portEND_SWITCHING_ISR(pdTRUE);
 
 	}
@@ -308,7 +308,7 @@ void I2C2Class::ER_IRQHandler(){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_AF);
 		I2C_GenerateSTOP(I2C2,ENABLE);
 		printf("af\n\r");
-		xSemaphoreGiveFromISR(m_sem,pdTRUE);
+		xSemaphoreGiveFromISR(m_sem,(BaseType_t *)pdTRUE);
 		portEND_SWITCHING_ISR(pdTRUE);
 
 
@@ -331,7 +331,7 @@ void I2C2Class::DMA1_Stream2_IRQHandler(){
 	if(DMA_GetITStatus(DMA1_Stream2,DMA_IT_TCIF2)!=RESET){
 		DMA_ClearITPendingBit(DMA1_Stream2,DMA_IT_TCIF2);
 		I2C_GenerateSTOP(I2C2,ENABLE);
-		xSemaphoreGiveFromISR(m_sem,pdTRUE);
+		xSemaphoreGiveFromISR(m_sem,(BaseType_t *)pdTRUE);
 		portEND_SWITCHING_ISR(pdTRUE);
 	}
 }

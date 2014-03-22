@@ -42,9 +42,9 @@ void Seeker::EnqueAdData(float* data){
 
 
 portTickType Seeker::DoTask(){
-	float bandpass;
-	float allpass;
-	float adData;
+	float bandpass = 0;
+	float allpass = 0;
+	float adData = 0;
 
 	while(xQueueReceive(m_adDataQueue,&adData,0) != errQUEUE_EMPTY){
 		bandpass = m_filter.bandpass(adData);

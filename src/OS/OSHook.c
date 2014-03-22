@@ -16,7 +16,7 @@ void vApplicationMallocFailedHook(void){
 	while(1);
 }
 
-void vApplicationStackOverflowHook(void* ptr, signed char* taskname){
+void vApplicationStackOverflowHook(void* ptr, char* taskname){
 	int i=0;
 	while(taskname[i]!=0){
 		stackoverflowTaskname[i] = taskname[i];

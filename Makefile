@@ -1,6 +1,6 @@
 ### You only have to modify here when you add a new file.
-OSPATH = src/OS src/OS/Stdout src/OS/FreeRTOS_DemoFile
-DRVPATH = src/Drivers src/Drivers/PeriphLib
+OSPATH = src/OS src/OS/Stdout
+DRVPATH = src/Drivers src/Drivers/PeriphLib src/Drivers/FreeRTOS_DemoFile
 MIDDLEPATH = src/Middle src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2
 ###
 
@@ -46,20 +46,22 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I $(FREERTOS_DIR)/Demo/Common/include \
 					-I ./src/OS/FreeRTOS_DemoFile \
 					-I ./src/OS \
+					-I ./src/Drivers \
+					-I ./src/Middle \
 					-I ./src
 
 BOARD_OPTS = -DHSE_VALUE=8000000 -DSTM32F4XX -DSTM32F40_41xxx
-FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER -DconfigUSE_TRACE_FACILITY -DconfigUSE_STATS_FORMATTING_FUNCTIONS
-COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-rtti -fno-exceptions -Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -fpermissive -mfpu=fpv4-sp-d16
+FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
+COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions -Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16
 
-CC      = $(TOOLDIR)arm-none-eabi-g++
-CXX	    = $(CC)
-AS      = $(CC)
-LD      = $(CC)
+CC      = $(TOOLDIR)arm-none-eabi-gcc
+CXX	    = $(TOOLDIR)arm-none-eabi-g++
+AS      = $(CXX)
+LD      = $(CXX)
 AR      = $(TOOLDIR)arm-none-eabi-ar
 OBJCOPY = $(TOOLDIR)arm-none-eabi-objcopy
-CFLAGS  = $(COMPILE_OPTS)
-CXXFLAGS= $(COMPILE_OPTS)
+CFLAGS  = $(COMPILE_OPTS) -std=gnu99
+CXXFLAGS= $(COMPILE_OPTS)  -fno-rtti -fpermissive 
 ASFLAGS = -x assembler-with-cpp -c $(TARGET_ARCH) $(COMPILE_OPTS) 
 LDFLAGS = -Wl,--gc-sections,-Map=$(BINDIR)/main.map,-cref -T stm32_flash.ld -lstdc++ -L $(TOOLDIR)../arm-none-eabi/lib/thumb -L $(OBJDIR)
 
@@ -73,7 +75,7 @@ LIB_SRCS = \
  $(wildcard $(FREERTOS_DIR)/Source/portable/MemMang/heap_2.c) \
  $(wildcard $(FREERTOS_DIR)/Source/*.c) \
  $(wildcard $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/*.c) \
- ./Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c \
+ ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/GenQTest.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/BlockQ.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/blocktim.c \

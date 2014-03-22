@@ -215,7 +215,7 @@ void SPI2Class::WaitForDataReady(){
 
 void SPI2Class::EXTI14_IRQHandler(){
 	if(m_dataReadySem!=NULL){
-		xSemaphoreGiveFromISR(m_dataReadySem,pdTRUE);
+		xSemaphoreGiveFromISR(m_dataReadySem,(BaseType_t *)pdTRUE);
 	}
 	NVIC_DisableIRQ(EXTI15_10_IRQn);
 	portEND_SWITCHING_ISR(pdTRUE);
@@ -224,7 +224,7 @@ void SPI2Class::EXTI14_IRQHandler(){
 void SPI2Class::DMA1_Stream3_IRQHandler(){
 	if(DMA_GetITStatus(DMA1_Stream3,DMA_IT_TCIF3)!=RESET){
 		DMA_ClearITPendingBit(DMA1_Stream3,DMA_IT_TCIF3);
-		xSemaphoreGiveFromISR(m_rwSem,pdTRUE);
+		xSemaphoreGiveFromISR(m_rwSem,(BaseType_t *)pdTRUE);
 		portEND_SWITCHING_ISR(pdTRUE);
 	}
 }

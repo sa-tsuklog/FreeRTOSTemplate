@@ -9,9 +9,10 @@
 #include "PeriphLib/SPI2.h"
 #include "PeriphLib/I2C2.h"
 
-void myEXTI14_IRQHandler(){
+void myEXTI15_10_IRQHandler(){
 	SPI2Class::GetInstance()->EXTI14_IRQHandler();
 }
+
 void myDMA1_Stream3_IRQHandler(){
 	SPI2Class::GetInstance()->DMA1_Stream3_IRQHandler();
 }

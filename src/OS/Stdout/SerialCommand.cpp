@@ -10,15 +10,15 @@
 
 void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
-		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,pdFALSE)!=pdPASS){
+		if(xQueueSendToBackFromISR(USART2Class::GetInstance()->GetQueue(),&c,(BaseType_t *)pdFALSE)!=pdPASS){
 		}
 	}
 }
 
 void HandleSerialCommand(char* line){
 	char buf[1024];
-	if(strncmp((const char*)line,(const char*)"vTaskList",9)==0){
-		vTaskList((signed portCHAR*)buf);
+	if(strncmp(line,"vTaskList",9)==0){
+		vTaskList(buf);
 		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
 		printf(buf);
 	}else{
