@@ -17,7 +17,7 @@ void uputc(USART_TypeDef* ch,char c){
 
 void HandleSerialCommand(char* line){
 	char buf[1024];
-	if(strncmp(line,"vTaskList",9)==0){
+	if(strncmp((const char*)line,(const char*)"vTaskList",9)==0){
 		vTaskList((signed portCHAR*)buf);
 		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
 		printf(buf);

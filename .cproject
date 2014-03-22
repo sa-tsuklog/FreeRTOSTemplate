@@ -42,6 +42,18 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.93844385.201932763" name="/" resourcePath="Libraries/CMSIS/Device/ST/STM32F4xx/Include">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.118831020" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.116260779.1094049761" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.116260779"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.2079181954.1259287284" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.2079181954"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.339756208" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.1263112505"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.101941047" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.708470467"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.856330987" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.97852521"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.2086732669" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.1276585545"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.377499019" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.1013698190"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.2108831189" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.1763125212"/>
+						</toolChain>
+					</folderInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -55,48 +67,6 @@
 		<configuration configurationName="Default"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.93844385;cdt.managedbuild.toolchain.gnu.cross.base.93844385.2067785632;cdt.managedbuild.tool.gnu.cross.cpp.compiler.708470467;cdt.managedbuild.tool.gnu.cpp.compiler.input.626734670">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
-			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
-				<buildOutputProvider>
-					<openAction enabled="true" filePath=""/>
-					<parser enabled="true"/>
-				</buildOutputProvider>
-				<scannerInfoProvider id="specsFile">
-					<runAction arguments="-E -P -v -dD &quot;${plugin_state_location}/specs.cpp&quot;" command="arm-none-eabi-g++" useDefault="true"/>
-					<parser enabled="true"/>
-				</scannerInfoProvider>
-			</profile>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.93844385;cdt.managedbuild.toolchain.gnu.cross.base.93844385.2067785632;cdt.managedbuild.tool.gnu.cross.c.compiler.1263112505;cdt.managedbuild.tool.gnu.c.compiler.input.1945975903">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
-			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
-				<buildOutputProvider>
-					<openAction enabled="true" filePath=""/>
-					<parser enabled="true"/>
-				</buildOutputProvider>
-				<scannerInfoProvider id="specsFile">
-					<runAction arguments="-E -P -v -dD &quot;${plugin_state_location}/specs.c&quot;" command="arm-none-eabi-gcc" useDefault="true"/>
-					<parser enabled="true"/>
-				</scannerInfoProvider>
-			</profile>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.93844385">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
-	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
-		<buildTargets>
-			<target name="all" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
-				<buildCommand>C:/eclipse/eclipse_stm32_new/yagarto-tools-20100703/bin/make</buildCommand>
-				<buildArguments/>
-				<buildTarget>all</buildTarget>
-				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
-				<runAllBuilders>true</runAllBuilders>
-			</target>
-		</buildTargets>
-	</storageModule>
+	<storageModule moduleId="scannerConfiguration"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

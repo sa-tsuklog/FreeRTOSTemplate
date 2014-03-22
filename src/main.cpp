@@ -6,9 +6,10 @@
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"
-#include "MyTasks.h"
+#include "Middle/MyTasks.h"
 
 #include "stdio.h"
+#include "stdlib.h"
 
 /*
 Pin list.
@@ -101,16 +102,16 @@ void LEDInit(void) {
 int main(void) {
 
 	SystemInit();
-	LEDInit();
+	//LEDInit();
 
-	xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
-	xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
-	xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
-	xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
-	xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
-	xTaskCreate(prvADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
-	xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
-	xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
+	//xTaskCreate(prvTaskA,(signed portCHAR*)"TaskA",512,NULL,1,NULL);
+	//xTaskCreate(prvTxTask,(signed portCHAR*)"u3tx",4096,USART2,1,NULL);
+	//xTaskCreate(prvRxTask,(signed portCHAR*)"u3rx",4096,USART2,1,NULL);
+	//xTaskCreate(prvAdis16488Task,(signed portCHAR*)"adis",512,NULL,1,NULL);
+	//xTaskCreate(prvI2C2SendTask,(signed portCHAR*)"i2c2",512,NULL,1,NULL);
+	//xTaskCreate(prvADCTask,(signed portCHAR*)"ADC",512,NULL,2,NULL);
+	//xTaskCreate(prvAd7176Task,(signed portCHAR*)"ad71",4096,NULL,4,NULL);
+	//xTaskCreate(prvSeekerTask,(signed portCHAR*)"skr",1024,NULL,2,NULL);
 
 	vTaskStartScheduler();
 

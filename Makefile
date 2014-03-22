@@ -31,11 +31,13 @@ VPATH = ./Libraries/STM32F4xx_StdPeriph_Driver/src/ \
  $(FREERTOS_DIR)/Source/ \
  $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/ \
  $(FREERTOS_DIR)/Demo/Common/Minimal/ \
+ ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/ \
  $(SRCPATH)
 
 TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
+					-I ./Libraries/ \
 					-I ./Libraries/CMSIS/Include \
 					-I $(TOOLDIR)../arm-none-eabi/include \
 					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
@@ -71,6 +73,7 @@ LIB_SRCS = \
  $(wildcard $(FREERTOS_DIR)/Source/portable/MemMang/heap_2.c) \
  $(wildcard $(FREERTOS_DIR)/Source/*.c) \
  $(wildcard $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/*.c) \
+ ./Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/GenQTest.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/BlockQ.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/blocktim.c \
