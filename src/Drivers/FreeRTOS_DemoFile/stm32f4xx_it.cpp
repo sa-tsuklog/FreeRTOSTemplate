@@ -23,7 +23,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
-#include "Drivers/IRQHandlerInterface.h"
+#include "Drivers/PeriphLib/SPI2.h"
+#include "Drivers/PeriphLib/I2C2.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -161,32 +162,32 @@ void EXTI9_5_IRQHandler(void)
   */
 void EXTI15_10_IRQHandler()
 {
-	myEXTI15_10_IRQHandler();
+	SPI2Class::GetInstance()->EXTI14_IRQHandler();
 }
 
 void DMA1_Stream3_IRQHandler()
 {
-	//myDMA1_Stream3_IRQHandler();
+	SPI2Class::GetInstance()->DMA1_Stream3_IRQHandler();
 }
 
 void I2C2_EV_IRQHandler()
 {
-	//myI2C2_EV_IRQHandler();
+	I2C2Class::GetInstance()->EV_IRQHandler();
 }
 
 void I2C2_ER_IRQHandler()
 {
-	//myI2C2_ER_IRQHandler();
+	I2C2Class::GetInstance()->ER_IRQHandler();
 }
 
 void DMA1_Stream2_IRQHandler()
 {
-	//myDMA1_Stream2_IRQHandler();
+	I2C2Class::GetInstance()->DMA1_Stream2_IRQHandler();
 }
 
 void DMA1_Stream7_IRQHandler()
 {
-	//myDMA1_Stream7_IRQHandler();
+	I2C2Class::GetInstance()->DMA1_Stream7_IRQHandler();
 }
 
 #ifdef __cplusplus

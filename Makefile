@@ -26,27 +26,17 @@ else
 endif
 
 FREERTOS_DIR = ./Libraries/FreeRTOS
-VPATH = ./Libraries/STM32F4xx_StdPeriph_Driver/src/ \
- $(FREERTOS_DIR)/Source/portable/MemMang/ \
- $(FREERTOS_DIR)/Source/ \
- $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/ \
- $(FREERTOS_DIR)/Demo/Common/Minimal/ \
- ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/ \
- $(SRCPATH)
 
 TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
-					-I ./Libraries/ \
 					-I ./Libraries/CMSIS/Include \
 					-I $(TOOLDIR)../arm-none-eabi/include \
 					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
+					-I $(FREERTOS_DIR)/Demo/Common/include \
 					-I $(FREERTOS_DIR)/Source/include \
 					-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
-					-I $(FREERTOS_DIR)/Demo/Common/include \
-					-I ./src/OS \
-					-I ./src/Drivers/FreeRTOS_DemoFile \
-					-I ./src/Middle \
+					-I ./src/include \
 					-I ./src
 
 BOARD_OPTS = -DHSE_VALUE=8000000 -DSTM32F4XX -DSTM32F40_41xxx
@@ -54,7 +44,7 @@ FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
 COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions -Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16
 
 CC      = $(TOOLDIR)arm-none-eabi-gcc
-CXX	    = $(TOOLDIR)arm-none-eabi-g++
+CXX     = $(TOOLDIR)arm-none-eabi-g++
 AS      = $(CXX)
 LD      = $(CXX)
 AR      = $(TOOLDIR)arm-none-eabi-ar
@@ -74,7 +64,6 @@ LIB_SRCS = \
  $(wildcard $(FREERTOS_DIR)/Source/portable/MemMang/heap_2.c) \
  $(wildcard $(FREERTOS_DIR)/Source/*.c) \
  $(wildcard $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/*.c) \
- ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/GenQTest.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/BlockQ.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/blocktim.c \
@@ -82,6 +71,7 @@ LIB_SRCS = \
  $(FREERTOS_DIR)/Demo/Common/Minimal/PollQ.c
 LIB_OBJS = $(notdir $(LIB_SRCS:.c=.o))
 
+VPATH = $(SRCPATH) $(dir $(LIB_SRCS))
 
 all: main
 

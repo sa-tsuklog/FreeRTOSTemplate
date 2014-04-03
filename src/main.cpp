@@ -1,8 +1,9 @@
 #include "stm32f4xx.h"
+#include "stm32f4xx_conf.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "Stdout/SerialCommand.h"
+#include "OS/Stdout/SerialCommand.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"
