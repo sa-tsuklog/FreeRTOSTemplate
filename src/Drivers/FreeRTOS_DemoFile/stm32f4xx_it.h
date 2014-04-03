@@ -45,13 +45,13 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 
-#ifdef __cplusplus
-}
-#endif
-
 void vPortSVCHandler(void);
 void xPortPendSVHandler(void);
 void xPortSysTickHandler(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __STM32F4xx_IT_H */
 

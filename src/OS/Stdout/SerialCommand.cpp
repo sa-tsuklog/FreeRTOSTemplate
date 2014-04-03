@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "task.h"
 
 #include "SerialCommand.h"
 #include "Drivers/PeriphLib/USART2.h"
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
@@ -25,3 +28,7 @@ void HandleSerialCommand(char* line){
 		printf("invalid command:%s\n\r",line);
 	}
 }
+
+#ifdef __cplusplus
+}
+#endif

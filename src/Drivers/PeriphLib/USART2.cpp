@@ -1,4 +1,5 @@
 #include "USART2.h"
+#include "OS/Stdout/SerialCommand.h"
 
 USART2Class::USART2Class(){
 	m_queue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));

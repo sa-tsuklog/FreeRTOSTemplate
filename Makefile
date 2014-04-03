@@ -83,7 +83,7 @@ main: $(addprefix $(OBJDIR)/,$(OBJS)) $(OBJDIR)/libstm32f4xx.a $(OBJDIR)/startup
 
 $(OBJDIR)/%.o : %.c
 	$(MKOBJDIR)
-	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
+	$(CC) $(CFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
 $(OBJDIR)/%.o : %.cpp
 	$(MKOBJDIR)

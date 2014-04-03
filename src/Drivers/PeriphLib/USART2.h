@@ -33,6 +33,4 @@ public:
 	xQueueHandle GetQueue(){ return m_queue; }
 };
 
-void HandleSerialCommand(char* line);
-
 #endif
