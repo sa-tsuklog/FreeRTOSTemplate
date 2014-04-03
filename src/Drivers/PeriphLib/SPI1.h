@@ -23,7 +23,7 @@ private:
 	char m_txBuf[SPI_BUFFERSIZE];
 	char m_rxBuf[SPI_BUFFERSIZE];
 	//xSemaphoreHandle m_rwSem;
-	xSemaphoreHandle m_dataReadySem;
+	//xSemaphoreHandle m_dataReadySem;
 public:
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 };

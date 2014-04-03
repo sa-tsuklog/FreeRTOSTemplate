@@ -12,7 +12,11 @@
 #include "I2C2.h"
 #include "task.h"
 
-I2C2Class::I2C2Class(){
+I2C2Class::I2C2Class() :
+m_rw(-1),
+m_address(-1),
+m_state(-1)
+{
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 
 	GPIO_InitTypeDef pb10_11def;
