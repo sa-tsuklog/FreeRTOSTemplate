@@ -3,7 +3,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "OS/Stdout/SerialCommand.h"
+#include "Middle/Stdout/SerialCommand.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"

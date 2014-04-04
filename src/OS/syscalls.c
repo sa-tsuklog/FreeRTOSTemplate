@@ -40,7 +40,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "Stdout/SerialCommand.h"
+#include "Middle/Stdout/SerialCommand.h"
 #include "stm32f4xx.h"
 
 #ifdef __cplusplus
