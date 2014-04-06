@@ -8,5 +8,7 @@
 #ifndef ADIS16488_HPP_
 #define ADIS16488_HPP_
 
+void adis16488init();
+
 
 #endif /* ADIS16488_HPP_ */

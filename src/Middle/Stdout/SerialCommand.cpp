@@ -7,9 +7,9 @@
 #include "SerialCommand.h"
 #include "Drivers/PeriphLib/USART2.h"
 
-#ifdef __cplusplus
- extern "C" {
-#endif
+//#ifdef __cplusplus
+// extern "C" {
+//#endif
 
 void uputc(USART_TypeDef* ch,char c){
 	if(ch == USART2){
@@ -29,6 +29,6 @@ void HandleSerialCommand(char* line){
 	}
 }
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
