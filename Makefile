@@ -1,7 +1,7 @@
 ### You only have to modify here when you add a new file.
-OSPATH = src/OS src/OS/Stdout
+OSPATH = src/OS
 DRVPATH = src/Drivers src/Drivers/PeriphLib src/Drivers/FreeRTOS_DemoFile
-MIDDLEPATH = src/Middle src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2
+MIDDLEPATH = src/Middle src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2 src/Middle/Stdout
 ###
 
 SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH)

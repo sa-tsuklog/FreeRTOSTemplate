@@ -12,7 +12,7 @@
 
 #include "Drivers/PeriphLib/ADC3.h"
 #include "Drivers/PeriphLib/USART2.h"
-#include "Drivers/PeriphLib/SPI1.h"
+#include "Drivers/PeriphLib/SPI1_TIM1.h"
 #include "Drivers/PeriphLib/SPI2.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
@@ -31,7 +31,7 @@ void prvADCTask(void *pvParameters){
 		ADvoltage[0] = adc3->GetData(0) * 3300 / 0xFFF;
 		ADvoltage[1] = adc3->GetData(1) * 3300 / 0xFFF;
 
-		printf("%lx\t%lx\n\r", ADvoltage[0], ADvoltage[1]);
+		//printf("%lx\t%lx\n\r", ADvoltage[0], ADvoltage[1]);
 		//printf("%ld\t%ld\n\r", ADvoltage[0], ADvoltage[1]);
 
 		vTaskDelay(100);
@@ -63,9 +63,12 @@ void prvAdis16488Task(void *pvParameters){
 	while(1){
 		//printf("%x,%x,%x,%x,%x,%x\n\r",spi1RxBuf[0],spi1RxBuf[1],spi1RxBuf[2],spi1RxBuf[3]
 		        //,spi1RxBuf[4],spi1RxBuf[5]);
-		//SPI1Class::GetInstance()->ReadWrite(); ????
+		unsigned char tmp = 0;
+		unsigned char tmp2= 0;
+		SPI1Class::GetInstance()->ReadWrite(&tmp,&tmp2,1);
+		printf("adis\n\r");
 
-		vTaskDelay(100);
+		vTaskDelay(1);
 	}
 }
 

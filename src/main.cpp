@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "Drivers/PeriphLib/SPI1_TIM1.h"
 #include "Middle/Stdout/SerialCommand.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
@@ -116,15 +117,16 @@ int main(void) {
 	LEDInit();
 
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-
+	
+	
 	xTaskCreate(prvTaskA,"TaskA",512,NULL,1,NULL);
 	xTaskCreate(prvTaskB,"TaskB",512,NULL,1,NULL);
 
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
 	xTaskCreate(prvTxTask,"u3tx",4096,USART2,1,NULL);
 	xTaskCreate(prvRxTask,"u3rx",4096,USART2,1,NULL);
-	xTaskCreate(prvADCTask,"ADC",512,NULL,2,NULL);
-//	xTaskCreate(prvAdis16488Task,"adis",512,NULL,1,NULL);
+	xTaskCreate(prvADCTask,"ADC",512,NULL,2,NULL);	
+	xTaskCreate(prvAdis16488Task,"adis",512,NULL,1,NULL);
 //	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
 //	xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
 //	xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);

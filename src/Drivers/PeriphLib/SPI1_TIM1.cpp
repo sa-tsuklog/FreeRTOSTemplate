@@ -2,7 +2,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
 
-#include "SPI1.h"
+#include "SPI1_TIM1.h"
 
 #include "task.h"
 #include "queue.h"
@@ -74,8 +74,44 @@ SPI1Class::SPI1Class(){
 	SPI_I2S_DMACmd(SPI1,SPI_DMAReq_Rx|SPI_DMAReq_Tx,ENABLE);
 
 	SPI_Cmd(SPI1,ENABLE);
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+	GPIO_InitTypeDef pe9def;
 
+	GPIO_StructInit(&pe9def);
+	pe9def.GPIO_Pin = GPIO_Pin_1;
+	pe9def.GPIO_Mode = GPIO_Mode_OUT;
+	pe9def.GPIO_OType = GPIO_OType_PP;
+	pe9def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pe9def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOC,&pe9def);
 
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource9,GPIO_AF_TIM1);
+	
+	
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
+	TIM_TimeBaseInitTypeDef tim1;
+	TIM_TimeBaseStructInit(&tim1);
+	tim1.TIM_ClockDivision = TIM_CKD_DIV1;
+	tim1.TIM_CounterMode = TIM_CounterMode_Up;
+	tim1.TIM_Period = 50;
+	tim1.TIM_Prescaler = 0;
+	tim1.TIM_RepetitionCounter = 8;
+	
+	TIM_OCInitTypeDef oc1;
+	TIM_OCStructInit(&oc1);
+	oc1.TIM_OCIdleState = TIM_OCIdleState_Set;
+	oc1.TIM_OCMode = TIM_OCMode_PWM1;
+	oc1.TIM_OCPolarity = TIM_OCPolarity_High;
+	oc1.TIM_OutputState = TIM_OutputState_Enable;
+	 
+	TIM_TimeBaseInit(TIM1,&tim1);
+	TIM_OC1Init(TIM1,&oc1);
+	
+	TIM_Cmd(TIM1,ENABLE);
+	
+			
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
 
 	DMA_InitTypeDef dma2_2;
@@ -125,8 +161,8 @@ SPI1Class::SPI1Class(){
 	pa0def.GPIO_Mode = GPIO_Mode_IN;
 	pa0def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	pa0def.GPIO_Speed = GPIO_Speed_100MHz;
-	//GPIO_Init(GPIOA,&pa0def);
-	GPIO_Init(GPIOC,&pa0def);
+	GPIO_Init(GPIOA,&pa0def);
+	//GPIO_Init(GPIOC,&pa0def);
 
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource0);
 
@@ -152,15 +188,19 @@ SPI1Class::SPI1Class(){
 
 int SPI1Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength)
 {
-	m_txBuf[0] = writeData[0];
-	m_txBuf[1] = writeData[1];
-	m_txBuf[2] = writeData[2];
-	m_txBuf[3] = writeData[3];
+	m_txBuf[0] = 0xAA;
+	m_txBuf[1] = 0xAA;
+	m_txBuf[2] = 0xAA;
+	m_txBuf[3] = 0xAA;
 
 	DMA_Cmd(DMA2_Stream3,DISABLE);
 	DMA_SetCurrDataCounter(DMA2_Stream3,4);
 	DMA_ClearFlag(DMA2_Stream3,DMA_FLAG_TCIF3);
 	DMA_Cmd(DMA2_Stream3,ENABLE);
-
+	
+	GPIO_SetBits(GPIOC,GPIO_PinSource1);
+	vTaskDelay(1);
+	GPIO_ResetBits(GPIOC,GPIO_PinSource1);
+	
 	return 0;
 }
