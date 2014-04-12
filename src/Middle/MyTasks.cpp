@@ -32,7 +32,7 @@ void prvADCTask(void *pvParameters){
 		ADvoltage[1] = adc3->GetData(1) * 3300 / 0xFFF;
 
 		//printf("%lx\t%lx\n\r", ADvoltage[0], ADvoltage[1]);
-		//printf("%ld\t%ld\n\r", ADvoltage[0], ADvoltage[1]);
+		printf("%ld\t%ld\n\r", ADvoltage[0], ADvoltage[1]);
 
 		vTaskDelay(100);
 	}

@@ -1,5 +1,8 @@
 #include "USART2.h"
 #include "Middle/Stdout/SerialCommand.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
 
 USART2Class::USART2Class(){
 	m_queue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
@@ -129,5 +132,28 @@ void USART2Class::Rx()
 		}
 
 		rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
+	}
+}
+
+void USART2Class::prvTxTask(void *pvParameters)
+{
+	portTickType xLastWakeTime = xTaskGetTickCount();
+
+	if((USART_TypeDef*)pvParameters == USART2){
+		while(1){
+			USART2Class::GetInstance()->Tx();
+			vTaskDelayUntil(&xLastWakeTime,1);
+		}
+	}
+}
+
+void USART2Class::prvRxTask(void *pvParameters)
+{
+	if((USART_TypeDef*)pvParameters == USART2){
+		while(1){
+			USART2Class::GetInstance()->Rx();
+			vTaskDelay(100);
+
+		}
 	}
 }
