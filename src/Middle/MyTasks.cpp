@@ -22,42 +22,6 @@
 
 #include "MyTasks.h"
 
-void prvADCTask(void *pvParameters){
-
-	ADC3Class* adc3 = ADC3Class::GetInstance();
-	uint32_t ADvoltage[2];
-	while (1)
-	{
-		ADvoltage[0] = adc3->GetData(0) * 3300 / 0xFFF;
-		ADvoltage[1] = adc3->GetData(1) * 3300 / 0xFFF;
-
-		//printf("%lx\t%lx\n\r", ADvoltage[0], ADvoltage[1]);
-		printf("%ld\t%ld\n\r", ADvoltage[0], ADvoltage[1]);
-
-		vTaskDelay(100);
-	}
-}
-
-void prvTxTask(void *pvParameters){
-	portTickType xLastWakeTime = xTaskGetTickCount();
-
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Tx();
-			vTaskDelayUntil(&xLastWakeTime,1);
-		}
-	}
-}
-
-void prvRxTask(void *pvParameters){
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Rx();
-			vTaskDelay(100);
-
-		}
-	}
-}
 
 void prvAdis16488Task(void *pvParameters){
 	while(1){
