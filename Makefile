@@ -2,9 +2,10 @@
 OSPATH = src/OS
 DRVPATH = src/Drivers src/Drivers/PeriphLib src/Drivers/FreeRTOS_DemoFile
 MIDDLEPATH = src/Middle src/Middle/Stdout src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2
+APPPATH = src/App src/Util src/Gains
 ###
 
-SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH)
+SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH) $(APPPATH)
 
 OBJDIR = objs
 BINDIR = bin

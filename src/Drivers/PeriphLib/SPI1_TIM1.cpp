@@ -232,6 +232,8 @@ SPI1Class::SPI1Class(){
 
 	NVIC_SetPriority(EXTI0_IRQn,0xFF);
 	NVIC_SetPriority(TIM1_UP_TIM10_IRQn,0xFF);
+	
+	m_dataReadySem = xSemaphoreCreateBinary();
 }
 
 int SPI1Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength)
@@ -257,8 +259,17 @@ int SPI1Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int
 void SPI1Class::timerStart(){
 	TIM_Cmd(TIM1,ENABLE);
 }
+
+void SPI1Class::waitNewData(){
+	xSemaphoreTake(m_dataReadySem,0);
+}
+unsigned short* SPI1Class::getRxBuf(){
+	return m_rxBuf; 
+}
 void SPI1Class::TIM1_UP_TIM10_IRQHandler(){
 	if(TIM_GetITStatus(TIM1,TIM_IT_Update)!=RESET){
 		TIM_ClearITPendingBit(TIM1,TIM_IT_Update);
+		portBASE_TYPE pxHigherPriorityTaskWoken = pdTRUE;
+		xSemaphoreGiveFromISR(m_dataReadySem,&pxHigherPriorityTaskWoken);
 	}
 }

@@ -20,13 +20,15 @@ public:
 	// Class definition
 private:
 	static const int SPI_BUFFERSIZE = 32;
-	char m_txBuf[SPI_BUFFERSIZE];
-	char m_rxBuf[SPI_BUFFERSIZE];
+	unsigned short m_txBuf[SPI_BUFFERSIZE];
+	unsigned short m_rxBuf[SPI_BUFFERSIZE];
 	//xSemaphoreHandle m_rwSem;
-	//xSemaphoreHandle m_dataReadySem;
+	xSemaphoreHandle m_dataReadySem;
 public:	
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 	void timerStart();
+	void waitNewData();
+	unsigned short* getRxBuf();
 	void TIM1_UP_TIM10_IRQHandler();
 };
 
