@@ -24,6 +24,7 @@ public:
 	// Class definition
 private:
 public:
+	void timerStart();
 };
 
 

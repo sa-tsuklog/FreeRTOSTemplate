@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "Drivers/PeriphLib/TIM3.h"
 #include "Drivers/PeriphLib/SPI1_TIM1.h"
 #include "Middle/Stdout/SerialCommand.h"
 #include "Middle/Mpu-9250/MPU9250.h"
@@ -118,6 +119,7 @@ int main(void) {
 
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 	
+	TIM3Class::GetInstance()->timerStart();
 	
 	xTaskCreate(prvTaskA,"TaskA",512,NULL,1,NULL);
 	xTaskCreate(prvTaskB,"TaskB",512,NULL,1,NULL);

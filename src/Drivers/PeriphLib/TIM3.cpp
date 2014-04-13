@@ -10,7 +10,7 @@
 #include "TIM3.h"
 
 TIM3Class::TIM3Class(){
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 	GPIO_InitTypeDef gpiob5;
 	GPIO_StructInit(&gpiob5);
 	gpiob5.GPIO_Pin = GPIO_Pin_5;
@@ -20,7 +20,6 @@ TIM3Class::TIM3Class(){
 	gpiob5.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOB,&gpiob5);
 	GPIO_PinAFConfig(GPIOB,GPIO_PinSource5,GPIO_AF_TIM3);
-	
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
 	TIM_TimeBaseInitTypeDef timebase;
@@ -39,5 +38,8 @@ TIM3Class::TIM3Class(){
 	oc2def.TIM_Pulse = 1500-4;
 	TIM_OC2Init(TIM3,&oc2def);
 	
+}
+
+void TIM3Class::timerStart(){
 	TIM_Cmd(TIM3,ENABLE);
 }

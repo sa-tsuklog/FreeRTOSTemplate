@@ -24,8 +24,12 @@ private:
 	char m_rxBuf[SPI_BUFFERSIZE];
 	//xSemaphoreHandle m_rwSem;
 	//xSemaphoreHandle m_dataReadySem;
-public:
+public:	
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
+	void timerStart();
+	void TIM1_UP_TIM10_IRQHandler();
 };
+
+void tmpTIM1_UP_TIM10_IRQHandler();
 
 #endif /* __HALSPI1_H__ */

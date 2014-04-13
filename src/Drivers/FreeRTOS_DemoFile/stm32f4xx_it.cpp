@@ -25,6 +25,7 @@
 #include "stm32f4xx_it.h"
 #include "Drivers/PeriphLib/SPI2.h"
 #include "Drivers/PeriphLib/I2C2.h"
+#include "Drivers/PeriphLib/SPI1_TIM1.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -160,6 +161,12 @@ void EXTI9_5_IRQHandler(void)
   * @param  None
   * @retval None
   */
+void EXTI0_IRQHandler(){
+	if(EXTI_GetITStatus(EXTI_Line0)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
+}
+
 void EXTI15_10_IRQHandler()
 {
 	SPI2Class::GetInstance()->EXTI14_IRQHandler();
@@ -188,6 +195,10 @@ void DMA1_Stream2_IRQHandler()
 void DMA1_Stream7_IRQHandler()
 {
 	I2C2Class::GetInstance()->DMA1_Stream7_IRQHandler();
+}
+
+void TIM1_UP_TIM10_IRQHandler(){
+	tmpTIM1_UP_TIM10_IRQHandler();
 }
 
 #ifdef __cplusplus

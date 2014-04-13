@@ -66,7 +66,7 @@ void prvAdis16488Task(void *pvParameters){
 		unsigned char tmp = 0;
 		unsigned char tmp2= 0;
 		SPI1Class::GetInstance()->ReadWrite(&tmp,&tmp2,1);
-		printf("adis\n\r");
+		printf("%d\n\r",TIM_GetCounter(TIM1));
 
 		vTaskDelay(1);
 	}

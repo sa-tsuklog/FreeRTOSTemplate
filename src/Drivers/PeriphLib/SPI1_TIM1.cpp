@@ -75,45 +75,12 @@ SPI1Class::SPI1Class(){
 
 	SPI_Cmd(SPI1,ENABLE);
 	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
-	GPIO_InitTypeDef pe9def;
 
-	GPIO_StructInit(&pe9def);
-	pe9def.GPIO_Pin = GPIO_Pin_1;
-	pe9def.GPIO_Mode = GPIO_Mode_OUT;
-	pe9def.GPIO_OType = GPIO_OType_PP;
-	pe9def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pe9def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOC,&pe9def);
-
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource9,GPIO_AF_TIM1);
-	
-	
-	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
-	TIM_TimeBaseInitTypeDef tim1;
-	TIM_TimeBaseStructInit(&tim1);
-	tim1.TIM_ClockDivision = TIM_CKD_DIV1;
-	tim1.TIM_CounterMode = TIM_CounterMode_Up;
-	tim1.TIM_Period = 50;
-	tim1.TIM_Prescaler = 0;
-	tim1.TIM_RepetitionCounter = 8;
-	
-	TIM_OCInitTypeDef oc1;
-	TIM_OCStructInit(&oc1);
-	oc1.TIM_OCIdleState = TIM_OCIdleState_Set;
-	oc1.TIM_OCMode = TIM_OCMode_PWM1;
-	oc1.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc1.TIM_OutputState = TIM_OutputState_Enable;
-	 
-	TIM_TimeBaseInit(TIM1,&tim1);
-	TIM_OC1Init(TIM1,&oc1);
-	
-	TIM_Cmd(TIM1,ENABLE);
 	
 			
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
 
+	/*
 	DMA_InitTypeDef dma2_2;
 	DMA_StructInit(&dma2_2);
 	dma2_2.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
@@ -147,8 +114,81 @@ SPI1Class::SPI1Class(){
 
 	dma2_3.DMA_Channel = DMA_Channel_3;
 	DMA_Init(DMA2_Stream3,&dma2_3);
+	 */
 
+	
+	//NSS port setting
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE,ENABLE);
+	GPIO_InitTypeDef pe14def;
+	GPIO_StructInit(&pe14def);
+	pe14def.GPIO_Pin = GPIO_Pin_14;
+	pe14def.GPIO_Mode = GPIO_Mode_AF;
+	pe14def.GPIO_OType = GPIO_OType_PP;
+	pe14def.GPIO_Speed = GPIO_Speed_100MHz;
+	pe14def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOE,&pe14def);
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource14,GPIO_AF_TIM1);
+	
+	//timebase
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
+	TIM_TimeBaseInitTypeDef tim1;
+	TIM_TimeBaseStructInit(&tim1);
+	tim1.TIM_ClockDivision = TIM_CKD_DIV2;
+	tim1.TIM_Prescaler = 0;
+	tim1.TIM_Period = 1450-1;
+	tim1.TIM_CounterMode = TIM_CounterMode_Up;
+	tim1.TIM_RepetitionCounter = 3;
+	TIM_TimeBaseInit(TIM1,&tim1);
+	TIM_SelectOnePulseMode(TIM1,TIM_OPMode_Single);
+	
+	//NSS generation
+	TIM_OCInitTypeDef oc4;
+	TIM_OCStructInit(&oc4);
+	oc4.TIM_OCMode = TIM_OCMode_PWM1;
+	oc4.TIM_OCPolarity = TIM_OCPolarity_High;
+	oc4.TIM_OutputState = TIM_OutputState_Enable;
+	oc4.TIM_Pulse = 350-1;
+	TIM_OC4Init(TIM1,&oc4);
+	TIM_CtrlPWMOutputs(TIM1,ENABLE);
+	
+	//DMA start
+	TIM_OCInitTypeDef oc1;
+	TIM_OCStructInit(&oc1);
+	oc1.TIM_Pulse = 350;
+	TIM_OC1Init(TIM1,&oc1);
+	
+	//Update Interrupt
+	TIM_ITConfig(TIM1,TIM_IT_Update,ENABLE);
+	
+	
+	TIM_DMACmd(TIM1,TIM_DMA_CC1,ENABLE);
+	DMA_InitTypeDef dma2_1;
+	DMA_StructInit(&dma2_1);
+	dma2_1.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
+	dma2_1.DMA_Memory0BaseAddr = (uint32_t)m_txBuf;
+	dma2_1.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+	dma2_1.DMA_BufferSize = 4;
+	dma2_1.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	dma2_1.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	dma2_1.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+	dma2_1.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+	dma2_1.DMA_Mode = DMA_Mode_Circular;
+	dma2_1.DMA_Priority = DMA_Priority_Medium;
 
+	dma2_1.DMA_Channel = DMA_Channel_6;
+	DMA_Init(DMA2_Stream1,&dma2_1);
+	DMA_Cmd(DMA2_Stream1,ENABLE);
+	
+	NVIC_InitTypeDef dma_nvicdef;
+	dma_nvicdef.NVIC_IRQChannel  = DMA2_Stream1_IRQn;
+	dma_nvicdef.NVIC_IRQChannelPreemptionPriority = 0x00;
+	dma_nvicdef.NVIC_IRQChannelSubPriority = 0x00;
+	dma_nvicdef.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&dma_nvicdef);
+	NVIC_SetPriority(DMA1_Stream3_IRQn,0x08);
+	
+	
+	
 	//SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource0);
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
@@ -182,8 +222,16 @@ SPI1Class::SPI1Class(){
 	nvicdef.NVIC_IRQChannelSubPriority = 0x00;
 	nvicdef.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvicdef);
+	
+	NVIC_InitTypeDef timitdef;
+	timitdef.NVIC_IRQChannel = TIM1_UP_TIM10_IRQn;
+	timitdef.NVIC_IRQChannelPreemptionPriority = 0x00;
+	timitdef.NVIC_IRQChannelSubPriority = 0x00;
+	timitdef.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&timitdef);
 
 	NVIC_SetPriority(EXTI0_IRQn,0xFF);
+	NVIC_SetPriority(TIM1_UP_TIM10_IRQn,0xFF);
 }
 
 int SPI1Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength)
@@ -193,14 +241,28 @@ int SPI1Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int
 	m_txBuf[2] = 0xAA;
 	m_txBuf[3] = 0xAA;
 
-	DMA_Cmd(DMA2_Stream3,DISABLE);
-	DMA_SetCurrDataCounter(DMA2_Stream3,4);
-	DMA_ClearFlag(DMA2_Stream3,DMA_FLAG_TCIF3);
-	DMA_Cmd(DMA2_Stream3,ENABLE);
+//	DMA_Cmd(DMA2_Stream3,DISABLE);
+//	DMA_SetCurrDataCounter(DMA2_Stream3,4);
+//	DMA_ClearFlag(DMA2_Stream3,DMA_FLAG_TCIF3);
+//	DMA_Cmd(DMA2_Stream3,ENABLE);
+//	
+//	GPIO_SetBits(GPIOC,GPIO_PinSource1);
+//	vTaskDelay(1);
+//	GPIO_ResetBits(GPIOC,GPIO_PinSource1);
 	
-	GPIO_SetBits(GPIOC,GPIO_PinSource1);
-	vTaskDelay(1);
-	GPIO_ResetBits(GPIOC,GPIO_PinSource1);
+	timerStart();
 	
 	return 0;
+}
+void SPI1Class::timerStart(){
+	TIM_Cmd(TIM1,ENABLE);
+}
+void SPI1Class::TIM1_UP_TIM10_IRQHandler(){
+	if(TIM_GetITStatus(TIM1,TIM_IT_Update)!=RESET){
+		TIM_ClearITPendingBit(TIM1,TIM_IT_Update);
+	}
+}
+
+void tmpTIM1_UP_TIM10_IRQHandler(){
+	SPI1Class::GetInstance()->TIM1_UP_TIM10_IRQHandler();
 }
