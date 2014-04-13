@@ -198,7 +198,7 @@ void DMA1_Stream7_IRQHandler()
 }
 
 void TIM1_UP_TIM10_IRQHandler(){
-	tmpTIM1_UP_TIM10_IRQHandler();
+	SPI1Class::GetInstance()->TIM1_UP_TIM10_IRQHandler();
 }
 
 #ifdef __cplusplus

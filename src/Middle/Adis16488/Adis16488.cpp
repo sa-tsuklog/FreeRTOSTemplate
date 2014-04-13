@@ -20,7 +20,7 @@ void write16(unsigned char address,unsigned short writedata){
 	
 }
 unsigned short read16(unsigned char address){
-	
+	return 0;
 }
 
 
@@ -29,7 +29,9 @@ void ADiadis16488init(){
 	tmp = read16(PROD_ID);
 	printf("%d\n\r",tmp);
 	
-	
+	//PAGE 3
+	write16(PAGE_ID,0x0003);	
+	write16(DEC_RATE,23);	//102.5sps
 	
 	
 	

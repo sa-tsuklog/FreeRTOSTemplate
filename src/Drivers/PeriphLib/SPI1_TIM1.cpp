@@ -262,7 +262,3 @@ void SPI1Class::TIM1_UP_TIM10_IRQHandler(){
 		TIM_ClearITPendingBit(TIM1,TIM_IT_Update);
 	}
 }
-
-void tmpTIM1_UP_TIM10_IRQHandler(){
-	SPI1Class::GetInstance()->TIM1_UP_TIM10_IRQHandler();
-}

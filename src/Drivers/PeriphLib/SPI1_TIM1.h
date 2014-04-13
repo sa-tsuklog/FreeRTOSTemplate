@@ -30,6 +30,4 @@ public:
 	void TIM1_UP_TIM10_IRQHandler();
 };
 
-void tmpTIM1_UP_TIM10_IRQHandler();
-
 #endif /* __HALSPI1_H__ */
