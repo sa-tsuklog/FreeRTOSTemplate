@@ -21,6 +21,10 @@ private:
 	uint16_t m_value[2];
 public:
 	uint16_t GetData(int pinNum);
+
+	// Task definition
+public:
+	static void prvTask(void *pvParameters);
 };
 
 #endif

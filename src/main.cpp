@@ -10,6 +10,9 @@
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"
 #include "Middle/MyTasks.h"
+#include "Drivers/PeriphLib/ADC3.h"
+
+#include "Drivers/PeriphLib/USART2.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -125,10 +128,12 @@ int main(void) {
 	xTaskCreate(prvTaskB,"TaskB",512,NULL,1,NULL);
 
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
-	xTaskCreate(prvTxTask,"u3tx",4096,USART2,1,NULL);
-	xTaskCreate(prvRxTask,"u3rx",4096,USART2,1,NULL);
-	xTaskCreate(prvADCTask,"ADC",512,NULL,2,NULL);	
-	xTaskCreate(prvAdis16488Task,"adis",512,NULL,1,NULL);
+	//xTaskCreate(prvTxTask,"u3tx",4096,USART2,1,NULL);
+	//xTaskCreate(prvRxTask,"u3rx",4096,USART2,1,NULL);
+	xTaskCreate(&USART2Class::prvTxTask,"u3tx",4096,USART2,1,NULL);
+	xTaskCreate(&USART2Class::prvRxTask,"u3rx",4096,USART2,1,NULL);
+	xTaskCreate(&ADC3Class::prvTask,"ADC",512,NULL,2,NULL);
+//	xTaskCreate(prvAdis16488Task,"adis",512,NULL,1,NULL);
 //	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
 //	xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
 //	xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);

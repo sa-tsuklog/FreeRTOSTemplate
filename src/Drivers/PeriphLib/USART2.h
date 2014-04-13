@@ -31,6 +31,11 @@ public:
 	virtual void Tx();
 	virtual void Rx();
 	xQueueHandle GetQueue(){ return m_queue; }
+
+	// Task definition
+public:
+	static void prvTxTask(void *pvParameters);
+	static void prvRxTask(void *pvParameters);
 };
 
 #endif

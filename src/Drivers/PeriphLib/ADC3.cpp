@@ -1,6 +1,7 @@
 #include "ADC3.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "Drivers/FreeRTOS_DemoFile/stm32f4xx_it.h"
 
 #include <stdio.h>
 
@@ -68,8 +69,25 @@ uint16_t ADC3Class::GetData(int pinNum)
 {
 	if(pinNum >= 2){
 		// error handling
-		return 0;
+		printf("Invalid pin number at ADC3\n");
+		UsageFault_Handler();
 	}
 	return m_value[pinNum];
 }
 
+
+void ADC3Class::prvTask(void *pvParameters){
+
+	ADC3Class* adc3 = ADC3Class::GetInstance();
+	uint32_t ADvoltage[2];
+	while (1)
+	{
+		ADvoltage[0] = adc3->GetData(0) * 3300 / 0xFFF;
+		ADvoltage[1] = adc3->GetData(1) * 3300 / 0xFFF;
+
+		printf("%lx\t%lx\n\r", ADvoltage[0], ADvoltage[1]);
+		//printf("%ld\t%ld\n\r", ADvoltage[0], ADvoltage[1]);
+
+		vTaskDelay(100);
+	}
+}
