@@ -52,7 +52,7 @@ LD      = $(CXX)
 AR      = $(TOOLDIR)arm-none-eabi-ar
 OBJCOPY = $(TOOLDIR)arm-none-eabi-objcopy
 CFLAGS  = $(COMPILE_OPTS) -std=gnu99
-CXXFLAGS= $(COMPILE_OPTS)  -fno-rtti -fpermissive 
+CXXFLAGS= $(COMPILE_OPTS)  -fno-rtti -fpermissive -fno-threadsafe-statics
 ASFLAGS = -x assembler-with-cpp -c $(TARGET_ARCH) $(COMPILE_OPTS) 
 LDFLAGS = -Wl,--gc-sections,-Map=$(BINDIR)/main.map,-cref -T stm32_flash.ld -lstdc++ -L $(TOOLDIR)../arm-none-eabi/lib/thumb -L $(OBJDIR)
 
