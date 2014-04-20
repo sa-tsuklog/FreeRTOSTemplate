@@ -7,28 +7,28 @@
 USART2Class::USART2Class(){
 	m_queue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
 
-	GPIO_InitTypeDef pa2def;
+	GPIO_InitTypeDef pd5def;
 
-	GPIO_StructInit(&pa2def);
-	pa2def.GPIO_Pin = GPIO_Pin_2;
-	pa2def.GPIO_Mode = GPIO_Mode_AF;
-	pa2def.GPIO_OType = GPIO_OType_PP;
-	pa2def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pa2def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA,&pa2def);
+	GPIO_StructInit(&pd5def);
+	pd5def.GPIO_Pin = GPIO_Pin_5;
+	pd5def.GPIO_Mode = GPIO_Mode_AF;
+	pd5def.GPIO_OType = GPIO_OType_PP;
+	pd5def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pd5def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOD,&pd5def);
 
-	GPIO_InitTypeDef pa3def;
-	GPIO_StructInit(&pa3def);
-	pa3def.GPIO_Pin = GPIO_Pin_3;
-	pa3def.GPIO_Mode = GPIO_Mode_AF;
-	pa3def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pa3def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA,&pa3def);
+	GPIO_InitTypeDef pd6def;
+	GPIO_StructInit(&pd6def);
+	pd6def.GPIO_Pin = GPIO_Pin_3;
+	pd6def.GPIO_Mode = GPIO_Mode_AF;
+	pd6def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pd6def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOD,&pd6def);
 
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource5, GPIO_AF_USART2);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource6, GPIO_AF_USART2);
 
 
 	USART_InitTypeDef usart2;

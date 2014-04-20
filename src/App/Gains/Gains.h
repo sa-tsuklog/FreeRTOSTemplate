@@ -10,8 +10,20 @@
 
 class Gains{
 private:
+	static int m_lattitudeRef;
+	static int m_longitudeRef;
+	
+	
 public:
 	static void prvGainsTask(void *pvParameters);
+	
+	static float getMpspsAcl(int axis);
+	static float getMpsSpeed(int axis);
+	static float getMPos(int axis);
+	static float getRpsRate(int axis);
+	static Quaternion getAttitude();
+	static int getLattitudeRef();
+	static int getLongitudeRef();
 };
 
 

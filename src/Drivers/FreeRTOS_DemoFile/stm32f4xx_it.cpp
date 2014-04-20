@@ -22,7 +22,10 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "stdio.h"
 #include "stm32f4xx_it.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include "Drivers/PeriphLib/SPI2.h"
 #include "Drivers/PeriphLib/I2C2.h"
 #include "Drivers/PeriphLib/SPI1_TIM1.h"
@@ -169,36 +172,55 @@ void EXTI0_IRQHandler(){
 
 void EXTI15_10_IRQHandler()
 {
-	SPI2Class::GetInstance()->EXTI14_IRQHandler();
+	if(EXTI_GetITStatus(EXTI_Line13)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line13);
+		SPI1Class::GetInstance()->timerStart();
+	}
+	//SPI2Class::GetInstance()->EXTI14_IRQHandler();
 }
 
 void DMA1_Stream3_IRQHandler()
 {
-	SPI2Class::GetInstance()->DMA1_Stream3_IRQHandler();
+	//SPI2Class::GetInstance()->DMA1_Stream3_IRQHandler();
 }
 
 void I2C2_EV_IRQHandler()
 {
-	I2C2Class::GetInstance()->EV_IRQHandler();
+	//I2C2Class::GetInstance()->EV_IRQHandler();
 }
 
 void I2C2_ER_IRQHandler()
 {
-	I2C2Class::GetInstance()->ER_IRQHandler();
+	//I2C2Class::GetInstance()->ER_IRQHandler();
 }
 
 void DMA1_Stream2_IRQHandler()
 {
-	I2C2Class::GetInstance()->DMA1_Stream2_IRQHandler();
+	//I2C2Class::GetInstance()->DMA1_Stream2_IRQHandler();
 }
 
 void DMA1_Stream7_IRQHandler()
 {
-	I2C2Class::GetInstance()->DMA1_Stream7_IRQHandler();
+	//I2C2Class::GetInstance()->DMA1_Stream7_IRQHandler();
+}
+void DMA2_Stream6_IRQHandler()
+{
+	printf("test\n\r");
+}
+void TIM1_CC3_IRQHandler(){
+	if(TIM_GetITStatus(TIM1,TIM_IT_CC3)!=RESET){
+		TIM_ClearITPendingBit(TIM1,TIM_IT_CC3);
+	}
 }
 
+
 void TIM1_UP_TIM10_IRQHandler(){
-	SPI1Class::GetInstance()->TIM1_UP_TIM10_IRQHandler();
+	portBASE_TYPE xSwitchRequired;
+	if(TIM_GetITStatus(TIM1,TIM_IT_Update)!=RESET){
+		TIM_ClearITPendingBit(TIM1,TIM_IT_Update);
+		xSemaphoreGiveFromISR(SPI1_TIM1_dataReadySem,&xSwitchRequired);
+	}
+	portEND_SWITCHING_ISR(xSwitchRequired );
 }
 
 #ifdef __cplusplus

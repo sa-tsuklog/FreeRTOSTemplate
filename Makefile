@@ -43,7 +43,7 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 BOARD_OPTS = -DHSE_VALUE=8000000 -DSTM32F4XX -DSTM32F40_41xxx
 FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
 COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions \
-					-Wall -Werror -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16
+					-Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16
 
 CC      = $(TOOLDIR)arm-none-eabi-gcc
 CXX     = $(TOOLDIR)arm-none-eabi-g++
@@ -63,7 +63,7 @@ OBJS += $(notdir $(patsubst %.cpp,%.o,$(CPPSRCS)))
 
 LIB_SRCS = \
  $(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c) \
- $(wildcard $(FREERTOS_DIR)/Source/portable/MemMang/heap_2.c) \
+ $(wildcard $(FREERTOS_DIR)/Source/portable/MemMang/heap_3.c) \
  $(wildcard $(FREERTOS_DIR)/Source/*.c) \
  $(wildcard $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/*.c) \
  $(FREERTOS_DIR)/Demo/Common/Minimal/GenQTest.c \

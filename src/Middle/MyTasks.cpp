@@ -23,19 +23,6 @@
 #include "MyTasks.h"
 
 
-void prvAdis16488Task(void *pvParameters){
-	while(1){
-		//printf("%x,%x,%x,%x,%x,%x\n\r",spi1RxBuf[0],spi1RxBuf[1],spi1RxBuf[2],spi1RxBuf[3]
-		        //,spi1RxBuf[4],spi1RxBuf[5]);
-		unsigned char tmp = 0;
-		unsigned char tmp2= 0;
-		SPI1Class::GetInstance()->ReadWrite(&tmp,&tmp2,1);
-		printf("%d\n\r",(int)TIM_GetCounter(TIM1));
-
-		vTaskDelay(1);
-	}
-}
-
 void prvI2C2SendTask(void *pvParameters){
 	MPU9250InitSend();
 	while(1){

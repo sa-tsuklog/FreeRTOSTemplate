@@ -4,6 +4,8 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+extern xSemaphoreHandle SPI1_TIM1_dataReadySem;
+
 class SPI1Class {
 	// Singleton pattern definition
 private:
@@ -23,13 +25,19 @@ private:
 	unsigned short m_txBuf[SPI_BUFFERSIZE];
 	unsigned short m_rxBuf[SPI_BUFFERSIZE];
 	//xSemaphoreHandle m_rwSem;
-	xSemaphoreHandle m_dataReadySem;
-public:	
+	
+public:
+	void setContinuousMode();
+	void setSingleTransactionMode();
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 	void timerStart();
 	void waitNewData();
-	unsigned short* getRxBuf();
 	void TIM1_UP_TIM10_IRQHandler();
+	void setTxBuf(int index,unsigned short data);
+	unsigned short* getRxBuf();
+	unsigned short read16(unsigned char address);
+	void write16(unsigned char address,unsigned short data);
+	
 };
 
 #endif /* __HALSPI1_H__ */

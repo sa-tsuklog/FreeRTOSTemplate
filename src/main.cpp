@@ -3,38 +3,40 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "Drivers/PeriphLib/TIM3.h"
 #include "Drivers/PeriphLib/SPI1_TIM1.h"
+#include "Drivers/PeriphLib/TIM3.h"
 #include "Middle/Stdout/SerialCommand.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"
 #include "Middle/MyTasks.h"
+#include "Middle/Adis16488/Adis16488.hpp"
 #include "Drivers/PeriphLib/ADC3.h"
 
 #include "Drivers/PeriphLib/USART2.h"
 
 #include "stdio.h"
 #include "stdlib.h"
-
 /*
 Pin list.
   
 	PA0 SW1
 	
   HalUsart - XBee
-	PA2	USART2_TX
-	PA3	USART2_RX
+	PD5	USART2_TX
+	PD6	USART2_RX
 	
   HalSpi1 - Adis16488
-	PA4 SPI1_NSS		
 	PA5	SPI1_SCK
 	PA6 SPI1_MISO
 	PA7	SPI1_MOSI
+	PE13 DataReady
+	PE14 NSS
 
   HalI2C2 - MPU9250
   	PB10I2C2_SCL
   	PB11 I2C2_SDA
+  	XXXX INT
 
   HalSpi2 - AD7162-2
 	PB12 SPI2_NSS
@@ -45,6 +47,12 @@ Pin list.
   ADC - Internal A/D converter
 	PC1 ADC3_1
 	PC2 ADC3_2
+  
+  TIM2
+  	PA2 TIM2_CH3
+  	
+  TIM5
+    PA3 TIM5_CH4
 
   Main
   	PD12 LED
@@ -65,7 +73,8 @@ DMA list
   HalSpi1
     DMA2Stream2
 	DMA2Stream3
-
+	DMA2Stream6
+	
   HalSpi2
     DMA1Stream3
     DMA1Stream4
@@ -74,7 +83,8 @@ DMA list
     DMA2Stream0
     
 EXTI 
-	EXTI0	Spi1
+	EXTI0	Spi1(not used)
+	EXTI13	SPI1
 	EXTI14	Spi2
 */
 
@@ -115,11 +125,38 @@ void LEDInit(void) {
 	GPIO_Write(GPIOD, 0);
 }
 
+void DebugGpioInit(){
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+
+	GPIO_InitTypeDef pc0def;
+
+	GPIO_StructInit(&pc0def);
+	pc0def.GPIO_Pin = GPIO_Pin_0;
+	pc0def.GPIO_Mode = GPIO_Mode_OUT;
+	pc0def.GPIO_OType = GPIO_OType_PP;
+	pc0def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pc0def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOC,&pc0def);
+	
+	GPIO_InitTypeDef pc1def;
+
+	GPIO_StructInit(&pc1def);
+	pc1def.GPIO_Pin = GPIO_Pin_1;
+	pc1def.GPIO_Mode = GPIO_Mode_OUT;
+	pc1def.GPIO_OType = GPIO_OType_PP;
+	pc1def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pc1def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOC,&pc1def);
+}
+
 int main(void) {
 
+	
+	
 	SystemInit();
 	LEDInit();
-
+	DebugGpioInit();
+	
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 	
 	TIM3Class::GetInstance()->timerStart();
@@ -130,14 +167,14 @@ int main(void) {
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
 	//xTaskCreate(prvTxTask,"u3tx",4096,USART2,1,NULL);
 	//xTaskCreate(prvRxTask,"u3rx",4096,USART2,1,NULL);
-	xTaskCreate(&USART2Class::prvTxTask,"u3tx",4096,USART2,1,NULL);
-	xTaskCreate(&USART2Class::prvRxTask,"u3rx",4096,USART2,1,NULL);
-	xTaskCreate(&ADC3Class::prvTask,"ADC",512,NULL,2,NULL);
-	xTaskCreate(prvAdis16488Task,"adis",512,NULL,1,NULL);
+	xTaskCreate(&USART2Class::prvTxTask,"u3tx",1024,USART2,1,NULL);
+	xTaskCreate(&USART2Class::prvRxTask,"u3rx",1024,USART2,1,NULL);
+	//xTaskCreate(&ADC3Class::prvTask,"ADC",1024,NULL,2,NULL);
+	xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,2,NULL);
 //	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
 //	xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
 //	xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);
-
+	
 	vTaskStartScheduler();
 
 	while (1)
