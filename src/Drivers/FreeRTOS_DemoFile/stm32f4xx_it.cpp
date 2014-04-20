@@ -28,7 +28,7 @@
 #include "semphr.h"
 #include "Drivers/PeriphLib/SPI2.h"
 #include "Drivers/PeriphLib/I2C2.h"
-#include "Drivers/PeriphLib/SPI1_TIM1.h"
+#include "Drivers/PeriphLib/SPI3_TIM1.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -174,7 +174,7 @@ void EXTI15_10_IRQHandler()
 {
 	if(EXTI_GetITStatus(EXTI_Line13)!=RESET){
 		EXTI_ClearITPendingBit(EXTI_Line13);
-		SPI1Class::GetInstance()->timerStart();
+		SPI3Class::GetInstance()->timerStart();
 	}
 	//SPI2Class::GetInstance()->EXTI14_IRQHandler();
 }
@@ -218,9 +218,23 @@ void TIM1_UP_TIM10_IRQHandler(){
 	portBASE_TYPE xSwitchRequired;
 	if(TIM_GetITStatus(TIM1,TIM_IT_Update)!=RESET){
 		TIM_ClearITPendingBit(TIM1,TIM_IT_Update);
-		xSemaphoreGiveFromISR(SPI1_TIM1_dataReadySem,&xSwitchRequired);
+		xSemaphoreGiveFromISR(SPI3_TIM1_dataReadySem,&xSwitchRequired);
 	}
 	portEND_SWITCHING_ISR(xSwitchRequired );
+}
+
+void TIM2_IRQHandler(){
+	if(TIM_GetITStatus(TIM2,TIM_IT_CC1)!=RESET){
+		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
+	}
+	
+}
+
+void TIM5_IRQHandler(){
+	if(TIM_GetITStatus(TIM5,TIM_IT_CC2)!=RESET){
+		TIM_ClearITPendingBit(TIM5,TIM_IT_CC2);
+	}
+	
 }
 
 #ifdef __cplusplus

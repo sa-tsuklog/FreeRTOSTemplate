@@ -2,50 +2,54 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
 
-#include "SPI1_TIM1.h"
+#include "SPI3_TIM1.h"
 
 #include "task.h"
 #include "queue.h"
 
 
-SemaphoreHandle_t SPI1_TIM1_dataReadySem;
+SemaphoreHandle_t SPI3_TIM1_dataReadySem;
 
-SPI1Class::SPI1Class(){
-	SPI1_TIM1_dataReadySem= xSemaphoreCreateBinary();
+SPI3Class::SPI3Class(){
+}
+
+void SPI3Class::init(){
+	SPI3_TIM1_dataReadySem= xSemaphoreCreateBinary();
+	
 	//////////////////////
 	//GPIO Setting
 	//////////////////////
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
 
-	GPIO_InitTypeDef pa5def;
-	GPIO_StructInit(&pa5def);
-	pa5def.GPIO_Pin = GPIO_Pin_5;
-	pa5def.GPIO_Mode = GPIO_Mode_AF;
-	pa5def.GPIO_OType = GPIO_OType_PP;
-	pa5def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pa5def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA,&pa5def);
+	GPIO_InitTypeDef pc10def;
+	GPIO_StructInit(&pc10def);
+	pc10def.GPIO_Pin = GPIO_Pin_10;
+	pc10def.GPIO_Mode = GPIO_Mode_AF;
+	pc10def.GPIO_OType = GPIO_OType_PP;
+	pc10def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pc10def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOC,&pc10def);
 
-	GPIO_InitTypeDef pa6def;
-	GPIO_StructInit(&pa6def);
-	pa6def.GPIO_Pin = GPIO_Pin_6;
-	pa6def.GPIO_Mode = GPIO_Mode_AF;
-	pa6def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pa6def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA,&pa6def);
+	GPIO_InitTypeDef pc11def;
+	GPIO_StructInit(&pc11def);
+	pc11def.GPIO_Pin = GPIO_Pin_11;
+	pc11def.GPIO_Mode = GPIO_Mode_AF;
+	pc11def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pc11def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOC,&pc11def);
 
-	GPIO_InitTypeDef pa7def;
-	GPIO_StructInit(&pa7def);
-	pa7def.GPIO_Pin = GPIO_Pin_7;
-	pa7def.GPIO_Mode = GPIO_Mode_AF;
-	pa7def.GPIO_OType = GPIO_OType_PP;
-	pa7def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pa7def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA,&pa7def);
+	GPIO_InitTypeDef pc12def;
+	GPIO_StructInit(&pc12def);
+	pc12def.GPIO_Pin = GPIO_Pin_12;
+	pc12def.GPIO_Mode = GPIO_Mode_AF;
+	pc12def.GPIO_OType = GPIO_OType_PP;
+	pc12def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pc12def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOC,&pc12def);
 	
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource5,GPIO_AF_SPI1);
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource6,GPIO_AF_SPI1);
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource7,GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource10,GPIO_AF_SPI3);
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource11,GPIO_AF_SPI3);
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource12,GPIO_AF_SPI3);
 	
 	//NSS port setting
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE,ENABLE);
@@ -71,21 +75,22 @@ SPI1Class::SPI1Class(){
 	///////////////////////////
 	//SPI Setting
 	///////////////////////////
-	SPI_InitTypeDef spi1;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1,ENABLE);
-	spi1.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
-	spi1.SPI_CPHA = SPI_CPHA_2Edge;
-	spi1.SPI_CPOL = SPI_CPOL_High;
-	spi1.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-	spi1.SPI_DataSize = SPI_DataSize_16b;
-	spi1.SPI_FirstBit = SPI_FirstBit_MSB;
-	spi1.SPI_Mode = SPI_Mode_Master;
-	spi1.SPI_NSS = SPI_NSS_Hard;
-
-	SPI_Init(SPI1,&spi1);
-	SPI_SSOutputCmd(SPI1,ENABLE);
-	SPI_I2S_DMACmd(SPI1,SPI_DMAReq_Rx|SPI_DMAReq_Tx,ENABLE);
-	SPI_Cmd(SPI1,ENABLE);
+	SPI_InitTypeDef spi3def;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3,ENABLE);
+	spi3def.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+	spi3def.SPI_CPHA = SPI_CPHA_2Edge;
+	spi3def.SPI_CPOL = SPI_CPOL_High;
+	spi3def.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+	spi3def.SPI_DataSize = SPI_DataSize_16b;
+	spi3def.SPI_FirstBit = SPI_FirstBit_MSB;
+	spi3def.SPI_Mode = SPI_Mode_Master;
+	spi3def.SPI_NSS = SPI_NSS_Hard;
+	
+	SPI_Init(SPI3,&spi3def);
+	SPI_SSOutputCmd(SPI3,ENABLE);
+	//SPI_I2S_DMACmd(SPI3,SPI_DMAReq_Rx|SPI_DMAReq_Tx,ENABLE);
+	SPI_I2S_DMACmd(SPI3,SPI_DMAReq_Rx,ENABLE);
+	SPI_Cmd(SPI3,ENABLE);
 	
 	///////////////////////////
 	//TIM1 Setting
@@ -125,27 +130,30 @@ SPI1Class::SPI1Class(){
 	/////////////////////////////
 	//DMA Setting
 	/////////////////////////////
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
-	DMA_InitTypeDef dma2_2;
-	DMA_StructInit(&dma2_2);
-	dma2_2.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
-	dma2_2.DMA_Memory0BaseAddr = (uint32_t)m_rxBuf;
-	dma2_2.DMA_DIR = DMA_DIR_PeripheralToMemory;
-	dma2_2.DMA_BufferSize = 2;
-	dma2_2.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	dma2_2.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	dma2_2.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	dma2_2.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	dma2_2.DMA_Mode = DMA_Mode_Circular;
-	dma2_2.DMA_Priority = DMA_Priority_Medium;
+	//SPI3RX
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1,ENABLE);
+	DMA_InitTypeDef dma1_0;
+	DMA_StructInit(&dma1_0);
+	dma1_0.DMA_PeripheralBaseAddr = (uint32_t)&(SPI3->DR);
+	dma1_0.DMA_Memory0BaseAddr = (uint32_t)m_rxBuf;
+	dma1_0.DMA_DIR = DMA_DIR_PeripheralToMemory;
+	dma1_0.DMA_BufferSize = 2;
+	dma1_0.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	dma1_0.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	dma1_0.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	dma1_0.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	dma1_0.DMA_Mode = DMA_Mode_Circular;
+	dma1_0.DMA_Priority = DMA_Priority_Medium;
 
-	dma2_2.DMA_Channel = DMA_Channel_3;
-	DMA_Init(DMA2_Stream2,&dma2_2);
-	DMA_Cmd(DMA2_Stream2,ENABLE);
+	dma1_0.DMA_Channel = DMA_Channel_0;
+	DMA_Init(DMA1_Stream0,&dma1_0);
+	DMA_Cmd(DMA1_Stream0,ENABLE);
 	
+	//TIM1_CH1
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
 	DMA_InitTypeDef dma2_6;
 	DMA_StructInit(&dma2_6);
-	dma2_6.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
+	dma2_6.DMA_PeripheralBaseAddr = (uint32_t)&(SPI3->DR);
 	dma2_6.DMA_Memory0BaseAddr = (uint32_t)m_txBuf;
 	dma2_6.DMA_DIR = DMA_DIR_MemoryToPeripheral;
 	dma2_6.DMA_BufferSize = 2;
@@ -242,7 +250,7 @@ SPI1Class::SPI1Class(){
 }
 
 
-void SPI1Class::setSingleTransactionMode(){
+void SPI3Class::setSingleTransactionMode(){
 	TIM_Cmd(TIM1,DISABLE);
 	
 	TIM_TimeBaseInitTypeDef tim1;
@@ -254,29 +262,29 @@ void SPI1Class::setSingleTransactionMode(){
 	tim1.TIM_RepetitionCounter = 1;
 	TIM_TimeBaseInit(TIM1,&tim1);
 	
-	DMA_Cmd(DMA2_Stream2,DISABLE);
-	DMA_InitTypeDef dma2_2;
-	DMA_StructInit(&dma2_2);
-	dma2_2.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
-	dma2_2.DMA_Memory0BaseAddr = (uint32_t)m_rxBuf;
-	dma2_2.DMA_DIR = DMA_DIR_PeripheralToMemory;
-	dma2_2.DMA_BufferSize = 2;
-	dma2_2.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	dma2_2.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	dma2_2.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	dma2_2.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	dma2_2.DMA_Mode = DMA_Mode_Circular;
-	dma2_2.DMA_Priority = DMA_Priority_Medium;
+	DMA_Cmd(DMA1_Stream0,DISABLE);
+	DMA_InitTypeDef dma1_0;
+	DMA_StructInit(&dma1_0);
+	dma1_0.DMA_PeripheralBaseAddr = (uint32_t)&(SPI3->DR);
+	dma1_0.DMA_Memory0BaseAddr = (uint32_t)m_rxBuf;
+	dma1_0.DMA_DIR = DMA_DIR_PeripheralToMemory;
+	dma1_0.DMA_BufferSize = 2;
+	dma1_0.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	dma1_0.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	dma1_0.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	dma1_0.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	dma1_0.DMA_Mode = DMA_Mode_Circular;
+	dma1_0.DMA_Priority = DMA_Priority_Medium;
 
-	dma2_2.DMA_Channel = DMA_Channel_3;
-	DMA_Init(DMA2_Stream2,&dma2_2);
-	DMA_Cmd(DMA2_Stream2,ENABLE);
+	dma1_0.DMA_Channel = DMA_Channel_0;
+	DMA_Init(DMA1_Stream0,&dma1_0);
+	DMA_Cmd(DMA1_Stream0,ENABLE);
 	
 	DMA_Cmd(DMA2_Stream6,DISABLE);
 	
 	DMA_InitTypeDef dma2_6;
 	DMA_StructInit(&dma2_6);
-	dma2_6.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
+	dma2_6.DMA_PeripheralBaseAddr = (uint32_t)&(SPI3->DR);
 	dma2_6.DMA_Memory0BaseAddr = (uint32_t)m_txBuf;
 	dma2_6.DMA_DIR = DMA_DIR_MemoryToPeripheral;
 	dma2_6.DMA_BufferSize = 2;
@@ -292,7 +300,7 @@ void SPI1Class::setSingleTransactionMode(){
 	DMA_Cmd(DMA2_Stream6,ENABLE);
 }
 
-void SPI1Class::setContinuousMode(){
+void SPI3Class::setContinuousMode(){
 	TIM_Cmd(TIM1,DISABLE);
 		
 	TIM_TimeBaseInitTypeDef tim1;
@@ -304,29 +312,28 @@ void SPI1Class::setContinuousMode(){
 	tim1.TIM_RepetitionCounter = 18;
 	TIM_TimeBaseInit(TIM1,&tim1);
 	
-	DMA_Cmd(DMA2_Stream2,DISABLE);
-	DMA_InitTypeDef dma2_2;
-	DMA_StructInit(&dma2_2);
-	dma2_2.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
-	dma2_2.DMA_Memory0BaseAddr = (uint32_t)m_rxBuf;
-	dma2_2.DMA_DIR = DMA_DIR_PeripheralToMemory;
-	dma2_2.DMA_BufferSize = 19;
-	dma2_2.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	dma2_2.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	dma2_2.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	dma2_2.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	dma2_2.DMA_Mode = DMA_Mode_Circular;
-	dma2_2.DMA_Priority = DMA_Priority_Medium;
+	DMA_Cmd(DMA1_Stream0,DISABLE);
+	DMA_InitTypeDef dma1_0;
+	DMA_StructInit(&dma1_0);
+	dma1_0.DMA_PeripheralBaseAddr = (uint32_t)&(SPI3->DR);
+	dma1_0.DMA_Memory0BaseAddr = (uint32_t)m_rxBuf;
+	dma1_0.DMA_DIR = DMA_DIR_PeripheralToMemory;
+	dma1_0.DMA_BufferSize = 19;
+	dma1_0.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	dma1_0.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	dma1_0.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	dma1_0.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	dma1_0.DMA_Mode = DMA_Mode_Circular;
+	dma1_0.DMA_Priority = DMA_Priority_Medium;
 
-	dma2_2.DMA_Channel = DMA_Channel_3;
-	DMA_Init(DMA2_Stream2,&dma2_2);
-	DMA_Cmd(DMA2_Stream2,ENABLE);
+	dma1_0.DMA_Channel = DMA_Channel_0;
+	DMA_Init(DMA1_Stream0,&dma1_0);
+	DMA_Cmd(DMA1_Stream0,ENABLE);
 	
 	DMA_Cmd(DMA2_Stream6,DISABLE);
-	
 	DMA_InitTypeDef dma2_6;
 	DMA_StructInit(&dma2_6);
-	dma2_6.DMA_PeripheralBaseAddr = (uint32_t)&(SPI1->DR);
+	dma2_6.DMA_PeripheralBaseAddr = (uint32_t)&(SPI3->DR);
 	dma2_6.DMA_Memory0BaseAddr = (uint32_t)m_txBuf;
 	dma2_6.DMA_DIR = DMA_DIR_MemoryToPeripheral;
 	dma2_6.DMA_BufferSize = 19;
@@ -343,46 +350,46 @@ void SPI1Class::setContinuousMode(){
 }
 
 
-void SPI1Class::timerStart(){
-	xSemaphoreTake(SPI1_TIM1_dataReadySem,0);
-	xSemaphoreTake(SPI1_TIM1_dataReadySem,0);
+void SPI3Class::timerStart(){
+	xSemaphoreTake(SPI3_TIM1_dataReadySem,0);
+	xSemaphoreTake(SPI3_TIM1_dataReadySem,0);
 	TIM_Cmd(TIM1,ENABLE);
 }
 
-void SPI1Class::waitNewData(){
+void SPI3Class::waitNewData(){
 	GPIO_SetBits(GPIOC,GPIO_Pin_1);
-	//xSemaphoreTake(SPI1_TIM1_dataReadySem,portMAX_DELAY);
-	xSemaphoreTake(SPI1_TIM1_dataReadySem,1000);
+	//xSemaphoreTake(SPI3_TIM1_dataReadySem,portMAX_DELAY);
+	xSemaphoreTake(SPI3_TIM1_dataReadySem,1000);
 	GPIO_ResetBits(GPIOC,GPIO_Pin_1);
 	
 }
-void SPI1Class::setTxBuf(int index,unsigned short data){
+void SPI3Class::setTxBuf(int index,unsigned short data){
 	if(index < SPI_BUFFERSIZE){
 		m_txBuf[index] = data;
 	}
 }
-unsigned short* SPI1Class::getRxBuf(){
+unsigned short* SPI3Class::getRxBuf(){
 	return m_rxBuf; 
 }
 
-void SPI1Class::write16(unsigned char address,unsigned short data){
+void SPI3Class::write16(unsigned char address,unsigned short data){
 	m_txBuf[0] = 0x8000 | address<<8 | (0xFF & (data));
 	m_txBuf[1] = 0x8100 | address<<8 | (0xFF & (data>>8));
 	setSingleTransactionMode();
 	timerStart();
 	waitNewData();
 }
-unsigned short SPI1Class::read16(unsigned char address){
+unsigned short SPI3Class::read16(unsigned char address){
 	m_txBuf[0] = address<<8;
 	m_txBuf[1] = 0x0;
 	setSingleTransactionMode();
 	timerStart();
 	waitNewData();
 	
-	return SPI1->DR;
+	return SPI3->DR;
 }
 
-void SPI1Class::TIM1_UP_TIM10_IRQHandler(){
+void SPI3Class::TIM1_UP_TIM10_IRQHandler(){
 	portBASE_TYPE pxHigherPriorityTaskWoken = pdTRUE;
-	xSemaphoreGiveFromISR(SPI1_TIM1_dataReadySem,&pxHigherPriorityTaskWoken);
+	xSemaphoreGiveFromISR(SPI3_TIM1_dataReadySem,&pxHigherPriorityTaskWoken);
 }

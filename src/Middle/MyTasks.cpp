@@ -12,7 +12,6 @@
 
 #include "Drivers/PeriphLib/ADC3.h"
 #include "Drivers/PeriphLib/USART2.h"
-#include "Drivers/PeriphLib/SPI1_TIM1.h"
 #include "Drivers/PeriphLib/SPI2.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"

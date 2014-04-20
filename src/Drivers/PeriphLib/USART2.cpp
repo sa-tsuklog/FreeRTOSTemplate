@@ -21,7 +21,7 @@ USART2Class::USART2Class(){
 
 	GPIO_InitTypeDef pd6def;
 	GPIO_StructInit(&pd6def);
-	pd6def.GPIO_Pin = GPIO_Pin_3;
+	pd6def.GPIO_Pin = GPIO_Pin_6;
 	pd6def.GPIO_Mode = GPIO_Mode_AF;
 	pd6def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	pd6def.GPIO_Speed = GPIO_Speed_100MHz;
@@ -117,21 +117,24 @@ void USART2Class::Rx()
 	int lineBufIndex = 0;
 
 	char c;
-	while( (c = m_rxBuf[rxBufIndex]) != 0 ){
-		m_rxBuf[rxBufIndex]=0;
-		if(c=='\n'){
-		}else if(c=='\r'){
-			m_lineBuf[lineBufIndex]=0;
-
-			HandleSerialCommand(m_lineBuf);
-			lineBufIndex=0;
-
-		}else{
-			m_lineBuf[lineBufIndex]=c;
-			lineBufIndex++;
+	while(1){
+		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
+			m_rxBuf[rxBufIndex]=0;
+			if(c=='\n'){
+			}else if(c=='\r'){
+				m_lineBuf[lineBufIndex]=0;
+	
+				HandleSerialCommand(m_lineBuf);
+				lineBufIndex=0;
+	
+			}else{
+				m_lineBuf[lineBufIndex]=c;
+				lineBufIndex++;
+			}
+	
+			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 		}
-
-		rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
+		vTaskDelay(100);
 	}
 }
 
@@ -150,10 +153,6 @@ void USART2Class::prvTxTask(void *pvParameters)
 void USART2Class::prvRxTask(void *pvParameters)
 {
 	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Rx();
-			vTaskDelay(100);
-
-		}
+		USART2Class::GetInstance()->Rx();
 	}
 }
