@@ -3,11 +3,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "Drivers/PeriphLib/SPI3_TIM1.h"
+#include "Drivers/PeriphLib/SPI2_TIM8.h"
 #include "Drivers/PeriphLib/TIM3.h"
 #include "Middle/Stdout/SerialCommand.h"
 #include "Middle/Mpu-9250/MPU9250.h"
-#include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"
 #include "Middle/MyTasks.h"
 #include "Middle/Adis16488/Adis16488.hpp"
@@ -163,9 +162,9 @@ int main(void) {
 	
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 	
-	TIM3Class::GetInstance()->timerStart();
-	TIM4Class::GetInstance()->timerStart();
-	TIM8Class::GetInstance()->timerStart();
+	//TIM3Class::GetInstance()->timerStart();
+	//TIM4Class::GetInstance()->timerStart();
+	//TIM8Class::GetInstance()->timerStart();
 	
 	xTaskCreate(prvTaskA,"TaskA",512,NULL,1,NULL);
 	xTaskCreate(prvTaskB,"TaskB",512,NULL,1,NULL);
@@ -180,8 +179,8 @@ int main(void) {
 //	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
 //	xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
 //	xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);
-	xTaskCreate(prvTIM2TestTask,"tim2",128,NULL,1,NULL);
-	xTaskCreate(prvTIM5TestTask,"tim5",128,NULL,1,NULL);
+	//xTaskCreate(prvTIM2TestTask,"tim2",128,NULL,1,NULL);
+	//xTaskCreate(prvTIM5TestTask,"tim5",128,NULL,1,NULL);
 	
 	vTaskStartScheduler();
 

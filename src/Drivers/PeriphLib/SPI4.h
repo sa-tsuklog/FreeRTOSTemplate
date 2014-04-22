@@ -1,19 +1,19 @@
-#ifndef __PERIPHLIB_SPI2_H__
-#define __PERIPHLIB_SPI2_H__
+#ifndef __PERIPHLIB_SPI4_H__
+#define __PERIPHLIB_SPI4_H__
 
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-class SPI2Class {
+class SPI4Class {
 	// Singleton pattern definition
 private:
-	SPI2Class();
-	SPI2Class(const SPI2Class& rhs);
-	SPI2Class& operator=(const SPI2Class& rhs);
-	virtual ~SPI2Class() {}
+	SPI4Class();
+	SPI4Class(const SPI4Class& rhs);
+	SPI4Class& operator=(const SPI4Class& rhs);
+	virtual ~SPI4Class() {}
 public:
-	static SPI2Class* GetInstance() {
-    	static SPI2Class instance;
+	static SPI4Class* GetInstance() {
+    	static SPI4Class instance;
     	return &instance;
 	}
 
@@ -27,8 +27,8 @@ private:
 public:
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 	void WaitForDataReady();
-	void EXTI14_IRQHandler();
-	void DMA1_Stream3_IRQHandler();
+	void myEXTI5_IRQHandler();
+	void myDMA2_Stream0_IRQHandler();
 };
 
-#endif /* HALSPI2_H_ */
+#endif /* HALSPI4_H_ */

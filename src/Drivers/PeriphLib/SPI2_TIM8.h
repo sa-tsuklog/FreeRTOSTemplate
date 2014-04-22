@@ -1,21 +1,21 @@
-#ifndef __HALSPI3_H__
-#define __HALSPI3_H__
+#ifndef __HALSPI2_H__
+#define __HALSPI2_H__
 
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-extern xSemaphoreHandle SPI3_TIM1_dataReadySem;
+extern xSemaphoreHandle SPI2_TIM8_dataReadySem;
 
-class SPI3Class {
+class SPI2Class {
 	// Singleton pattern definition
 private:
-	SPI3Class();
-	SPI3Class(const SPI3Class& rhs);
-	SPI3Class& operator=(const SPI3Class& rhs);
-	virtual ~SPI3Class() {}
+	SPI2Class();
+	SPI2Class(const SPI2Class& rhs);
+	SPI2Class& operator=(const SPI2Class& rhs);
+	virtual ~SPI2Class() {}
 public:
-	static SPI3Class* GetInstance() {
-    	static SPI3Class instance;
+	static SPI2Class* GetInstance() {
+    	static SPI2Class instance;
     	return &instance;
 	}
 
@@ -33,7 +33,7 @@ public:
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
 	void timerStart();
 	void waitNewData();
-	void TIM1_UP_TIM10_IRQHandler();
+	void TIM8_UP_TIM10_IRQHandler();
 	void setTxBuf(int index,unsigned short data);
 	unsigned short* getRxBuf();
 	unsigned short read16(unsigned char address);
@@ -41,4 +41,4 @@ public:
 	
 };
 
-#endif /* __HALSPI3_H__ */
+#endif /* __HALSPI2_H__ */

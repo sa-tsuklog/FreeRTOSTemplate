@@ -12,7 +12,7 @@
 
 #include "Drivers/PeriphLib/ADC3.h"
 #include "Drivers/PeriphLib/USART2.h"
-#include "Drivers/PeriphLib/SPI2.h"
+#include "Drivers/PeriphLib/SPI4.h"
 #include "Middle/Mpu-9250/MPU9250.h"
 #include "Middle/AD7176-2/Ad7176-2Seeker.h"
 #include "Middle/AD7176-2/Seeker.hpp"
@@ -44,7 +44,7 @@ void prvAd7176Task(void *pvParameters){
 
 //	int i=0;
 	while(1){
-		SPI2Class::GetInstance()->WaitForDataReady();
+		SPI4Class::GetInstance()->WaitForDataReady();
 		//buf[0] = read24(DATA);
 		//sts = read8(STATUS);
 

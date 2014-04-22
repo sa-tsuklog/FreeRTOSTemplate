@@ -13,7 +13,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include "Drivers/PeriphLib/SPI2.h"
+#include "Drivers/PeriphLib/SPI4.h"
 #include "Ad7176-2Seeker.h"
 #include "Ad7176-2RegisterDef.h"
 #include "Seeker.hpp"
