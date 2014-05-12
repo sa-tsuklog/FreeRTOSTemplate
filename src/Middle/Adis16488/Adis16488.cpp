@@ -74,14 +74,14 @@ void ADIS16488::setContinuousRead(){
 
 
 void ADIS16488::prvAdis16488Task(void *pvParameters){
+	vTaskDelay(100);
 	SPI2Class::GetInstance()->init();
 	ADIS16488::GetInstance()->adis16488init();
-	//ADIS16488::GetInstance()->setContinuousRead();
+	ADIS16488::GetInstance()->setContinuousRead();
 	int i=0;
 	while(1){
 		//SPI2Class::GetInstance()->timerStart();
-		//SPI2Class::GetInstance()->waitNewData();
-		ADIS16488::GetInstance()->adis16488init();
+		SPI2Class::GetInstance()->waitNewData();
 		
 		unsigned short* buf = SPI2Class::GetInstance()->getRxBuf();
 		ImuData imuData = ImuData(

@@ -8,6 +8,8 @@
 #ifndef TIM2_H_
 #define TIM2_H_
 
+#include "stdint.h"
+
 class TIM2Class {
 	// Singleton pattern definition
 private:
@@ -25,10 +27,7 @@ public:
 private:
 public:
 	void timerStart();
-	int getUsCycle();
-	int getUsDuty();
+	uint32_t getUsTime();
 };
-
-void prvTIM2TestTask(void* pvParameters);
 
 #endif /* TIM2_H_ */

@@ -11,12 +11,16 @@
 #include "Middle/MyTasks.h"
 #include "Middle/Adis16488/Adis16488.hpp"
 #include "Drivers/PeriphLib/ADC3.h"
+#include "Drivers/PeriphLib/TIM1.h"
 #include "Drivers/PeriphLib/TIM2.h"
 #include "Drivers/PeriphLib/TIM3.h"
 #include "Drivers/PeriphLib/TIM4.h"
 #include "Drivers/PeriphLib/TIM5.h"
-#include "Drivers/PeriphLib/TIM8.h"
+#include "Drivers/PeriphLib/USART1.h"
 #include "Drivers/PeriphLib/USART2.h"
+#include "Drivers/PeriphLib/USART3.h"
+#include "Drivers/PeriphLib/I2C2.h"
+#include "Drivers/PeriphLib/DAC.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -92,13 +96,17 @@ EXTI
 */
 
 void prvTaskA(void *pvParameters){
+	int i=0;
+	
+	TIM2Class::GetInstance()->timerStart();
 	while(1){
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-		vTaskDelay(100);
+		vTaskDelay(1);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
-		vTaskDelay(100);
 		//printf("taskA\n\r");
+		vTaskDelay(100);
 	}
+	
 }
 
 void prvTaskB(void *pvParameters){
@@ -107,7 +115,7 @@ void prvTaskB(void *pvParameters){
 		vTaskDelay(100);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_13));
 		vTaskDelay(100);
-		//printf("taskA\n\r");
+		//printf("taskB\n\r");
 	}
 }
 
@@ -164,18 +172,25 @@ int main(void) {
 	
 	//TIM3Class::GetInstance()->timerStart();
 	//TIM4Class::GetInstance()->timerStart();
-	//TIM8Class::GetInstance()->timerStart();
+	//TIM1Class::GetInstance()->timerStart();
 	
-	xTaskCreate(prvTaskA,"TaskA",512,NULL,1,NULL);
-	xTaskCreate(prvTaskB,"TaskB",512,NULL,1,NULL);
+	xTaskCreate(prvTaskA,"TaskA",128,NULL,1,NULL);
+	xTaskCreate(prvTaskB,"TaskB",128,NULL,1,NULL);
 
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
 	//xTaskCreate(prvTxTask,"u3tx",4096,USART2,1,NULL);
 	//xTaskCreate(prvRxTask,"u3rx",4096,USART2,1,NULL);
-	xTaskCreate(&USART2Class::prvTxTask,"u3tx",512,USART2,1,NULL);
-	xTaskCreate(&USART2Class::prvRxTask,"u3rx",1024,USART2,1,NULL);
+	//xTaskCreate(&USART1Class::prvTxTask,"u1tx",512,USART1,1,NULL);
+	//xTaskCreate(&USART1Class::prvRxTask,"u1rx",1024,USART1,1,NULL);
+	//xTaskCreate(&USART2Class::prvTxTask,"u2tx",512,USART2,1,NULL);
+	//xTaskCreate(&USART2Class::prvRxTask,"u2rx",1024,USART2,1,NULL);
+	xTaskCreate(&USART3Class::prvTxTask,"u3tx",512,USART3,1,NULL);
+	xTaskCreate(&USART3Class::prvRxTask,"u3rx",1024,USART3,1,NULL);
+	xTaskCreate(&USART2Class::prvTxTask,"u2tx",512,USART2,1,NULL);
+	xTaskCreate(&USART2Class::prvRxTask,"u2rx",1024,USART2,1,NULL);
 	//xTaskCreate(&ADC3Class::prvTask,"ADC",1024,NULL,2,NULL);
-	xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,2,NULL);
+	//xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,2,NULL);
+	//xTaskCreate(prvMpu9250TaskEntry,"mpu",2048,NULL,1,NULL);
 //	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
 //	xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
 //	xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);

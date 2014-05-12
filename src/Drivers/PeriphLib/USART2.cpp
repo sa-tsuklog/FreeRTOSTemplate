@@ -1,12 +1,13 @@
+#include "../../GeneralConfig.h"
+#include "Middle/Gps/Gps.h"
 #include "USART2.h"
-#include "Middle/Stdout/SerialCommand.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "stdio.h"
 
 
 USART2Class::USART2Class(){
 	m_queue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
-
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
 
 	GPIO_InitTypeDef pd5def;
@@ -95,19 +96,24 @@ USART2Class::USART2Class(){
 
 void USART2Class::Tx()
 {
-	int numTx;
+	portTickType xLastWakeTime = xTaskGetTickCount();
+	vTaskDelayUntil(&xLastWakeTime,MS_INITIAL_DELAY);
+	while(1){
+		int numTx;
+		if(DMA_GetCmdStatus(DMA1_Stream6)==DISABLE && (numTx = uxQueueMessagesWaiting(m_queue)) != 0){
+			for(int i=0;i<numTx;i++){
+				char c;
+				xQueueReceive(m_queue,&c,0);
+				m_txBuf[i] = c;
+			}
 
-	if(DMA_GetCmdStatus(DMA1_Stream6)==DISABLE && (numTx = uxQueueMessagesWaiting(m_queue)) != 0){
-		for(int i=0;i<numTx;i++){
-			char c;
-			xQueueReceive(m_queue,&c,0);
-			m_txBuf[i] = c;
+			DMA_SetCurrDataCounter(DMA1_Stream6,numTx);
+			USART_ClearFlag(USART2,USART_SR_TC);
+			DMA_ClearFlag(DMA1_Stream6,DMA_FLAG_TCIF6);
+			DMA_Cmd(DMA1_Stream6,ENABLE);
 		}
-
-		DMA_SetCurrDataCounter(DMA1_Stream6,numTx);
-		USART_ClearFlag(USART2,USART_SR_TC);
-		DMA_ClearFlag(DMA1_Stream6,DMA_FLAG_TCIF6);
-		DMA_Cmd(DMA1_Stream6,ENABLE);
+		
+		vTaskDelayUntil(&xLastWakeTime,1);
 	}
 }
 
@@ -117,6 +123,7 @@ void USART2Class::Rx()
 	int lineBufIndex = 0;
 
 	char c;
+	vTaskDelay(MS_INITIAL_DELAY);
 	while(1){
 		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
 			m_rxBuf[rxBufIndex]=0;
@@ -124,7 +131,11 @@ void USART2Class::Rx()
 			}else if(c=='\r'){
 				m_lineBuf[lineBufIndex]=0;
 	
-				HandleSerialCommand(m_lineBuf);
+				//HandleSerialCommand(m_lineBuf);
+				Gps::GetInstance()->decodeNMEA((char*)m_lineBuf);
+				
+				//printf(m_lineBuf);
+				//printf("\n\r");
 				lineBufIndex=0;
 	
 			}else{
@@ -134,25 +145,16 @@ void USART2Class::Rx()
 	
 			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 		}
-		vTaskDelay(100);
+		vTaskDelay(1);
 	}
 }
 
 void USART2Class::prvTxTask(void *pvParameters)
 {
-	portTickType xLastWakeTime = xTaskGetTickCount();
-
-	if((USART_TypeDef*)pvParameters == USART2){
-		while(1){
-			USART2Class::GetInstance()->Tx();
-			vTaskDelayUntil(&xLastWakeTime,1);
-		}
-	}
+	USART2Class::GetInstance()->Tx();
 }
 
 void USART2Class::prvRxTask(void *pvParameters)
 {
-	if((USART_TypeDef*)pvParameters == USART2){
-		USART2Class::GetInstance()->Rx();
-	}
+	USART2Class::GetInstance()->Rx();
 }

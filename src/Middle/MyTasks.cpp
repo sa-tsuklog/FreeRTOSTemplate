@@ -22,13 +22,6 @@
 #include "MyTasks.h"
 
 
-void prvI2C2SendTask(void *pvParameters){
-	MPU9250InitSend();
-	while(1){
-		MPU9250Send();
-		vTaskDelay(50);
-	}
-}
 
 void prvAd7176Task(void *pvParameters){
 	void clearSemaphores();

@@ -158,7 +158,7 @@ void EXTI9_5_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line6)!=RESET){
 		EXTI_ClearITPendingBit(EXTI_Line6);
-		//SPI2Class::GetInstance()->timerStart();
+		SPI2Class::GetInstance()->timerStart();
 	}
 }
 
@@ -178,33 +178,41 @@ void EXTI15_10_IRQHandler()
 	//SPI2Class::GetInstance()->EXTI14_IRQHandler();
 }
 
-void DMA1_Stream3_IRQHandler()
-{
-	//SPI2Class::GetInstance()->DMA1_Stream3_IRQHandler();
-}
-
 void I2C2_EV_IRQHandler()
 {
-	//I2C2Class::GetInstance()->EV_IRQHandler();
+	I2C2Class::getInstance()->myEV_IRQHandler();
 }
 
 void I2C2_ER_IRQHandler()
 {
-	//I2C2Class::GetInstance()->ER_IRQHandler();
+	I2C2Class::getInstance()->myER_IRQHandler();
+}
+
+void DMA1_Stream1_IRQHandler()
+{
 }
 
 void DMA1_Stream2_IRQHandler()
 {
-	//I2C2Class::GetInstance()->DMA1_Stream2_IRQHandler();
+	I2C2Class::getInstance()->myDMA1_Stream2_IRQHandler();
 }
-
+void DMA1_Stream3_IRQHandler()
+{
+	//SPI2Class::GetInstance()->DMA1_Stream3_IRQHandler();
+}
+void DMA1_Stream4_IRQHandler()
+{
+}
 void DMA1_Stream7_IRQHandler()
 {
-	//I2C2Class::GetInstance()->DMA1_Stream7_IRQHandler();
+	I2C2Class::getInstance()->myDMA1_Stream7_IRQHandler();
 }
 void DMA2_Stream6_IRQHandler()
 {
 	printf("test\n\r");
+}
+void DMA2_Stream7_IRQHandler()
+{
 }
 void TIM8_CC3_IRQHandler(){
 	if(TIM_GetITStatus(TIM8,TIM_IT_CC3)!=RESET){

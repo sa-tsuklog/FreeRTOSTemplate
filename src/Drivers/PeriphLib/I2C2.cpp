@@ -12,7 +12,7 @@
 #include "I2C2.h"
 #include "task.h"
 
-I2C2Class::I2C2Class() :
+I2C2Class::I2C2Class():
 m_rw(-1),
 m_address(-1),
 m_state(-1)
@@ -38,7 +38,7 @@ m_state(-1)
 
 	I2C_StructInit(&i2cdef);
 
-	i2cdef.I2C_ClockSpeed = 100000;
+	i2cdef.I2C_ClockSpeed = 400000;
 	i2cdef.I2C_DutyCycle = I2C_DutyCycle_2;
 	i2cdef.I2C_Ack = I2C_Ack_Enable;
 	i2cdef.I2C_Mode = I2C_Mode_I2C;
@@ -129,7 +129,7 @@ m_state(-1)
 }
 
 
-int I2C2Class::Write(char i2cAddress, char regAddress, char* writeData, int writeLength){
+int I2C2Class::write(char i2cAddress, char regAddress, unsigned char* writeData, int writeLength){
 	if(writeLength+1 > I2C2_BUFSIZE){
 		return 0;
 	}
@@ -146,19 +146,21 @@ int I2C2Class::Write(char i2cAddress, char regAddress, char* writeData, int writ
 	DMA_SetCurrDataCounter(DMA1_Stream7,writeLength+1);
 
 	DMA_Cmd(DMA1_Stream7,ENABLE);
+	xSemaphoreTake(m_sem,0);
 	I2C_GenerateSTART(I2C2,ENABLE);
-
+	
 	if(pdTRUE!=xSemaphoreTake(m_sem,portMAX_DELAY)){
 		while(1){}
 	}
+	vTaskDelay(1);
 
 	return 1;
 }
 
-int I2C2Class::Write1(char i2cAddress,char regAddress, char writeData){
-	return Write(i2cAddress,regAddress,&writeData,1);
+int I2C2Class::write1(char i2cAddress,char regAddress, unsigned char writeData){
+	return write(i2cAddress,regAddress,&writeData,1);
 }
-int I2C2Class::Read(char i2cAddress,char regAddress, char* readBuf, int readLength){
+int I2C2Class::read(char i2cAddress,char regAddress, unsigned char* readBuf, int readLength){
 	if(readLength+1 > I2C2_BUFSIZE){
 		return 0;
 	}
@@ -188,11 +190,15 @@ int I2C2Class::Read(char i2cAddress,char regAddress, char* readBuf, int readLeng
 
 	DMA_Cmd(DMA1_Stream7,ENABLE);
 	DMA_Cmd(DMA1_Stream2,ENABLE);
+	//xSemaphoreTake(m_sem,0);
 	I2C_GenerateSTART(I2C2,ENABLE);
-
-	if(pdTRUE!=xSemaphoreTake(m_sem,portMAX_DELAY)){
-		while(1){}
+	
+	if(m_sem != NULL){
+		if(pdTRUE!=xSemaphoreTake(m_sem,portMAX_DELAY)){
+			while(1){}
+		}
 	}
+	vTaskDelay(1);
 
 	for(int i=0;i<readLength;i++){
 		readBuf[i] = m_rxBuf[i];
@@ -202,7 +208,7 @@ int I2C2Class::Read(char i2cAddress,char regAddress, char* readBuf, int readLeng
 
 }
 
-void I2C2Class::EV_IRQ_Write(){
+void I2C2Class::myEV_IRQ_Write(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_SB)!=RESET){
 		I2C_ReadRegister(I2C2,I2C_Register_SR1);
 		I2C_Send7bitAddress(I2C2,m_address,I2C_Direction_Transmitter);
@@ -215,14 +221,16 @@ void I2C2Class::EV_IRQ_Write(){
 		I2C_ReadRegister(I2C2,I2C_Register_DR);
 
 		I2C_GenerateSTOP(I2C2,ENABLE);
-
-		xSemaphoreGiveFromISR(m_sem,(BaseType_t *)pdTRUE);
-		portEND_SWITCHING_ISR(pdTRUE);
-
+		
+		
+		BaseType_t isWoken;
+		xSemaphoreGiveFromISR(m_sem,&isWoken);
+		portEND_SWITCHING_ISR(isWoken);
+		
 	}
 }
 
-void I2C2Class::EV_IRQ_ReadN(){
+void I2C2Class::myEV_IRQ_ReadN(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_SB)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_SB);
 		if(m_state == STATE_TRANSMIT_DEVADDRESS){
@@ -251,7 +259,7 @@ void I2C2Class::EV_IRQ_ReadN(){
 	}
 }
 
-void I2C2Class::EV_IRQ_Read1(){
+void I2C2Class::myEV_IRQ_Read1(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_SB)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_SB);
 		if(m_state == STATE_TRANSMIT_DEVADDRESS){
@@ -280,13 +288,13 @@ void I2C2Class::EV_IRQ_Read1(){
 	}
 }
 
-void I2C2Class::EV_IRQHandler(){
+void I2C2Class::myEV_IRQHandler(){
 	if(m_rw == RW_WRITE){
-		EV_IRQ_Write();
+		myEV_IRQ_Write();
 	}else if(m_rw == RW_READN){
-		EV_IRQ_ReadN();
+		myEV_IRQ_ReadN();
 	}else if(m_rw == RW_READ1){
-		EV_IRQ_Read1();
+		myEV_IRQ_Read1();
 	}
 
 	if(I2C_GetITStatus(I2C2,I2C_IT_ADD10)!=RESET){
@@ -297,7 +305,7 @@ void I2C2Class::EV_IRQHandler(){
 	}
 }
 
-void I2C2Class::ER_IRQHandler(){
+void I2C2Class::myER_IRQHandler(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_BERR)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_BERR);
 
@@ -331,16 +339,18 @@ void I2C2Class::ER_IRQHandler(){
 	}
 }
 
-void I2C2Class::DMA1_Stream2_IRQHandler(){
+void I2C2Class::myDMA1_Stream2_IRQHandler(){
 	if(DMA_GetITStatus(DMA1_Stream2,DMA_IT_TCIF2)!=RESET){
 		DMA_ClearITPendingBit(DMA1_Stream2,DMA_IT_TCIF2);
 		I2C_GenerateSTOP(I2C2,ENABLE);
-		xSemaphoreGiveFromISR(m_sem,(BaseType_t *)pdTRUE);
-		portEND_SWITCHING_ISR(pdTRUE);
+		
+		BaseType_t isWoken;
+		xSemaphoreGiveFromISR(m_sem,&isWoken);
+		portEND_SWITCHING_ISR(isWoken);
 	}
 }
 
-void I2C2Class::DMA1_Stream7_IRQHandler(){
+void I2C2Class::myDMA1_Stream7_IRQHandler(){
 	if(DMA_GetITStatus(DMA1_Stream7,DMA_IT_TCIF7)!=RESET){
 		DMA_ClearITPendingBit(DMA1_Stream7,DMA_IT_TCIF7);
 	}

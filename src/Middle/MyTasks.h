@@ -12,11 +12,6 @@ extern "C"{
 
 void prvADCTask(void *pvParameters);
 
-void prvTxTask(void *pvParameters);
-void prvRxTask(void *pvParameters);
-
-void prvI2C2SendTask(void *pvParameters);
-
 void prvAd7176Task(void *pvParameters);
 void prvSeekerTask(void *pvParameters);
 

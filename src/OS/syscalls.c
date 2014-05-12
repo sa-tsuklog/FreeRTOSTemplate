@@ -78,7 +78,7 @@ int _write_r (struct _reent *r, int file, char * ptr, int len)
 {
 	if(file == 1){
 		for(int i=0;i<len;i++){
-			uputc(USART2,ptr[i]);
+			uputc(USART3,ptr[i]);
 		}
 	}
 	
