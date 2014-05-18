@@ -76,10 +76,11 @@ int _lseek_r (struct _reent *r, int file, int ptr, int dir)
 
 int _write_r (struct _reent *r, int file, char * ptr, int len)
 {
-	if(file == 1){
+	if(file == 1){//stdout
 		for(int i=0;i<len;i++){
 			uputc(USART3,ptr[i]);
 		}
+	}else if(file == 2){//stderr
 	}
 	
 	return len;

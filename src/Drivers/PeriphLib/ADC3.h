@@ -3,6 +3,7 @@
 
 #include "stm32f4xx.h"
 
+//for voltage monitor
 class ADC3Class {
 	// Singleton pattern definition
 private:
@@ -18,10 +19,9 @@ public:
 
 	// Class definition
 private:
-	uint16_t m_value[2];
 public:
-	uint16_t GetData(int pinNum);
-
+	uint16_t getNextData(int pinNum);
+	void startFirstConversion(); 
 	// Task definition
 public:
 	static void prvTask(void *pvParameters);

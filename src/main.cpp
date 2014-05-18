@@ -21,6 +21,7 @@
 #include "Drivers/PeriphLib/USART3.h"
 #include "Drivers/PeriphLib/I2C2.h"
 #include "Drivers/PeriphLib/DAC.h"
+#include "Drivers/PeriphLib/USER_FLASH.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -99,12 +100,63 @@ void prvTaskA(void *pvParameters){
 	int i=0;
 	
 	TIM2Class::GetInstance()->timerStart();
+	
+	vTaskDelay(100);
+	int data;
+	
+	
+//	FLASHClass::GetInstance()->erase();
+	
+	printf("before write\n\r");
+	data = FLASHClass::GetInstance()->read(0);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x1);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x2);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x3);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x4);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x5);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x6);
+	printf("%x\n\r",data);
+	data = FLASHClass::GetInstance()->read(0x7);
+	printf("%x\n\r",data);
+	
+	data = FLASHClass::GetInstance()->read(0);
+	printf("%x\n\r",data);
+	FLASHClass::GetInstance()->write(0,0x5000AAAA);
+	FLASHClass::GetInstance()->write(1,0x5111AAAA);
+	FLASHClass::GetInstance()->write(2,0x5222AAAA);
+	FLASHClass::GetInstance()->write(3,0x5333AAAA);
+	FLASHClass::GetInstance()->flush();
+	
+//	printf("after write\n\r");
+//	data = FLASHClass::GetInstance()->read(0);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x1);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x2);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x3);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x4);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x5);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x6);
+//	printf("%x\n\r",data);
+//	data = FLASHClass::GetInstance()->read(0x7);
+//	printf("%x\n\r",data);
+	
 	while(1){
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 		vTaskDelay(1);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
-		//printf("taskA\n\r");
-		vTaskDelay(100);
+		printf("taskA\n\r");
+		vTaskDelay(1000);
 	}
 	
 }
@@ -174,7 +226,7 @@ int main(void) {
 	//TIM4Class::GetInstance()->timerStart();
 	//TIM1Class::GetInstance()->timerStart();
 	
-	xTaskCreate(prvTaskA,"TaskA",128,NULL,1,NULL);
+	//xTaskCreate(prvTaskA,"TaskA",128,NULL,1,NULL);
 	xTaskCreate(prvTaskB,"TaskB",128,NULL,1,NULL);
 
 	GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_13);
@@ -188,7 +240,7 @@ int main(void) {
 	xTaskCreate(&USART3Class::prvRxTask,"u3rx",1024,USART3,1,NULL);
 	xTaskCreate(&USART2Class::prvTxTask,"u2tx",512,USART2,1,NULL);
 	xTaskCreate(&USART2Class::prvRxTask,"u2rx",1024,USART2,1,NULL);
-	//xTaskCreate(&ADC3Class::prvTask,"ADC",1024,NULL,2,NULL);
+	xTaskCreate(&ADC3Class::prvTask,"ADC",1024,NULL,1,NULL);
 	//xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,2,NULL);
 	//xTaskCreate(prvMpu9250TaskEntry,"mpu",2048,NULL,1,NULL);
 //	xTaskCreate(prvI2C2SendTask,"i2c2",512,NULL,1,NULL);
