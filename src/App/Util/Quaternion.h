@@ -27,6 +27,7 @@ public:
     Quaternion* con(const Quaternion* q);
     Quaternion* con();
     float normalize();
+    float normalize(const Quaternion* q);
     float norm() const;
     Quaternion* rotate(const Quaternion* vect,const Quaternion* roter);
     Quaternion* rotate(const Quaternion* roter);

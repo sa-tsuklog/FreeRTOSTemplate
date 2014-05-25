@@ -9,6 +9,8 @@
 #include "math.h"
 #include "string.h"
 #include "stdio.h"
+#include "../../App/Gains/GpsData.h"
+#include "../../App/Gains/Gains.h"
 
 //TODO: 速度、相対位置のチェックまだ。
 //TODO: getterをmutex使って安全にする。
@@ -33,10 +35,19 @@ Gps::Gps(){
 // public methods
 /////////////////////////////////////
 void Gps::decodeNMEA(char* line){
-	if(strncmp(line,"$GPRMC,",7)==0){
-		decodeGPRMC(line);
-	}else if(strncmp(line,"$GPGGA,",7)==0){
+	if(strncmp(line,"$GPGGA,",7)==0){
 		decodeGPGGA(line);
+		
+	}else if(strncmp(line,"$GPRMC,",7)==0){
+		decodeGPRMC(line);
+		if(!isRefValid){
+			setRefPosition();
+		}
+		if(valid){
+			GpsData gpsData = GpsData(getM_RelativePosX(),getM_RelativePosY(),getRelativeHeight(),
+					getMpsSpeedX(),getMpsSpeedY(),0);
+			Gains::GetInstance()->appendGpsData(&gpsData);
+		}
 	}else{
 		//do nothing.
 	}
@@ -75,6 +86,7 @@ float Gps::getMpsSpeedY(){
 void Gps::setRefPosition(){
 	degX1MLattitudeRef = degX1MLatitude;
 	degX1MLongitudeRef = degX1MLongitude;
+	heightRef = height;
 	isRefValid = 1;
 }
 
@@ -97,7 +109,9 @@ float Gps::getM_RelativePosY(){ //west/east
 
 	return degRelative * M_EARTH_RADIUS * cosf(degX1MLattitudeRef*0.000001/180*M_PI) * M_PI /180.0;
 }
-
+float Gps::getRelativeHeight(){
+	return height-heightRef;
+}
 
 /////////////////////////////////////
 // private methods
@@ -223,10 +237,6 @@ void Gps::decodeGPRMC(char* line){
 	index += 2; //"E,". east longitude only.
 	index += decodeSpeed(line+index);
 	index += decodeCourse(line+index);
-	
-	if(!isRefValid){
-		setRefPosition();
-	}
 }
 
 void Gps::decodeGPGGA(char* line){
@@ -245,7 +255,7 @@ void Gps::decodeGPGGA(char* line){
 		return;
 	}
 	
-	for(int i=0;i<5;i++){
+	for(int i=0;i<3;i++){
 		while(line[index] != ','){
 			if(line[index] == 0){
 				return;

@@ -8,6 +8,8 @@
 #ifndef IMUDATA_H_
 #define IMUDATA_H_
 
+#include "../Util/Quaternion.h"
+
 class ImuData{
 private:
 public:
@@ -16,22 +18,16 @@ public:
 			float uTCmpsX,float uTCmpsY,float uTCmpsZ,
 			float prsPressure,
 			int isCmpsValid,int isPressureValid){
-		this->rpsRate[0]  = rpsRateX;
-		this->rpsRate[1]  = rpsRateY;
-		this->rpsRate[2]  = rpsRateZ;
-		this->mpspsAcl[0] = mpspsAclX;
-		this->mpspsAcl[1] = mpspsAclY;
-		this->mpspsAcl[2] = mpspsAclZ;
-		this->uTCmps[0]   = uTCmpsX;
-		this->uTCmps[1]   = uTCmpsY;
-		this->uTCmps[2]   = uTCmpsZ;
+		this->rpsRate = Quaternion(0,rpsRateX,rpsRateY,rpsRateZ);
+		this->mpspsAcl = Quaternion(0,mpspsAclX,mpspsAclY,mpspsAclZ);
+		this->uTCmps   = Quaternion(0,uTCmpsX,uTCmpsY,uTCmpsZ);
 		this->prsPressure = prsPressure;
 		this->isCmpsValid = isCmpsValid;
 		this->isPressureValid= isPressureValid;
 	}
-	float mpspsAcl[3];
-	float rpsRate[3];
-	float uTCmps[3];
+	Quaternion mpspsAcl;
+	Quaternion rpsRate;
+	Quaternion uTCmps;
 	float prsPressure;
 	int isCmpsValid;
 	int isPressureValid;

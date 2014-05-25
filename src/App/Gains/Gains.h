@@ -8,22 +8,44 @@
 #ifndef GAINS_H_
 #define GAINS_H_
 
+#include "../Util/Quaternion.h"
+#include "ImuData.h"
+#include "GpsData.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+
 class Gains{
+	// Singleton pattern definition
 private:
-	static int m_lattitudeRef;
-	static int m_longitudeRef;
-	
-	
+	Gains();
+	Gains(const Gains& rhs);
+	Gains& operator=(const Gains& rhs);
+	virtual ~Gains() {}
 public:
-	static void prvGainsTask(void *pvParameters);
+	static Gains* GetInstance() {
+    	static Gains instance;
+    	return &instance;
+	}
 	
-	static float getMpspsAcl(int axis);
-	static float getMpsSpeed(int axis);
-	static float getMPos(int axis);
-	static float getRpsRate(int axis);
-	static Quaternion getAttitude();
-	static int getLattitudeRef();
-	static int getLongitudeRef();
+	// Class definition
+	xQueueHandle imuQueue;
+	xQueueHandle gpsQueue;
+	
+private:
+	void gainsTask(void *pvParameters);
+public:
+	void appendInsData(ImuData *imuData);
+	void appendGpsData(GpsData *gpsData);
+	
+	float getMpspsAcl(int axis);
+	float getMpsSpeed(int axis);
+	float getMPos(int axis);
+	float getRpsRate(int axis);
+	Quaternion getAttitude();
+	int getLattitudeRef();
+	int getLongitudeRef();
+	
+	static void prvGainsTask(void *pvParameters);
 };
 
 

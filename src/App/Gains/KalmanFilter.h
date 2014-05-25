@@ -29,7 +29,7 @@ public:
 
 
 private:
-    static const float SEC_TIMESTEP = 1.0 / 100;
+    static const float SEC_TIMESTEP = 1.0f/102.5f;
     static const float EARTH_RADIUS = 6378137.0f;
     const Quaternion* EARTH_RATE;
     const Quaternion* GRAVITY;
@@ -56,8 +56,6 @@ private:
     Quaternion* positionDelta;
     Quaternion* velocityDelta;
     Quaternion* w_ne_n;
-    Quaternion* w_ei_n;
-    Quaternion* w_ei_n_Att;
     
     Matrix* attitudeDcm;
     //update
@@ -68,6 +66,7 @@ private:
     Quaternion* cmpsProducts;
     Matrix* diff;
     Matrix* estimatedErrorDx;
+    Quaternion* normalizeCmps;
     Matrix* tmpErrorP;
     Matrix* phiP;
     Matrix* errorP_bu1_00;
@@ -95,7 +94,6 @@ private:
     void updateX();
     void updateP();
 };
-
 
 
 #endif /* KALMANFILTER_H_ */

@@ -131,8 +131,6 @@ void USART3Class::Rx()
 
 	char c;
 	
-	
-	
 	vTaskDelay(MS_INITIAL_DELAY);
 	
 	while(1){

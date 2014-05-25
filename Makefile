@@ -2,7 +2,7 @@
 OSPATH = src/OS
 DRVPATH = src/Drivers src/Drivers/PeriphLib src/Drivers/FreeRTOS_DemoFile
 MIDDLEPATH = src/Middle src/Middle/Stdout src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2 src/Middle/Gps
-APPPATH = src/App src/Util src/Gains
+APPPATH = src/App src/App/Util src/App/Gains
 ###
 
 SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH) $(APPPATH)
@@ -40,7 +40,7 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./src/include \
 					-I ./src
 
-BOARD_OPTS = -DHSE_VALUE=8000000 -DSTM32F4XX -DSTM32F40_41xxx
+BOARD_OPTS = -DHSE_VALUE=12000000 -DSTM32F4XX -DSTM32F40_41xxx -DSTM32F429
 FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
 COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions \
 					-Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16

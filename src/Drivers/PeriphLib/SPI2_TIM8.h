@@ -39,6 +39,9 @@ public:
 	unsigned short read16(unsigned char address);
 	void write16(unsigned char address,unsigned short data);
 	
+	static void myEXTI6_IRQHandler();
+	static void myTIM8_IRQHandler();
+	static void myTIM8_CC3_IRQHandler();
 };
 
 #endif /* __HALSPI2_H__ */

@@ -41,7 +41,7 @@ ADC3Class::ADC3Class(){
 	ADC_Cmd(ADC3, ENABLE);
 }
 
-uint16_t ADC3Class::getNextData(int pinNum)
+uint16_t ADC3Class::getNextData()
 {
 	uint16_t ad =ADC_GetConversionValue(ADC3);
 	ADC_ClearFlag(ADC3,ADC_FLAG_AWD|ADC_FLAG_EOC|ADC_FLAG_OVR);
@@ -57,14 +57,12 @@ void ADC3Class::prvTask(void *pvParameters){
 
 	ADC3Class* adc3 = ADC3Class::GetInstance();
 	adc3->startFirstConversion();
-	volatile uint16_t ad;
+	float ad;
 	vTaskDelay(MS_INITIAL_DELAY);
 	while (1)
 	{		
-		ad = adc3->getNextData(0) * 3300 / 0xFFF;
-		printf("%d\n\r", ad);
+		ad = adc3->getNextData()*VOLT_PER_LSB;
 		
-		
-		vTaskDelay(100);
+		vTaskDelay(500);
 	}
 }

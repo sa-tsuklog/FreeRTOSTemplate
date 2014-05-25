@@ -17,8 +17,8 @@
 //float<->double切り替えに置換が必要な関数:sin,cos,atan2
 
 KalmanFilter::KalmanFilter(Quaternion* velocity, Quaternion* position, Quaternion* attitude) {
-    this->EARTH_RATE = new Quaternion(0,0,0,M_PI/24/60/60);
-    //this->EARTH_RATE = new Quaternion(0,0,0,0);	//シミュレーション用
+    //this->EARTH_RATE = new Quaternion(0,0,0,M_PI/24/60/60);
+    //this->EARTH_RATE = new Quaternion(0,0,0,0);
     this->GRAVITY = new Quaternion(0,0,0,-9.8);
     this->CMPS_BASE = new Quaternion(0.0f,0.6624362551216327f,0.08216263629415599f,0.7445988914157886f);
     
@@ -45,11 +45,8 @@ KalmanFilter::KalmanFilter(Quaternion* velocity, Quaternion* position, Quaternio
     velocityDelta = new Quaternion();
     
     w_ne_n = new Quaternion();
-    w_ei_n = new Quaternion();
     positionCon = new Quaternion();
     attitudeCon = new Quaternion();
-    
-    w_ei_n_Att = new Quaternion();
     
     attitudeDcm = new Matrix(3,3,0);
     
@@ -65,6 +62,7 @@ KalmanFilter::KalmanFilter(Quaternion* velocity, Quaternion* position, Quaternio
     cmpsProducts = new Quaternion(0,0,0,0);
     diff = new Matrix(9,1,0);
     estimatedErrorDx = new Matrix(9,1,0);
+    normalizeCmps = new Quaternion();
     tmpErrorP = new Matrix(9,9,0);
     phiP = new Matrix(9,9,0);
     
@@ -102,8 +100,6 @@ void KalmanFilter::predictMisc(){
     positionCon->con(position);
     attitudeCon->con(attitude);
     
-    (w_ei_n->mul(positionCon,EARTH_RATE))->mul(position);
-    
     attitudeDcm->quatToDcm(attitude);
 }
 
@@ -115,8 +111,7 @@ void KalmanFilter::predictPositionDelta(){
     (positionDelta->mul(velocity,SEC_TIMESTEP));
 }
 void KalmanFilter::predictAttitudeDelta(Quaternion* rpsGyro){
-    w_ei_n_Att->mul(w_ei_n,attitude);
-    ((attitudeDelta->mul(attitude,rpsGyro))->sub(w_ei_n_Att))->mul(0.5*SEC_TIMESTEP);
+    (attitudeDelta->mul(attitude,rpsGyro))->mul(0.5*SEC_TIMESTEP);
 }
 void KalmanFilter::predictP(Quaternion* mpspsAccel){
     predictPhi(mpspsAccel);
@@ -232,7 +227,7 @@ void KalmanFilter::updateKalmanGain(){
 }
 void KalmanFilter::updateEstimatedErrorDx(Quaternion* gpsVel, Quaternion* gpsPos, Quaternion* uTCmps){
     bCmps->mul(attitudeCon,CMPS_BASE)->mul(attitude);
-    uTCmps->normalize();
+    normalizeCmps->normalize(uTCmps);
     cmpsProducts->mul(bCmps,uTCmps);
     
     diff->nums[0][0] = gpsVel->x - velocity->x;
@@ -281,21 +276,21 @@ void KalmanFilter::initializeP(){
 //    this->errorP->nums[6][6] = 2*M_PI/32;//attitude x error
 //    this->errorP->nums[7][7] = 2*M_PI/32;//attitude y error
 //    this->errorP->nums[8][8] = 2*M_PI/32;//attitude z error
-    this->errorP->nums[0][0] = 0;//velocity x error
-    this->errorP->nums[1][1] = 0;//velocity y error
-    this->errorP->nums[2][2] = 0;//velocity z error
-    this->errorP->nums[3][3] = 0;//position x error
-    this->errorP->nums[4][4] = 0;//position y error
-    this->errorP->nums[5][5] = 0;//position z error
-    this->errorP->nums[6][6] = 0;//attitude x error
-    this->errorP->nums[7][7] = 0;//attitude y error
-    this->errorP->nums[8][8] = 0;//attitude z error
+    this->errorP->nums[0][0] = 3;//velocity x error
+    this->errorP->nums[1][1] = 3;//velocity y error
+    this->errorP->nums[2][2] = 3;//velocity z error
+    this->errorP->nums[3][3] = 10;//position x error
+    this->errorP->nums[4][4] = 10;//position y error
+    this->errorP->nums[5][5] = 10;//position z error
+    this->errorP->nums[6][6] = 0.2;//attitude x error
+    this->errorP->nums[7][7] = 0.2;//attitude y error
+    this->errorP->nums[8][8] = 0.2;//attitude z error
 }
 void KalmanFilter::initializeQ(){
     this->ctrlErrorCovQ = new Matrix(6,6,0);
-    this->ctrlErrorCovQ->nums[0][0] = powf(0.1,2);      //accel x error
-    this->ctrlErrorCovQ->nums[1][1] = powf(0.1,2);      //accel y error
-    this->ctrlErrorCovQ->nums[2][2] = powf(0.1,2);      //accel z error
+    this->ctrlErrorCovQ->nums[0][0] = powf(0.01,2);      //accel x error
+    this->ctrlErrorCovQ->nums[1][1] = powf(0.01,2);      //accel y error
+    this->ctrlErrorCovQ->nums[2][2] = powf(0.01,2);      //accel z error
     this->ctrlErrorCovQ->nums[3][3] = powf(0.001,2);    //gyro x error
     this->ctrlErrorCovQ->nums[4][4] = powf(0.001,2);    //gyro y error
     this->ctrlErrorCovQ->nums[5][5] = powf(0.001,2);    //gyro z error
@@ -303,9 +298,9 @@ void KalmanFilter::initializeQ(){
 void KalmanFilter::initializeR(){
     this->gpsErrorCovR = new Matrix(9,9,0);
     
-    gpsErrorCovR->nums[0][0] = powf(1,2);       //velocity x error
-    gpsErrorCovR->nums[1][1] = powf(1,2);       //velocity y error
-    gpsErrorCovR->nums[2][2] = powf(1,2);       //velocity z error
+    gpsErrorCovR->nums[0][0] = powf(0.2,2);       //velocity x error
+    gpsErrorCovR->nums[1][1] = powf(0.2,2);       //velocity y error
+    gpsErrorCovR->nums[2][2] = powf(10,2);      //velocity z error
     gpsErrorCovR->nums[3][3] = powf(10,2);      //position x error
     gpsErrorCovR->nums[4][4] = powf(10,2);      //position y error
     gpsErrorCovR->nums[5][5] = powf(10,2);      //position z error

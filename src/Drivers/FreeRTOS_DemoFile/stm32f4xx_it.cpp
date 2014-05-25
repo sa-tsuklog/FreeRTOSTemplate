@@ -157,8 +157,7 @@ void SysTick_Handler(void)
 void EXTI9_5_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line6)!=RESET){
-		EXTI_ClearITPendingBit(EXTI_Line6);
-		SPI2Class::GetInstance()->timerStart();
+		SPI2Class::myEXTI6_IRQHandler();
 	}
 }
 
@@ -215,26 +214,18 @@ void DMA2_Stream7_IRQHandler()
 {
 }
 void TIM8_CC3_IRQHandler(){
-	if(TIM_GetITStatus(TIM8,TIM_IT_CC3)!=RESET){
-		TIM_ClearITPendingBit(TIM8,TIM_IT_CC3);
-	}
+	SPI2Class::myTIM8_CC3_IRQHandler();
 }
 
 
 void TIM8_UP_TIM13_IRQHandler(){
-	portBASE_TYPE xSwitchRequired;
 	if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET){
-		TIM_ClearITPendingBit(TIM8,TIM_IT_Update);
-		xSemaphoreGiveFromISR(SPI2_TIM8_dataReadySem,&xSwitchRequired);
+		SPI2Class::myTIM8_IRQHandler();
 	}
-	portEND_SWITCHING_ISR(xSwitchRequired );
+	
 }
 
 void TIM2_IRQHandler(){
-	if(TIM_GetITStatus(TIM2,TIM_IT_CC1)!=RESET){
-		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
-	}
-	
 }
 
 void TIM5_IRQHandler(){

@@ -133,6 +133,17 @@ float Quaternion::normalize() {
     return norm;
 }
 
+
+float Quaternion::normalize(const Quaternion* q) {
+    float norm = q->norm();
+    this->w = q->w/norm;
+    this->x = q->x/norm;
+    this->y = q->y/norm;
+    this->z = q->z/norm;
+
+    return norm;
+}
+
 Quaternion* Quaternion::rotate(const Quaternion* vect,const Quaternion* roter){
     float norm;
     Quaternion tmp1 = *roter;

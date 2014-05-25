@@ -15,6 +15,8 @@ SPI2Class::SPI2Class(){
 
 void SPI2Class::init(){
 	SPI2_TIM8_dataReadySem= xSemaphoreCreateBinary();
+	xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
+	xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
 	
 	//////////////////////
 	//GPIO Setting
@@ -70,6 +72,18 @@ void SPI2Class::init(){
 	pc7def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC,&pc7def);
 	GPIO_PinAFConfig(GPIOC,GPIO_PinSource7,GPIO_AF_TIM8);
+	
+	//RST port setting
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
+	GPIO_InitTypeDef pd10def;
+	GPIO_StructInit(&pd10def);
+	pd10def.GPIO_Pin = GPIO_Pin_10;
+	pd10def.GPIO_Mode = GPIO_Mode_OUT;
+	pd10def.GPIO_OType = GPIO_OType_PP;
+	pd10def.GPIO_Speed = GPIO_Speed_25MHz;
+	pd10def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOD,&pd10def);
+	GPIO_ResetBits(GPIOD,GPIO_Pin_10);
 	
 	///////////////////////////
 	//SPI Setting
@@ -211,43 +225,14 @@ void SPI2Class::init(){
 	exti6itdef.NVIC_IRQChannel = EXTI9_5_IRQn;
 	exti6itdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
 	exti6itdef.NVIC_IRQChannelSubPriority = 0xFF;
-	exti6itdef.NVIC_IRQChannelCmd = ENABLE;
+	exti6itdef.NVIC_IRQChannelCmd = DISABLE;
 	NVIC_Init(&exti6itdef);
 	NVIC_SetPriority(EXTI9_5_IRQn,0xFF);
 	
-	///////////////
-	//EXTI 0
-	////////////////
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
-	
-	GPIO_InitTypeDef pa0def;
-	GPIO_StructInit(&pa0def);
-	pa0def.GPIO_Pin = GPIO_Pin_0;
-	pa0def.GPIO_Mode = GPIO_Mode_IN;
-	pa0def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pa0def.GPIO_Speed = GPIO_Speed_100MHz;
-	//GPIO_Init(GPIOC,&pa0def);
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource0);
-
-	EXTI_InitTypeDef exti0def;
-	EXTI_StructInit(&exti0def);
-	exti0def.EXTI_Line = EXTI_Line0;
-	exti0def.EXTI_Mode = EXTI_Mode_Interrupt;
-	exti0def.EXTI_Trigger = EXTI_Trigger_Falling;
-	exti0def.EXTI_LineCmd = ENABLE;
-
-	EXTI_Init(&exti0def);
-	
-	NVIC_InitTypeDef nvicdef;
-	nvicdef.NVIC_IRQChannel = EXTI0_IRQn;
-	nvicdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
-	nvicdef.NVIC_IRQChannelSubPriority = 0xFF;
-	nvicdef.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&nvicdef);
-	
-	NVIC_SetPriority(EXTI0_IRQn,0xFF);
+	vTaskDelay(100);
+	GPIO_SetBits(GPIOD,GPIO_Pin_10);
+	vTaskDelay(500);
 }
-
 
 void SPI2Class::setSingleTransactionMode(){
 	TIM_Cmd(TIM8,DISABLE);
@@ -276,8 +261,8 @@ void SPI2Class::setSingleTransactionMode(){
 	dma1_3.DMA_Priority = DMA_Priority_Medium;
 
 	dma1_3.DMA_Channel = DMA_Channel_0;
-	DMA_Init(DMA1_Stream0,&dma1_3);
-	DMA_Cmd(DMA1_Stream0,ENABLE);
+	DMA_Init(DMA1_Stream3,&dma1_3);
+	DMA_Cmd(DMA1_Stream3,ENABLE);
 	
 	DMA_Cmd(DMA2_Stream2,DISABLE);
 	
@@ -346,21 +331,22 @@ void SPI2Class::setContinuousMode(){
 	dma2_2.DMA_Channel = DMA_Channel_0;
 	DMA_Init(DMA2_Stream2,&dma2_2);
 	DMA_Cmd(DMA2_Stream2,ENABLE);
+	
+	NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 
 void SPI2Class::timerStart(){
-	xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
-	xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
+	//xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
+	portBASE_TYPE xSwitchRequired;
+	xSemaphoreTakeFromISR(SPI2_TIM8_dataReadySem,&xSwitchRequired);
 	TIM_Cmd(TIM8,ENABLE);
 }
 
 void SPI2Class::waitNewData(){
-	GPIO_SetBits(GPIOC,GPIO_Pin_1);
 	//xSemaphoreTake(SPI2_TIM8_dataReadySem,portMAX_DELAY);
-	xSemaphoreTake(SPI2_TIM8_dataReadySem,1000);
-	GPIO_ResetBits(GPIOC,GPIO_Pin_1);
-	
+	xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
+	xSemaphoreTake(SPI2_TIM8_dataReadySem,portMAX_DELAY);
 }
 void SPI2Class::setTxBuf(int index,unsigned short data){
 	if(index < SPI_BUFFERSIZE){
@@ -375,6 +361,7 @@ void SPI2Class::write16(unsigned char address,unsigned short data){
 	m_txBuf[0] = 0x8000 | address<<8 | (0xFF & (data));
 	m_txBuf[1] = 0x8100 | address<<8 | (0xFF & (data>>8));
 	setSingleTransactionMode();
+	
 	timerStart();
 	waitNewData();
 }
@@ -382,13 +369,29 @@ unsigned short SPI2Class::read16(unsigned char address){
 	m_txBuf[0] = address<<8;
 	m_txBuf[1] = 0x0;
 	setSingleTransactionMode();
+	
 	timerStart();
 	waitNewData();
 	
-	return SPI2->DR;
+	return m_rxBuf[1];
 }
 
-void SPI2Class::TIM8_UP_TIM10_IRQHandler(){
-	portBASE_TYPE pxHigherPriorityTaskWoken = pdTRUE;
-	xSemaphoreGiveFromISR(SPI2_TIM8_dataReadySem,&pxHigherPriorityTaskWoken);
+void SPI2Class::myEXTI6_IRQHandler(void)
+{
+	EXTI_ClearITPendingBit(EXTI_Line6);
+	SPI2Class::GetInstance()->timerStart();
+}
+
+void SPI2Class::myTIM8_CC3_IRQHandler(){
+	if(TIM_GetITStatus(TIM8,TIM_IT_CC3)!=RESET){
+		TIM_ClearITPendingBit(TIM8,TIM_IT_CC3);
+	}
+}
+
+void SPI2Class::myTIM8_IRQHandler(){
+	portBASE_TYPE xSwitchRequired;
+	
+	TIM_ClearITPendingBit(TIM8,TIM_IT_Update);
+	xSemaphoreGiveFromISR(SPI2_TIM8_dataReadySem,&xSwitchRequired);
+	portEND_SWITCHING_ISR(xSwitchRequired );
 }

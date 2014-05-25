@@ -28,6 +28,7 @@ private:
 	int isRefValid;
 	int degX1MLattitudeRef;
 	int degX1MLongitudeRef;
+	float heightRef;
 	
 	int hour,min;
 	float sec;
@@ -37,6 +38,7 @@ private:
 	float degCourse;
 	int valid;
 	float height;
+	float previousHeight;
 	
 	int decodeTime(char* message);
 	int decodeIsValid(char* message);
@@ -61,6 +63,7 @@ public:
 	float getDegCourse();
 	float getMpsSpeedX();
 	float getMpsSpeedY();
+	float getRelativeHeight();
 	void setRefPosition();
 	void resetRefPosition();
 	float getM_RelativePosX();

@@ -33,20 +33,29 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = 0x20020000;    /* end of 128K RAM on AHB bus*/
-
+_estack = 0x20030000;    /* end of 64K RAM on AHB bus*/
+_vStackTop = 0x20040000;
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0;      /* required amount of heap  */
+_Min_Heap_Size = 0x20000; /* required amount of heap 128kB */
 _Min_Stack_Size = 0x400; /* required amount of stack */
 
-/* Specify the memory areas */
-MEMORY
+/* Specify the memory areas for STM407*/
+/*MEMORY
 {
   FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 896K
-  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 128K
+  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 192K
+  CCMRAM (xrw)    : ORIGIN = 0x10000000, LENGTH = 64K
+  MEMORY_B1 (rx)  : ORIGIN = 0x60000000, LENGTH = 0K
+}*/
+/* Specify the memory areas for STM429*/
+MEMORY
+{
+  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 1968K
+  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 256K
   CCMRAM (xrw)    : ORIGIN = 0x10000000, LENGTH = 64K
   MEMORY_B1 (rx)  : ORIGIN = 0x60000000, LENGTH = 0K
 }
+
 
 /* Define output sections */
 SECTIONS

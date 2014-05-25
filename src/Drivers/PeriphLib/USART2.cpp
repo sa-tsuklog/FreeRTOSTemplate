@@ -134,10 +134,8 @@ void USART2Class::Rx()
 				//HandleSerialCommand(m_lineBuf);
 				Gps::GetInstance()->decodeNMEA((char*)m_lineBuf);
 				
-				//printf(m_lineBuf);
-				//printf("\n\r");
 				lineBufIndex=0;
-	
+				
 			}else{
 				m_lineBuf[lineBufIndex]=c;
 				lineBufIndex++;

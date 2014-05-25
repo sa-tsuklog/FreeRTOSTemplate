@@ -19,8 +19,9 @@ public:
 
 	// Class definition
 private:
+	static const float VOLT_PER_LSB = 3.3*11/0xFFF; 
 public:
-	uint16_t getNextData(int pinNum);
+	uint16_t getNextData();
 	void startFirstConversion(); 
 	// Task definition
 public:
