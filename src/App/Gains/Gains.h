@@ -13,6 +13,7 @@
 #include "GpsData.h"
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "KalmanFilter.h"
 
 class Gains{
 	// Singleton pattern definition
@@ -46,6 +47,7 @@ public:
 	int getLongitudeRef();
 	
 	static void prvGainsTask(void *pvParameters);
+	void printNMEA(KalmanFilter* kf,GpsData* gpsData);
 };
 
 

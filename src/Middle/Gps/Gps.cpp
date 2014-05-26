@@ -65,6 +65,9 @@ int Gps::getMin(){
 float Gps::getSec(){
 	return sec;
 }
+int Gps::getDate(){
+	return date;
+}
 int Gps::getDegX1MLatitude(){
 	return degX1MLatitude;
 }
@@ -223,6 +226,15 @@ int Gps::decodeCourse(char* message){
 
 	return index;
 }
+int Gps::decodeDate(char* message){
+	int tmpDate=0;
+	
+	for(int i=0;i<6;i++){
+		tmpDate = tmpDate*10 + (message[i]-'0');
+	}
+	date = tmpDate;
+	return 6;
+}
 
 void Gps::decodeGPRMC(char* line){
 	int index=7;
@@ -237,6 +249,7 @@ void Gps::decodeGPRMC(char* line){
 	index += 2; //"E,". east longitude only.
 	index += decodeSpeed(line+index);
 	index += decodeCourse(line+index);
+	index += decodeDate(line+index);
 }
 
 void Gps::decodeGPGGA(char* line){
@@ -279,4 +292,32 @@ void Gps::decodeGPGGA(char* line){
 	}
 	this->height = num;
 	
+}
+
+int Gps::mPosXToDegX1M_Latitude(float mPosX){
+	float degX1M_Relative = mPosX/M_EARTH_RADIUS*180/M_PI*1000000.0f;
+	return (int)degX1M_Relative+degX1MLattitudeRef;
+}
+
+int Gps::mPosYToDegX1M_Longitude(float mPosY){
+	float degX1M_Relative = mPosY/M_EARTH_RADIUS*180/M_PI*1000000.0f/cosf(degX1MLattitudeRef*0.000001/180*M_PI);
+	return (int)degX1M_Relative+degX1MLongitudeRef;
+}
+
+int Gps::degX1MToDeg(int degX1M){
+	return degX1M/1000000;
+}
+float Gps::degX1MToMin(int degX1M){
+	return (degX1M%1000000)*0.000060;
+}
+float Gps::mpsToKnot(float mpsSpeed){
+	return mpsSpeed / 0.514444444;
+}
+float Gps::speedToDegDirection(float speedX,float speedY){
+	float degDirection = atan2(-speedY,speedX)*180/M_PI;
+	if(degDirection<0){
+		degDirection += 360;
+	}
+	
+	return degDirection;
 }

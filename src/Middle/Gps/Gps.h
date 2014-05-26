@@ -39,6 +39,7 @@ private:
 	int valid;
 	float height;
 	float previousHeight;
+	int date;
 	
 	int decodeTime(char* message);
 	int decodeIsValid(char* message);
@@ -46,6 +47,7 @@ private:
 	float knotToMps(float knot);
 	int decodeSpeed(char* message);
 	int decodeCourse(char* message);
+	int decodeDate(char* message);
 	void decodeGPRMC(char* line);
 	
 	void decodeGPGGA(char* line);
@@ -55,10 +57,9 @@ public:
 	int getHour();
 	int getMin();
 	float getSec();
+	int getDate();
 	int getDegX1MLatitude();
-	int getDegLattitudeFraction();
 	int getDegX1MLongitude();
-	int getDegLongitudeFraction();
 	float getMpsSpeed();
 	float getDegCourse();
 	float getMpsSpeedX();
@@ -68,6 +69,13 @@ public:
 	void resetRefPosition();
 	float getM_RelativePosX();
 	float getM_RelativePosY();
+	
+	int mPosXToDegX1M_Latitude(float mPosX);
+	int mPosYToDegX1M_Longitude(float mPosY);
+	static int degX1MToDeg(int degX1M);
+	static float degX1MToMin(int degX1M);
+	static float mpsToKnot(float mpsSpeed);
+	static float speedToDegDirection(float speedX,float speedY);
 };
 
 

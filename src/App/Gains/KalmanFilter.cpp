@@ -263,7 +263,6 @@ void KalmanFilter::updateP(){
     }
     tmpErrorP->copy(errorP);
     errorP->mul(kalmanGainK,tmpErrorP);
-    
 }
 void KalmanFilter::initializeP(){
     this->errorP = new Matrix(9,9);
@@ -276,21 +275,21 @@ void KalmanFilter::initializeP(){
 //    this->errorP->nums[6][6] = 2*M_PI/32;//attitude x error
 //    this->errorP->nums[7][7] = 2*M_PI/32;//attitude y error
 //    this->errorP->nums[8][8] = 2*M_PI/32;//attitude z error
-    this->errorP->nums[0][0] = 3;//velocity x error
-    this->errorP->nums[1][1] = 3;//velocity y error
-    this->errorP->nums[2][2] = 3;//velocity z error
-    this->errorP->nums[3][3] = 10;//position x error
-    this->errorP->nums[4][4] = 10;//position y error
-    this->errorP->nums[5][5] = 10;//position z error
-    this->errorP->nums[6][6] = 0.2;//attitude x error
-    this->errorP->nums[7][7] = 0.2;//attitude y error
-    this->errorP->nums[8][8] = 0.2;//attitude z error
+    this->errorP->nums[0][0] = 20;//velocity x error
+    this->errorP->nums[1][1] = 20;//velocity y error
+    this->errorP->nums[2][2] = 20;//velocity z error
+    this->errorP->nums[3][3] = 100;//position x error
+    this->errorP->nums[4][4] = 100;//position y error
+    this->errorP->nums[5][5] = 100;//position z error
+    this->errorP->nums[6][6] = 0.8;//attitude x error
+    this->errorP->nums[7][7] = 0.8;//attitude y error
+    this->errorP->nums[8][8] = 0.8;//attitude z error
 }
 void KalmanFilter::initializeQ(){
     this->ctrlErrorCovQ = new Matrix(6,6,0);
-    this->ctrlErrorCovQ->nums[0][0] = powf(0.01,2);      //accel x error
-    this->ctrlErrorCovQ->nums[1][1] = powf(0.01,2);      //accel y error
-    this->ctrlErrorCovQ->nums[2][2] = powf(0.01,2);      //accel z error
+    this->ctrlErrorCovQ->nums[0][0] = powf(0.1,2);      //accel x error
+    this->ctrlErrorCovQ->nums[1][1] = powf(0.1,2);      //accel y error
+    this->ctrlErrorCovQ->nums[2][2] = powf(0.1,2);      //accel z error
     this->ctrlErrorCovQ->nums[3][3] = powf(0.001,2);    //gyro x error
     this->ctrlErrorCovQ->nums[4][4] = powf(0.001,2);    //gyro y error
     this->ctrlErrorCovQ->nums[5][5] = powf(0.001,2);    //gyro z error
@@ -298,8 +297,8 @@ void KalmanFilter::initializeQ(){
 void KalmanFilter::initializeR(){
     this->gpsErrorCovR = new Matrix(9,9,0);
     
-    gpsErrorCovR->nums[0][0] = powf(0.2,2);       //velocity x error
-    gpsErrorCovR->nums[1][1] = powf(0.2,2);       //velocity y error
+    gpsErrorCovR->nums[0][0] = powf(0.05,2);       //velocity x error
+    gpsErrorCovR->nums[1][1] = powf(0.05,2);       //velocity y error
     gpsErrorCovR->nums[2][2] = powf(10,2);      //velocity z error
     gpsErrorCovR->nums[3][3] = powf(10,2);      //position x error
     gpsErrorCovR->nums[4][4] = powf(10,2);      //position y error
