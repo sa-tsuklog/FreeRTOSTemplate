@@ -9,6 +9,7 @@ volatile char stackoverflowTaskname[16];
 
 void vApplicationIdleHook(void){
 	static int idle_count=0;
+
 	idle_count++;
 }
 
@@ -17,11 +18,7 @@ void vApplicationMallocFailedHook(void){
 }
 
 void vApplicationStackOverflowHook(void* ptr, char* taskname){
-	int i=0;
-	while(taskname[i]!=0){
-		stackoverflowTaskname[i] = taskname[i];
-		i++;
-	}
+	printf("stackoverflow at %s\n\r",taskname);
 	while(1);
 }
 

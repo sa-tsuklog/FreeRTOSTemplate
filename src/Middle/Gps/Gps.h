@@ -25,6 +25,8 @@ public:
 private:
 	static const float M_EARTH_RADIUS = 6371000;
 	
+	int gpsValidate;
+	
 	int isRefValid;
 	int degX1MLattitudeRef;
 	int degX1MLongitudeRef;
@@ -51,6 +53,7 @@ private:
 	void decodeGPRMC(char* line);
 	
 	void decodeGPGGA(char* line);
+	void setRefPosition();
 public:
 	void decodeNMEA(char* line);
 	int isValid();
@@ -65,8 +68,7 @@ public:
 	float getMpsSpeedX();
 	float getMpsSpeedY();
 	float getRelativeHeight();
-	void setRefPosition();
-	void resetRefPosition();
+	
 	float getM_RelativePosX();
 	float getM_RelativePosY();
 	
@@ -76,6 +78,9 @@ public:
 	static float degX1MToMin(int degX1M);
 	static float mpsToKnot(float mpsSpeed);
 	static float speedToDegDirection(float speedX,float speedY);
+	
+	void resetRefPosition();
+	void setGpsValidate(int newVal){gpsValidate = newVal;};
 };
 
 

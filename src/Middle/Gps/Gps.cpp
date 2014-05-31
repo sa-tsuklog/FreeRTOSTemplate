@@ -11,6 +11,7 @@
 #include "stdio.h"
 #include "../../App/Gains/GpsData.h"
 #include "../../App/Gains/Gains.h"
+#include "../../App/Logger/Logger.h"
 
 //TODO: 速度、相対位置のチェックまだ。
 //TODO: getterをmutex使って安全にする。
@@ -28,6 +29,8 @@ Gps::Gps(){
 	mpsSpeed=0;
 	degCourse=0;
 	valid=0;
+	
+	gpsValidate = 1;
 }
 
 
@@ -43,14 +46,28 @@ void Gps::decodeNMEA(char* line){
 		if(!isRefValid){
 			setRefPosition();
 		}
-		if(valid){
-			GpsData gpsData = GpsData(getM_RelativePosX(),getM_RelativePosY(),getRelativeHeight(),
-					getMpsSpeedX(),getMpsSpeedY(),0);
+		
+		if(gpsValidate){
+			if(valid){
+				GpsData gpsData = GpsData(getM_RelativePosX(),getM_RelativePosY(),getRelativeHeight(),
+						getMpsSpeedX(),getMpsSpeedY(),0);
+				Gains::GetInstance()->appendGpsData(&gpsData);
+			}
+		}else{
+			GpsData gpsData = GpsData(0,0,0,0,0,0);
 			Gains::GetInstance()->appendGpsData(&gpsData);
 		}
 	}else{
 		//do nothing.
 	}
+	
+	
+//	Logger::GetInstance()->fileSemTake();
+//	FILE* fp = Logger::GetInstance()->getFp();
+//	if(fp != NULL){
+//		fprintf(fp,"%s\n\r",line);
+//	}
+//	Logger::GetInstance()->fileSemGive();
 }
 
 int Gps::isValid(){

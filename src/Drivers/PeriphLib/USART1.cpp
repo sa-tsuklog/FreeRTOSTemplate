@@ -10,6 +10,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "Middle/Stdout/SerialCommand.h"
+#include "TIM2.h"
 
 USART1Class::USART1Class(){
 	m_queue1 = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
@@ -133,13 +134,16 @@ void USART1Class::Rx()
 
 	char c;
 	while(1){
+		//uint32_t start;
+		//uint32_t end;
+		//start = TIM2Class::GetInstance()->getUsTime();
 		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
 			m_rxBuf[rxBufIndex]=0;
 			if(c=='\n'){
 			}else if(c=='\r'){
 				m_lineBuf[lineBufIndex]=0;
 	
-				HandleSerialCommand(m_lineBuf);
+				SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);
 				lineBufIndex=0;
 	
 			}else{
@@ -149,6 +153,8 @@ void USART1Class::Rx()
 	
 			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 		}
+		//end = TIM2Class::GetInstance()->getUsTime();
+		//printf("rx1 %d[us]",end - start);
 		vTaskDelay(100);
 	}
 }

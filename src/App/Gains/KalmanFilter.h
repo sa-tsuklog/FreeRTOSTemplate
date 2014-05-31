@@ -23,7 +23,9 @@ public:
     Quaternion getMPos();
     Quaternion getMpsSpeed();
     Quaternion getAttitude();
-
+    
+    void reset();
+    
     static Quaternion intToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass);
     static Quaternion angleToPosition(float lambda, float phi);
 

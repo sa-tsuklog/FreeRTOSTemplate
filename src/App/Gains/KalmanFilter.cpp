@@ -368,3 +368,13 @@ Quaternion KalmanFilter::getAttitude(){
     return *attitude;
 }
 
+void KalmanFilter::reset(){
+	position->w = 0;
+	position->x = 0;
+	position->y = 0;
+	position->z = 0;
+	velocity->w = 0;
+	velocity->x = 0;
+	velocity->y = 0;
+	velocity->z = 0;
+}

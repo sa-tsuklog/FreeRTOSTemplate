@@ -40,7 +40,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "Middle/Stdout/SerialCommand.h"
+#include <fcntl.h>
+#include "Middle/Stdout/myFileHandle.h"
+#include "ff.h"
 #include "stm32f4xx.h"
 
 #ifdef __cplusplus
@@ -51,13 +53,7 @@ extern "C" {
 
 int _read_r (struct _reent *r, int file, char * ptr, int len)
 {
-//	r = r;
-//	file = file;
-//	ptr = ptr;
-//	len = len;
-
-	errno = EINVAL;
-	return -1;
+	return myRead(r,file,ptr,len);
 }
 
 /***************************************************************************/
@@ -69,28 +65,25 @@ int _lseek_r (struct _reent *r, int file, int ptr, int dir)
 //	ptr = ptr;
 //	dir = dir;
 
-	return 0;
+	return myLseek(r,file,ptr,dir);
 }
 
 /***************************************************************************/
 
 int _write_r (struct _reent *r, int file, char * ptr, int len)
 {
-	if(file == 1){//stdout
-		for(int i=0;i<len;i++){
-			uputc(USART3,ptr[i]);
-		}
-	}else if(file == 2){//stderr
-	}
-	
-	return len;
+	return myWrite(r,file,ptr,len);
+}
+
+int _open_r(struct _reent *r,const char *path,int mode){
+	return myOpen(r,path,mode);
 }
 
 /***************************************************************************/
 
 int _close_r (struct _reent *r, int file)
 {
-	return 0;
+	return myClose(r,file);
 }
 
 /***************************************************************************/

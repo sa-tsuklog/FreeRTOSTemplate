@@ -12,7 +12,9 @@
 #include "Middle/Stdout/SerialCommand.h"
 #include "FreeRTOS.h"
 #include "task.h"
-
+#include "TIM2.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 USART3Class::USART3Class(){
 	m_queue3 = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
@@ -100,6 +102,8 @@ USART3Class::USART3Class(){
 	for(int i=0;i<RX_BUFFERSIZE;i++){
 		m_rxBuf[i] = 0;
 	}
+	
+	echo = 1;
 }
 
 void USART3Class::Tx()
@@ -134,23 +138,52 @@ void USART3Class::Rx()
 	vTaskDelay(MS_INITIAL_DELAY);
 	
 	while(1){
+//		uint32_t start;
+//		uint32_t end;
+//		start = TIM2Class::GetInstance()->getUsTime();
+		
+
 		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
 			m_rxBuf[rxBufIndex]=0;
+			
+			if(echo){
+				if(c=='\n'){
+				}else if(c=='\b'){
+					putchar('\b');
+					putchar(' ');
+					putchar('\b');
+					fflush(stdout);
+				}else{
+					putchar(c);
+					fflush(stdout);
+				}
+			}
+			
+			
 			if(c=='\n'){
 			}else if(c=='\r'){
 				m_lineBuf[lineBufIndex]=0;
 	
-				HandleSerialCommand(m_lineBuf);
+				SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);
 				lineBufIndex=0;
-	
+			}else if(c=='\b'){
+				if(lineBufIndex > 0){
+					lineBufIndex--;
+				}
 			}else{
+				
 				m_lineBuf[lineBufIndex]=c;
-				lineBufIndex++;
+				if(lineBufIndex<LINE_BUF_SIZE-1){
+					lineBufIndex++;
+				}
 			}
 	
 			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 		}
-		vTaskDelay(100);
+		
+//		end = TIM2Class::GetInstance()->getUsTime();
+//		printf("u3rx %d[us]\n\r",end-start);
+		vTaskDelay(25);
 	}
 }
 

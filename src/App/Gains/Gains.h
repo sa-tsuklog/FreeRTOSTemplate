@@ -14,6 +14,7 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "KalmanFilter.h"
+#include <stdio.h>
 
 class Gains{
 	// Singleton pattern definition
@@ -33,6 +34,8 @@ public:
 	xQueueHandle gpsQueue;
 	
 private:
+	KalmanFilter* kf;
+	
 	void gainsTask(void *pvParameters);
 public:
 	void appendInsData(ImuData *imuData);
@@ -47,7 +50,10 @@ public:
 	int getLongitudeRef();
 	
 	static void prvGainsTask(void *pvParameters);
-	void printNMEA(KalmanFilter* kf,GpsData* gpsData);
+	void printNMEA(FILE* fp,KalmanFilter* kf,GpsData* gpsData);
+	void printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData);
+	
+	void resetImu();
 };
 
 

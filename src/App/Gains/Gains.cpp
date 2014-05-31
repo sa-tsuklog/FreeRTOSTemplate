@@ -13,6 +13,8 @@
 #include "KalmanFilter.h"
 #include "stdio.h"
 #include "math.h"
+#include "../Logger/Logger.h"
+#include "../../Middle/Stdout/myFileHandle.h"
 
 #include "../../Drivers/PeriphLib/TIM2.h"
 #include "../../Middle/Gps/Gps.h"
@@ -54,7 +56,7 @@ void Gains::gainsTask(void *pvParameters){
 	
 	attitude = KalmanFilter::intToAttitude(&imuData.mpspsAcl,&imuData.uTCmps);
 	
-	KalmanFilter* kf = new KalmanFilter(&gpsVel,&gpsPos,&attitude);
+	kf = new KalmanFilter(&gpsVel,&gpsPos,&attitude);
 	
 	
 	while(1){
@@ -72,7 +74,25 @@ void Gains::gainsTask(void *pvParameters){
 			kf->update(&gpsVel,&gpsPos,&imuData.uTCmps);
 			updateEndTime = TIM2Class::GetInstance()->getUsTime();
 			
-			printNMEA(kf,&gpsData);
+			//printNMEA(stdout,kf,&gpsData);
+			
+			if(i==0){
+				//printIns(stdout,kf,&imuData,&gpsData);
+			}
+			
+			updateStartTime = TIM2Class::GetInstance()->getUsTime();
+			Logger::GetInstance()->fileSemTake();
+			FILE* fp = Logger::GetInstance()->getFp();
+			if(fp != NULL){
+				printNMEA(fp,kf,&gpsData);
+				//myFsync(fp);
+			}
+			Logger::GetInstance()->fileSemGive();
+			updateEndTime = TIM2Class::GetInstance()->getUsTime();
+			
+			printf("write:%d[us]\n\r",updateEndTime-updateStartTime);
+			
+			i=(i+1)%2;
 		}
 		
 		velocity = kf->getMpsSpeed();
@@ -93,12 +113,12 @@ void Gains::gainsTask(void *pvParameters){
 			//attitude.printPitchRoleHeading();
 		}
 		
-		i=(i+1)%10;
+		
 		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
 	}	
 }
 
-void Gains::printNMEA(KalmanFilter* kf,GpsData* gpsData){
+void Gains::printNMEA(FILE* fp,KalmanFilter* kf,GpsData* gpsData){
 	Gps* gps = Gps::GetInstance();
 	Quaternion mPos = kf->getMPos(); 
 	Quaternion mpsSpeed = kf->getMpsSpeed();
@@ -106,14 +126,39 @@ void Gains::printNMEA(KalmanFilter* kf,GpsData* gpsData){
 	int latitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(mPos.x);
 	int longitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(mPos.y);
 	
-	printf("$GPINS,");//tag,
-	printf("%02d%02d%06.3f,A,",gps->getHour(),gps->getMin(),gps->getSec());//time,status,
-	printf("%d%07.4f,N,%d%02.4f,E,",Gps::degX1MToDeg(latitude),Gps::degX1MToMin(latitude),
+	fprintf(fp,"$GPINS,");//tag,
+	fprintf(fp,"%02d%02d%06.3f,A,",gps->getHour(),gps->getMin(),gps->getSec());//time,status,
+	fprintf(fp,"%d%07.4f,N,%d%02.4f,E,",Gps::degX1MToDeg(latitude),Gps::degX1MToMin(latitude),
 			Gps::degX1MToDeg(longitude),Gps::degX1MToMin(longitude));//latitude,longitude,
-	printf("%.2f,%.2f,",Gps::mpsToKnot(sqrtf(mpsSpeed.x*mpsSpeed.x + mpsSpeed.y*mpsSpeed.y)),
+	fprintf(fp,"%.2f,%.2f,",Gps::mpsToKnot(sqrtf(mpsSpeed.x*mpsSpeed.x + mpsSpeed.y*mpsSpeed.y)),
 						Gps::speedToDegDirection(mpsSpeed.x,mpsSpeed.y));//speed,direction,
-	printf("%06d,",gps->getDate());//date
-	printf(",,A*00");
+	fprintf(fp,"%06d,",gps->getDate());//date
+	fprintf(fp,",,A*00");
+	fprintf(fp,"\n\r");
+}
+
+void Gains::printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData){
+	Quaternion mPos = kf->getMPos();
+	Quaternion mpsSpeed = kf->getMpsSpeed();
+	Quaternion attitude = kf->getAttitude();
+	Quaternion acl = imuData->mpspsAcl;
+	Quaternion gyro= imuData->rpsRate;
+	Quaternion cmps = imuData->uTCmps;
+	
+	float pitch,role,heading;
+	attitude.getRadPitchRoleHeading(&pitch,&role,&heading);
+	
+	int min = Gps::GetInstance()->getMin();
+	float sec = Gps::GetInstance()->getSec();
+	
+	printf("%.1f,",60*min+sec);//time,
+	printf("%.3f,%.3f,%.3f,",heading*180/M_PI,pitch*180/M_PI,role*180/M_PI);//heading,pitch,role,
+	printf("%.3f,%.3f,%.3f,",acl.x,acl.y,acl.z);//acl
+	printf("%.3f,%.3f,%.3f,",gyro.x,gyro.y,gyro.z);//gyro
+	printf("%.3f,%.3f,%.3f,",cmps.x,cmps.y,cmps.z);//cmps
+	printf("%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);
+	printf("%.3f,%.3f,%.3f,",mPos.x,mPos.y,mPos.z);
+	printf("%.3f,%.3f,%.3f,",gpsData->mGpsRelativePos.x,gpsData->mGpsRelativePos.y,gpsData->mGpsRelativePos.z);
 	printf("\n\r");
 }
 
@@ -129,4 +174,10 @@ void Gains::appendGpsData(GpsData* gpsData){
 }
 void Gains::prvGainsTask(void *pvParameters){
 	Gains::GetInstance()->gainsTask(pvParameters);
+}
+
+void Gains::resetImu(){
+	//TODO: ‚±‚±”r‘¼§Œä‚·‚éB
+	Gps::GetInstance()->resetRefPosition();
+	kf->reset();
 }

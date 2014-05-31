@@ -2,7 +2,7 @@
 OSPATH = src/OS
 DRVPATH = src/Drivers src/Drivers/PeriphLib src/Drivers/FreeRTOS_DemoFile
 MIDDLEPATH = src/Middle src/Middle/Stdout src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2 src/Middle/Gps
-APPPATH = src/App src/App/Util src/App/Gains
+APPPATH = src/App src/App/Util src/App/Gains src/App/Logger
 ###
 
 SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH) $(APPPATH)
@@ -32,6 +32,7 @@ TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
 					-I ./Libraries/CMSIS/Include \
+					-I ./Libraries/ff \
 					-I $(TOOLDIR)../arm-none-eabi/include \
 					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
 					-I $(FREERTOS_DIR)/Demo/Common/include \
@@ -40,7 +41,7 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./src/include \
 					-I ./src
 
-BOARD_OPTS = -DHSE_VALUE=12000000 -DSTM32F4XX -DSTM32F40_41xxx -DSTM32F429
+BOARD_OPTS = -DHSE_VALUE=12000000 -DSTM32F4XX -DSTM32F40_41xxx -DSTM32F429 -DUSE_32F429IDISCOVERY
 FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
 COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions \
 					-Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16
@@ -63,6 +64,8 @@ OBJS += $(notdir $(patsubst %.cpp,%.o,$(CPPSRCS)))
 
 LIB_SRCS = \
  $(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c) \
+ $(wildcard ./Libraries/ff/*.c) \
+ $(wildcard ./Libraries/ff/option/cc932.c) \
  $(wildcard $(FREERTOS_DIR)/Source/portable/MemMang/heap_3.c) \
  $(wildcard $(FREERTOS_DIR)/Source/*.c) \
  $(wildcard $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F/*.c) \

@@ -206,10 +206,11 @@ void DMA1_Stream7_IRQHandler()
 {
 	I2C2Class::getInstance()->myDMA1_Stream7_IRQHandler();
 }
-void DMA2_Stream6_IRQHandler()
-{
-	printf("test\n\r");
-}
+
+//void DMA2_Stream6_IRQHandler()	//defined in Libraries/ff/sdio_stm32f4.h
+//{
+//	
+//}
 void DMA2_Stream7_IRQHandler()
 {
 }
