@@ -90,8 +90,8 @@ void ADC1Class::prvTask(void *pvParameters){
 		ADvoltage[0] = adc3->GetData(0) * 3300 / 0xFFF;
 		ADvoltage[1] = adc3->GetData(1) * 3300 / 0xFFF;
 
-		printf("%lx\t%lx\n\r", ADvoltage[0], ADvoltage[1]);
-		//printf("%ld\t%ld\n\r", ADvoltage[0], ADvoltage[1]);
+		printf("%lx\t%lx\r\n", ADvoltage[0], ADvoltage[1]);
+		//printf("%ld\t%ld\r\n", ADvoltage[0], ADvoltage[1]);
 
 		vTaskDelay(100);
 	}

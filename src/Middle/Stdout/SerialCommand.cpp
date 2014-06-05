@@ -29,7 +29,7 @@ void SerialCommand::handleSerialCommand(char* line){
 	int i=0;
 	
 	if(strlen(line)==0){
-		printf("\n\r");
+		printf("\r\n");
 		return;
 	}
 	
@@ -41,34 +41,34 @@ void SerialCommand::handleSerialCommand(char* line){
 		}
 		i++;
 	}
-	printf("invalid command:%s\n\r",line);
+	printf("invalid command:%s\r\n",line);
 	
 	
 //	if(strncmp(line,"vTaskList",9)==0){
 //		char buf[768];
 //		vTaskList(buf);
-//		printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
+//		printf("task name\tstat\tprirty\tstack\ttasknum\r\n");
 //		printf(buf);
 //	}else{
-//		printf("invalid command:%s\n\r",line);
+//		printf("invalid command:%s\r\n",line);
 //	}
 }
 
 void SerialCommand::printHelp(){
 	int i=0;
 	while(commandList[i].command != NULL){
-		printf("%s\n\r",commandList[i].command);
+		printf("%s\r\n",commandList[i].command);
 		i++;
 	}
 }
 void SerialCommand::printTaskList(){
 	vTaskList(vTaskListBuf);
-	printf("task name\tstat\tprirty\tstack\ttasknum\n\r");
+	printf("task name\tstat\tprirty\tstack\ttasknum\r\n");
 	printf(vTaskListBuf);
 }
 void SerialCommand::startLogging(char* arg){
 	if(arg[0] == NULL){
-		printf("usage: startLogging filename\n\r");
+		printf("usage: startLogging filename\r\n");
 		return;
 	}
 	

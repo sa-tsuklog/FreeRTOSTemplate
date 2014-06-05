@@ -29,7 +29,7 @@ void ADIS16488::adis16488init(){
 	SPI2Class::GetInstance()->write16(PAGE_ID,0x0000);
 	tmp = SPI2Class::GetInstance()->read16(PROD_ID);
 	
-	printf("%d\n\r",tmp);
+	printf("%d\r\n",tmp);
 	
 //	//PAGE 3
 	SPI2Class::GetInstance()->write16(PAGE_ID,0x0003);
@@ -114,9 +114,9 @@ void ADIS16488::prvAdis16488Task(void *pvParameters){
 		Gains::GetInstance()->appendInsData(&imuData);
 		
 		if(i%10==0){
-			//printf("%d %f %f %f\n\r",i,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
-			//printf("%d %f %f %f\n\r",i,imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
-			//printf("%d %d %d %d\n\r",i,(short)buf[14],(short)buf[15],(short)buf[16]);
+			//printf("%d %f %f %f\r\n",i,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
+			//printf("%d %f %f %f\r\n",i,imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
+			//printf("%d %d %d %d\r\n",i,(short)buf[14],(short)buf[15],(short)buf[16]);
 		}
 		//vTaskDelay(10);
 		i++;

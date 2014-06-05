@@ -283,7 +283,7 @@ void KalmanFilter::initializeP(){
     this->errorP->nums[5][5] = 100;//position z error
     this->errorP->nums[6][6] = 0.8;//attitude x error
     this->errorP->nums[7][7] = 0.8;//attitude y error
-    this->errorP->nums[8][8] = 0.8;//attitude z error
+    this->errorP->nums[8][8] = 1.0;//attitude z error
 }
 void KalmanFilter::initializeQ(){
     this->ctrlErrorCovQ = new Matrix(6,6,0);
@@ -297,8 +297,8 @@ void KalmanFilter::initializeQ(){
 void KalmanFilter::initializeR(){
     this->gpsErrorCovR = new Matrix(9,9,0);
     
-    gpsErrorCovR->nums[0][0] = powf(0.05,2);       //velocity x error
-    gpsErrorCovR->nums[1][1] = powf(0.05,2);       //velocity y error
+    gpsErrorCovR->nums[0][0] = powf(0.5,2);       //velocity x error
+    gpsErrorCovR->nums[1][1] = powf(0.5,2);       //velocity y error
     gpsErrorCovR->nums[2][2] = powf(10,2);      //velocity z error
     gpsErrorCovR->nums[3][3] = powf(10,2);      //position x error
     gpsErrorCovR->nums[4][4] = powf(10,2);      //position y error
@@ -311,7 +311,7 @@ void KalmanFilter::initializeR(){
 }
 
 
-Quaternion KalmanFilter::intToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass){
+Quaternion KalmanFilter::insToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass){
     Quaternion attitudeFromAccel;
     
     float xyLength = sqrt(mpspsAccel->x*mpspsAccel->x + mpspsAccel->y * mpspsAccel->y);
@@ -330,7 +330,7 @@ Quaternion KalmanFilter::intToAttitude(Quaternion* mpspsAccel, Quaternion* uTCom
         
         float radAngle = atan2f(mpspsAccel->z,xyLength) + M_PI/2;
         
-        attitudeFromAccel = Quaternion(cosf(radAngle/2),axisX*sinf(radAngle/2),axisY*sinf(radAngle/2),0);   
+        attitudeFromAccel = Quaternion(cosf(radAngle/2),axisX*sinf(-radAngle/2),axisY*sinf(-radAngle/2),0);   
     }
     
     Quaternion rotatedCompass;

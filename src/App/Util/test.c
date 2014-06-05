@@ -11,7 +11,7 @@
 
 
 void prvTestTask(void* pvParameters){
-	printf("%f\n\r",0.1);
+	printf("%f\r\n",0.1);
 	vTaskDelay(100);
 }
 

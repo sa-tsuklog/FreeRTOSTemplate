@@ -30,4 +30,6 @@ public:
 	uint32_t getUsTime();
 };
 
+
+
 #endif /* TIM2_H_ */

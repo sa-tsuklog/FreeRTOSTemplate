@@ -57,7 +57,7 @@ void printfFresult(FRESULT res){
 		case FR_INVALID_PARAMETER:printf("FR_INVALID_PARAMETER");break;
 		default: printf("error code = %d",res);break;
 	}
-	printf("\n\r");
+	printf("\r\n");
 }
 void printFatfsMode(BYTE mode){
 	printf("mode:");
@@ -79,7 +79,7 @@ void printFatfsMode(BYTE mode){
 	if(mode & FA_CREATE_ALWAYS){
 		printf("FA_CREATE_ALWAYS|");
 	}
-	printf("\n\r");
+	printf("\r\n");
 }
 
 
@@ -228,7 +228,7 @@ int myOpen(struct _reent *r,const char *path,int mode){
 		}
 	}
 	if(handleId == MAX_FILEHANDLE_NUM){
-		printf("cannot open\n\r");
+		printf("cannot open\r\n");
 		return -1;
 	}
 	
@@ -239,7 +239,7 @@ int myOpen(struct _reent *r,const char *path,int mode){
 	//printf("open:%s",path);
 	//printfFresult(res);
 	//printFatfsMode(fatMode);
-	//printf("id = %d\n\r",handleId);
+	//printf("id = %d\r\n",handleId);
 	
 	if(res == FR_OK){
 		if(mode & O_APPEND){
@@ -262,13 +262,13 @@ int myOpen(struct _reent *r,const char *path,int mode){
 int myClose (struct _reent *r, int file)
 {
 	if(file < FILEHANDLE_OFFSET || FILEHANDLE_OFFSET+MAX_FILEHANDLE_NUM <= file){
-		//printf("close: invalid file %d\n\r",file);
+		//printf("close: invalid file %d\r\n",file);
 		return -1;
 	}
 	
 	int id = file - FILEHANDLE_OFFSET;
 	if(fileHandleInUse[id] != 1){
-		//printf("id %d is not open\n\r",id);
+		//printf("id %d is not open\r\n",id);
 		return -1;
 	}
 	
@@ -278,7 +278,7 @@ int myClose (struct _reent *r, int file)
 	fileHandleInUse[id] = 0;
 	
 	if(res == FR_OK){
-		//printf("id %d closed\n\r",id);
+		//printf("id %d closed\r\n",id);
 		return 0;
 	}else{
 		return -1;

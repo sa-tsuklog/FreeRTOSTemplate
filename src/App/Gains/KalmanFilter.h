@@ -26,7 +26,7 @@ public:
     
     void reset();
     
-    static Quaternion intToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass);
+    static Quaternion insToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass);
     static Quaternion angleToPosition(float lambda, float phi);
 
 

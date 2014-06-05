@@ -182,7 +182,7 @@ void USART3Class::Rx()
 		}
 		
 //		end = TIM2Class::GetInstance()->getUsTime();
-//		printf("u3rx %d[us]\n\r",end-start);
+//		printf("u3rx %d[us]\r\n",end-start);
 		vTaskDelay(25);
 	}
 }

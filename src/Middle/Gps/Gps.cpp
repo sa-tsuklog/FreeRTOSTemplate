@@ -29,8 +29,6 @@ Gps::Gps(){
 	mpsSpeed=0;
 	degCourse=0;
 	valid=0;
-	
-	gpsValidate = 1;
 }
 
 
@@ -43,31 +41,27 @@ void Gps::decodeNMEA(char* line){
 		
 	}else if(strncmp(line,"$GPRMC,",7)==0){
 		decodeGPRMC(line);
-		if(!isRefValid){
+		if(!isRefValid && valid){
 			setRefPosition();
 		}
 		
-		if(gpsValidate){
-			if(valid){
-				GpsData gpsData = GpsData(getM_RelativePosX(),getM_RelativePosY(),getRelativeHeight(),
-						getMpsSpeedX(),getMpsSpeedY(),0);
-				Gains::GetInstance()->appendGpsData(&gpsData);
-			}
-		}else{
-			GpsData gpsData = GpsData(0,0,0,0,0,0);
+		if(valid){
+			GpsData gpsData = GpsData(getM_RelativePosX(),getM_RelativePosY(),getRelativeHeight(),
+					getMpsSpeedX(),getMpsSpeedY(),0);
 			Gains::GetInstance()->appendGpsData(&gpsData);
 		}
 	}else{
 		//do nothing.
 	}
 	
+	//printf("%s\r\n",line);
 	
-//	Logger::GetInstance()->fileSemTake();
-//	FILE* fp = Logger::GetInstance()->getFp();
-//	if(fp != NULL){
-//		fprintf(fp,"%s\n\r",line);
-//	}
-//	Logger::GetInstance()->fileSemGive();
+	Logger::GetInstance()->fileSemTake();
+	FILE* fp = Logger::GetInstance()->getFp();
+	if(fp != NULL){
+		fprintf(fp,"%s\r\n",line);
+	}
+	Logger::GetInstance()->fileSemGive();
 }
 
 int Gps::isValid(){
@@ -101,7 +95,7 @@ float Gps::getMpsSpeedX(){
 	return getMpsSpeed()*cosf(getDegCourse()*M_PI/180);
 }
 float Gps::getMpsSpeedY(){
-	return getMpsSpeed()*(-sinf(getDegCourse()*M_PI/180));
+	return getMpsSpeed()*(sinf(getDegCourse()*M_PI/180));
 }
 void Gps::setRefPosition(){
 	degX1MLattitudeRef = degX1MLatitude;
@@ -331,7 +325,7 @@ float Gps::mpsToKnot(float mpsSpeed){
 	return mpsSpeed / 0.514444444;
 }
 float Gps::speedToDegDirection(float speedX,float speedY){
-	float degDirection = atan2(-speedY,speedX)*180/M_PI;
+	float degDirection = atan2(speedY,speedX)*180/M_PI;
 	if(degDirection<0){
 		degDirection += 360;
 	}

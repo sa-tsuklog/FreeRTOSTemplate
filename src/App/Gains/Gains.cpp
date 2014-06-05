@@ -45,16 +45,16 @@ void Gains::gainsTask(void *pvParameters){
 	
 	vTaskDelay(MS_INITIAL_DELAY);
 	
-	 
-	while(!imuData.isCmpsValid){
-		xQueueReceive(imuQueue,&imuData,portMAX_DELAY);
-	}
 	xQueueReceive(gpsQueue,&gpsData,portMAX_DELAY);
 	xQueueReceive(gpsQueue,&gpsData,portMAX_DELAY);
 	gpsVel = gpsData.mpsGpsRelativeSpeed;
 	gpsPos = gpsData.mGpsRelativePos;
 	
-	attitude = KalmanFilter::intToAttitude(&imuData.mpspsAcl,&imuData.uTCmps);
+	while(!imuData.isCmpsValid){
+		xQueueReceive(imuQueue,&imuData,portMAX_DELAY);
+	}
+	
+	attitude = KalmanFilter::insToAttitude(&imuData.mpspsAcl,&imuData.uTCmps);
 	
 	kf = new KalmanFilter(&gpsVel,&gpsPos,&attitude);
 	
@@ -80,39 +80,42 @@ void Gains::gainsTask(void *pvParameters){
 				//printIns(stdout,kf,&imuData,&gpsData);
 			}
 			
-			updateStartTime = TIM2Class::GetInstance()->getUsTime();
+			//updateStartTime = TIM2Class::GetInstance()->getUsTime();
 			Logger::GetInstance()->fileSemTake();
 			FILE* fp = Logger::GetInstance()->getFp();
 			if(fp != NULL){
 				printNMEA(fp,kf,&gpsData);
+				printIns2(fp,&imuData);
+				//printIns(fp,kf,&imuData,&gpsData);
 				//myFsync(fp);
 			}
 			Logger::GetInstance()->fileSemGive();
-			updateEndTime = TIM2Class::GetInstance()->getUsTime();
+			//updateEndTime = TIM2Class::GetInstance()->getUsTime();
+			//printf("write:%d[us]\r\n",updateEndTime-updateStartTime);
 			
-			printf("write:%d[us]\n\r",updateEndTime-updateStartTime);
-			
-			i=(i+1)%2;
+			i=(i+1)%5;
 		}
 		
 		velocity = kf->getMpsSpeed();
 		position = kf->getMPos();
 		attitude = kf->getAttitude();
+		//attitude = KalmanFilter::insToAttitude(&imuData.mpspsAcl,&imuData.uTCmps);
 		float radHeading;
 		float radPitch;
 		float radRole;
 		attitude.getRadPitchRoleHeading(&radPitch,&radRole,&radHeading);
 		
 		if(i==0){
-			//printf("%d[us],%d[us]\n\r",predictEndTime-predictStartTime,updateEndTime-updateStartTime);
-			//printf("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\n\r",gpsPos.x,gpsPos.y,gpsPos.z,gpsVel.x,gpsVel.y,gpsVel.z);
+			//printf("%d[us],%d[us]\r\n",predictEndTime-predictStartTime,updateEndTime-updateStartTime);
+			//printf("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\r\n",gpsPos.x,gpsPos.y,gpsPos.z,gpsVel.x,gpsVel.y,gpsVel.z);
 			
-			//printf("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\n\r",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z,imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
-			//printf("pos:%.3f\t%.3f\t%.3f\tspd:%.3f\t%.3f\t%.3f\tpitch:%.3f\trole:%.3f\theading:%.3f\n\r",position.x,position.y,position.z,velocity.x,velocity.y,velocity.z,radPitch*180/M_PI,radRole*180/M_PI,radHeading*180/M_PI);
+//			printf("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\r\n",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z,imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+//			printf("pos:%.3f\t%.3f\t%.3f\tspd:%.3f\t%.3f\t%.3f\tpitch:%.3f\trole:%.3f\theading:%.3f\r\n",position.x,position.y,position.z,velocity.x,velocity.y,velocity.z,radPitch*180/M_PI,radRole*180/M_PI,radHeading*180/M_PI);
+//			printf("%3f,%3f,%3f,%3f\r\n",attitude.w,attitude.x,attitude.y,attitude.z);
 			//attitude.print();
 			//attitude.printPitchRoleHeading();
 		}
-		
+		//i=(i+1)%10;
 		
 		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
 	}	
@@ -134,7 +137,7 @@ void Gains::printNMEA(FILE* fp,KalmanFilter* kf,GpsData* gpsData){
 						Gps::speedToDegDirection(mpsSpeed.x,mpsSpeed.y));//speed,direction,
 	fprintf(fp,"%06d,",gps->getDate());//date
 	fprintf(fp,",,A*00");
-	fprintf(fp,"\n\r");
+	fprintf(fp,"\r\n");
 }
 
 void Gains::printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData){
@@ -151,6 +154,7 @@ void Gains::printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData
 	int min = Gps::GetInstance()->getMin();
 	float sec = Gps::GetInstance()->getSec();
 	
+	printf("$GIFUL,");
 	printf("%.1f,",60*min+sec);//time,
 	printf("%.3f,%.3f,%.3f,",heading*180/M_PI,pitch*180/M_PI,role*180/M_PI);//heading,pitch,role,
 	printf("%.3f,%.3f,%.3f,",acl.x,acl.y,acl.z);//acl
@@ -159,14 +163,21 @@ void Gains::printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData
 	printf("%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);
 	printf("%.3f,%.3f,%.3f,",mPos.x,mPos.y,mPos.z);
 	printf("%.3f,%.3f,%.3f,",gpsData->mGpsRelativePos.x,gpsData->mGpsRelativePos.y,gpsData->mGpsRelativePos.z);
-	printf("\n\r");
+	printf("\r\n");
+}
+void Gains::printIns2(FILE* fp,ImuData* imuData){
+	fprintf(fp,"$GIRAW,");
+	fprintf(fp,"%.3f,%.3f,%.3f,",imuData->mpspsAcl.x,imuData->mpspsAcl.y,imuData->mpspsAcl.z);
+	fprintf(fp,"%.3f,%.3f,%.3f,",imuData->rpsRate.x,imuData->rpsRate.y,imuData->rpsRate.z);
+	fprintf(fp,"%.3f,%.3f,%.3f,",imuData->uTCmps.x,imuData->uTCmps.y,imuData->uTCmps.z);
+	fprintf(fp,"\r\n");
 }
 
 void Gains::appendInsData(ImuData* imuData){
 	portBASE_TYPE result = xQueueSend(imuQueue,imuData,0);
-	//printf("%f %f %f\n\r",imuData->uTCmps.x,imuData->uTCmps.y,imuData->uTCmps.z);
+	//printf("%f %f %f\r\n",imuData->uTCmps.x,imuData->uTCmps.y,imuData->uTCmps.z);
 //	if(result != pdTRUE){
-//		printf("imu queue overflow.\n\r");
+//		printf("imu queue overflow.\r\n");
 //	}
 }
 void Gains::appendGpsData(GpsData* gpsData){

@@ -100,10 +100,10 @@ void Mpu9250::readMpu9250(){
 	}
 	temp = (short)(tempBuf[0]<<8|tempBuf[1]);
 	
-	//printf("%f,%f,%f\n\r",acl[0],acl[1],acl[2]);
-	//printf("%f,%f,%f\n\r",cmps[0],cmps[1],cmps[2]);
+	//printf("%f,%f,%f\r\n",acl[0],acl[1],acl[2]);
+	//printf("%f,%f,%f\r\n",cmps[0],cmps[1],cmps[2]);
 
-	//printf("\n\r");
+	//printf("\r\n");
 }
 
 void Mpu9250::prvMpu9250Task(void* pvParameters){
@@ -116,7 +116,7 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 		I2C2Class::getInstance()->read(MPU9250ADDR,WHO_AM_I,&tmp,1);
 		I2C2Class::getInstance()->read(AK8963_ADDR,WIA,&tmp2,1);
 		
-		//printf("%x,%x\n\r",tmp,tmp2);
+		//printf("%x,%x\r\n",tmp,tmp2);
 		
 		readMpu9250();
 		vTaskDelay(100);

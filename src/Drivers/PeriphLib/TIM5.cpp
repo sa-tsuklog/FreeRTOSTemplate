@@ -87,7 +87,7 @@ void prvTIM5TestTask(void* pvParameters){
 		unsigned short s = TIM_GetCapture1(TIM5);
 		unsigned short s1= TIM_GetCapture2(TIM5);
 		unsigned short s2= TIM_GetCounter(TIM5);
-		//printf("ch5: %d,%d,%d\n\r",s,s1,s2);
+		//printf("ch5: %d,%d,%d\r\n",s,s1,s2);
 		vTaskDelay(100);
 	}
 }

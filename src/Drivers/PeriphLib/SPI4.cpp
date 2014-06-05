@@ -19,7 +19,7 @@ SPI4Class::SPI4Class(){
 	m_rwSem = xSemaphoreCreateBinary();
 	m_dataReadySem = xSemaphoreCreateBinary();
 	if(m_rwSem == NULL || m_dataReadySem == NULL){
-		printf("malloc error at SPI4 initialization\n\r");
+		printf("malloc error at SPI4 initialization\r\n");
 		while(1){}
 	}
 

@@ -122,7 +122,7 @@ m_state(-1)
 
 	m_sem = xSemaphoreCreateBinary();
 	if(m_sem == NULL){
-		printf("malloc error at initI2c2\n\r");
+		printf("malloc error at initI2c2\r\n");
 		while(1){}
 	}
 	xSemaphoreTake(m_sem,1);
@@ -309,33 +309,33 @@ void I2C2Class::myER_IRQHandler(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_BERR)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_BERR);
 
-		printf("berr\n\r");
+		printf("berr\r\n");
 
 	}else if(I2C_GetITStatus(I2C2,I2C_IT_ARLO)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_ARLO);
 
-		printf("arlo\n\r");
+		printf("arlo\r\n");
 
 	}else if(I2C_GetITStatus(I2C2,I2C_IT_AF)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_AF);
 		I2C_GenerateSTOP(I2C2,ENABLE);
-		printf("af\n\r");
+		printf("af\r\n");
 		xSemaphoreGiveFromISR(m_sem,(BaseType_t *)pdTRUE);
 		portEND_SWITCHING_ISR(pdTRUE);
 
 
 	}else if(I2C_GetITStatus(I2C2,I2C_IT_OVR)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_OVR);
-		printf("ovr\n\r");
+		printf("ovr\r\n");
 	}else if(I2C_GetITStatus(I2C2,I2C_IT_PECERR)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_PECERR);
-		printf("pecerr\n\r");
+		printf("pecerr\r\n");
 	}else if(I2C_GetITStatus(I2C2,I2C_IT_TIMEOUT)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_TIMEOUT);
-		printf("timeout\n\r");
+		printf("timeout\r\n");
 	}else if(I2C_GetITStatus(I2C2,I2C_IT_SMBALERT)!=RESET){
 		I2C_ClearITPendingBit(I2C2,I2C_IT_SMBALERT);
-		printf("smbalert\n\r");
+		printf("smbalert\r\n");
 	}
 }
 

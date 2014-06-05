@@ -25,8 +25,6 @@ public:
 private:
 	static const float M_EARTH_RADIUS = 6371000;
 	
-	int gpsValidate;
-	
 	int isRefValid;
 	int degX1MLattitudeRef;
 	int degX1MLongitudeRef;
@@ -80,7 +78,6 @@ public:
 	static float speedToDegDirection(float speedX,float speedY);
 	
 	void resetRefPosition();
-	void setGpsValidate(int newVal){gpsValidate = newVal;};
 };
 
 

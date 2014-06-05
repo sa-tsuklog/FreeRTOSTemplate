@@ -15,7 +15,7 @@ Logger::Logger(){
 	fp = NULL;
 	fileSem = xSemaphoreCreateMutex();
 	if(fileSem == NULL){
-		printf("sem error\n\r");
+		printf("sem error\r\n");
 	}
 	
 }
@@ -28,9 +28,9 @@ void Logger::startLogging(char* filename){
 	fp = fopen(filename,"w");
 	fileSemGive();
 	if(fp == NULL){
-		printf("cannot open file %s\n\r",filename);
+		printf("cannot open file %s\r\n",filename);
 	}else{
-		printf("start logging to: %s\n\r",filename);
+		printf("start logging to: %s\r\n",filename);
 	}
 }
 void Logger::stopLogging(){
@@ -42,7 +42,7 @@ void Logger::stopLogging(){
 	fp = NULL;
 	fileSemGive();
 	
-	printf("stop logging\n\r");
+	printf("stop logging\r\n");
 	
 	
 }

@@ -239,7 +239,7 @@ Quaternion* Quaternion::vectCross(const Quaternion* vect) {
 }
 
 void Quaternion::print() {
-    printf("%f\t%fi\t%fj\t%fk\n\r", w, x, y, z);
+    printf("%f\t%fi\t%fj\t%fk\r\n", w, x, y, z);
 }
 
 void Quaternion::printPitchRoleHeading() {
@@ -248,5 +248,5 @@ void Quaternion::printPitchRoleHeading() {
     pitch = getRadPitch(heading);
     role = getRadRole(heading, pitch);
 
-    printf("pitch:%f,\trole%f,\theading%f\n\r", pitch * 180 / M_PI, role * 180 / M_PI, heading * 180 / M_PI);
+    printf("pitch:%f,\trole%f,\theading%f\r\n", pitch * 180 / M_PI, role * 180 / M_PI, heading * 180 / M_PI);
 }

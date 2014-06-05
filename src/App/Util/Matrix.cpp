@@ -82,18 +82,18 @@ void Matrix::print(){
         for (int j = 0; j<columnSize; j++) {
             printf("%1.4e ",nums[i][j]);
         }
-        printf("\n\r");
+        printf("\r\n");
     }
-    printf("\n\r");
+    printf("\r\n");
 }
 
 Matrix* Matrix::copy(Matrix* m1){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->columnSize ||
                 this->rowSize != m1->rowSize ){
-            fprintf(stderr,"Copy: Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"Copy: Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -113,10 +113,10 @@ Matrix* Matrix::add(Matrix* m1, Matrix* m2){
                 this->columnSize != m2->columnSize ||
                 this->rowSize != m1->rowSize ||
                 this->rowSize != m2->rowSize ){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
-            fprintf(stderr,"m2  = (%d, %d).\n\r",m2->rowSize,m2->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
             return NULL;
         }
     }
@@ -139,10 +139,10 @@ Matrix* Matrix::sub(Matrix* m1, Matrix* m2){
                 this->columnSize != m2->columnSize ||
                 this->rowSize != m1->rowSize ||
                 this->rowSize != m2->rowSize ){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
-            fprintf(stderr,"m2  = (%d, %d).\n\r",m2->rowSize,m2->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
             return NULL;
         }
     }
@@ -165,10 +165,10 @@ Matrix* Matrix::mul(Matrix* m1, Matrix* m2){
         if(m1->columnSize != m2->rowSize ||
                 this->rowSize != m1->rowSize ||
                 this->columnSize != m2->columnSize ){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
-            fprintf(stderr,"m2  = (%d, %d).\n\r",m2->rowSize,m2->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
             return NULL;
         }
     }
@@ -192,9 +192,9 @@ Matrix* Matrix::mul(Matrix* m1, float scale){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->columnSize ||
                 this->rowSize != m1->rowSize){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -209,9 +209,9 @@ Matrix* Matrix::transposition(Matrix* m1){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->rowSize ||
                 this->rowSize != m1->columnSize){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -230,9 +230,9 @@ Matrix* Matrix::inverse(Matrix* m1,Matrix* work){
                 this->columnSize != m1->columnSize ||
                 work->columnSize != work->rowSize ||
                 this->columnSize != work->rowSize){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -274,9 +274,9 @@ Matrix* Matrix::subMatrix(Matrix* m1,int rowFrom,int columnFrom,int rowSize,int 
                 this->rowSize != rowSize ||
                 m1->columnSize < columnFrom+columnSize ||
                 m1->rowSize < rowFrom+rowSize ){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\n\r",m1->rowSize,m1->columnSize);
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -294,9 +294,9 @@ Matrix* Matrix::quatToDcm(Quaternion* q){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != 3 ||
                 this->rowSize != 3){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
-            fprintf(stderr,"this = (%d, %d),\n\r",this->rowSize,this->columnSize);
-            fprintf(stderr,"expected  = 3, 3.\n\r");
+            fprintf(stderr,"Matrix size mismatch.\r\n");
+            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            fprintf(stderr,"expected  = 3, 3.\r\n");
             return NULL;
         }
     }
@@ -319,7 +319,7 @@ Matrix* Matrix::quatToDcm(Quaternion* q){
 void Matrix::set(int column,int row,float value){
     if(MATRIX_CHECK_SIZE){
         if(column >= this->columnSize|| row >= this->rowSize){
-            fprintf(stderr,"Matrix size mismatch.\n\r");
+            fprintf(stderr,"Matrix size mismatch.\r\n");
             return;
         }
     }

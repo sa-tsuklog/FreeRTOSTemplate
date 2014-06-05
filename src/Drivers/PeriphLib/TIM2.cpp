@@ -4,6 +4,7 @@
  *  Created on: 2014/04/20
  *      Author: sa
  */
+
 #include "stdio.h"
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
@@ -32,4 +33,3 @@ void TIM2Class::timerStart(){
 uint32_t TIM2Class::getUsTime(){
 	return TIM_GetCounter(TIM2);
 }
-

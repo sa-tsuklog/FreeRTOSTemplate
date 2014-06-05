@@ -40,15 +40,16 @@
  * */
 
 
-
+extern unsigned int idle_count;
 void prvTaskA(void *pvParameters){
 	vTaskDelay(100);
-	
+	unsigned int previousIdleCount = 0;
 	while(1){
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-		vTaskDelay(1);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
-		vTaskDelay(1000);
+		printf("idle:%d\r\n",idle_count-previousIdleCount);
+		previousIdleCount = idle_count;
+		vTaskDelay(100);
 	}
 	
 }
@@ -75,7 +76,7 @@ int main(void) {
 	//TIM4Class::GetInstance()->timerStart();
 	//TIM1Class::GetInstance()->timerStart();
 	
-	xTaskCreate(prvTaskA,"TaskA",128,NULL,1,NULL);
+	//xTaskCreate(prvTaskA,"TaskA",512,NULL,4,NULL);
 
 	xTaskCreate(&USART1Class::prvTxTask,"u1tx",512,USART1,2,NULL);
 	xTaskCreate(&USART1Class::prvRxTask,"u1rx",1024,USART1,2,NULL);

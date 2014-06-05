@@ -5,11 +5,9 @@
  *      Author: Lark_mp
  */
 
-volatile char stackoverflowTaskname[16];
+unsigned int idle_count = 0;
 
 void vApplicationIdleHook(void){
-	static int idle_count=0;
-
 	idle_count++;
 }
 
@@ -18,7 +16,7 @@ void vApplicationMallocFailedHook(void){
 }
 
 void vApplicationStackOverflowHook(void* ptr, char* taskname){
-	printf("stackoverflow at %s\n\r",taskname);
+	printf("stackoverflow at %s\r\n",taskname);
 	while(1);
 }
 

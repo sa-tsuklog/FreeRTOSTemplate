@@ -52,6 +52,7 @@ public:
 	static void prvGainsTask(void *pvParameters);
 	void printNMEA(FILE* fp,KalmanFilter* kf,GpsData* gpsData);
 	void printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData);
+	void printIns2(FILE* fp,ImuData* imuData);
 	
 	void resetImu();
 };
