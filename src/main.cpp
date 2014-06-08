@@ -72,7 +72,7 @@ int main(void) {
 	
 	//GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 	TIM2Class::GetInstance()->timerStart();
-	//TIM3Class::GetInstance()->timerStart();
+	TIM3Class::GetInstance()->timerStart();
 	//TIM4Class::GetInstance()->timerStart();
 	//TIM1Class::GetInstance()->timerStart();
 	
