@@ -22,8 +22,6 @@ command_t commandList[32] = {
 		{"stopLogging",&SerialCommand::stopLogging},
 		{"resetImu",&SerialCommand::resetImu},
 		{"resetGpsRef",&SerialCommand::resetGpsRef},
-		{"gpsInvalidate",&SerialCommand::gpsInvalidate},
-		{"gpsValidate",&SerialCommand::gpsValidate},
 		{"echoOn",&SerialCommand::echoOn},
 		{"echoOff",&SerialCommand::echoOff}
 };

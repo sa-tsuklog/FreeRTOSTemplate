@@ -59,7 +59,7 @@ void Gps::decodeNMEA(char* line){
 	Logger::GetInstance()->fileSemTake();
 	FILE* fp = Logger::GetInstance()->getFp();
 	if(fp != NULL){
-		fprintf(fp,"%s\r\n",line);
+		//fprintf(fp,"%s\r\n",line);
 	}
 	Logger::GetInstance()->fileSemGive();
 }

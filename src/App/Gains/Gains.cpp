@@ -84,6 +84,7 @@ void Gains::gainsTask(void *pvParameters){
 			Logger::GetInstance()->fileSemTake();
 			FILE* fp = Logger::GetInstance()->getFp();
 			if(fp != NULL){
+				printf("write\n\r");
 				printNMEA(fp,kf,&gpsData);
 				printIns2(fp,&imuData);
 				//printIns(fp,kf,&imuData,&gpsData);

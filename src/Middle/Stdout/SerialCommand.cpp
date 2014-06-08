@@ -84,12 +84,6 @@ void SerialCommand::resetImu(){
 void SerialCommand::resetGpsRef(){
 	Gps::GetInstance()->resetRefPosition();
 }
-void SerialCommand::gpsInvalidate(){
-	Gps::GetInstance()->setGpsValidate(0);
-}
-void SerialCommand::gpsValidate(){
-	Gps::GetInstance()->setGpsValidate(1);
-}
 void SerialCommand::echoOn(){
 	USART3Class::GetInstance()->setEcho(1);
 }
