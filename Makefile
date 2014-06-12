@@ -1,11 +1,16 @@
 ### You only have to modify here when you add a new file.
 OSPATH = src/OS
-DRVPATH = src/Drivers src/Drivers/PeriphLib src/Drivers/FreeRTOS_DemoFile
-MIDDLEPATH = src/Middle src/Middle/Stdout src/Middle/Adis16488 src/Middle/Mpu-9250 src/Middle/AD7176-2 src/Middle/Gps
-APPPATH = src/App src/App/Util src/App/Gains src/App/Logger
+MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
+		    src/MyLib/Gains src/MyLib/Gains/Driver/Adis16488 src/MyLib/Gains/Driver/Gps src/MyLib/Gains/Driver/Mpu9250 src/MyLib/Gains/Driver/SupersonicHeight \
+		    src/MyLib/Logger \
+		    src/MyLib/Stdout src/MyLib/Stdout/Driver \
+		    src/MyLib/Util src/MyLib/Util/Driver \
+		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver
+COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
+APPPATH = src/App
 ###
 
-SRCPATH = src $(OSPATH) $(DRVPATH) $(MIDDLEPATH) $(APPPATH)
+SRCPATH = src $(OSPATH) $(MYLIBPATH) $(COMPATH) $(APPPATH)
 
 OBJDIR = objs
 BINDIR = bin
