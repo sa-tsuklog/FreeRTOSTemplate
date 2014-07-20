@@ -172,7 +172,10 @@ void EXTI0_IRQHandler(){
 }
 void EXTI15_10_IRQHandler()
 {
-	
+	if(EXTI_GetITStatus(EXTI_Line12)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line12);
+		I2C2Class::getInstance()->myEXTI12IRQHandler();
+	}
 	//SPI2Class::GetInstance()->EXTI14_IRQHandler();
 }
 

@@ -1,17 +1,13 @@
-/*
- * Matrix.cpp
- *
- *  Created on: 2014/04/13
- *      Author: sa
- */
-
-
-
-
 #include "Matrix.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "MyLib/Util/Util.h"
 
+/**
+ * @brief 行数,列数がsizeの単位行列を作成する
+ * 
+ * @param[in] size 行列のサイズ
+ */
 Matrix::Matrix(int size) {
     this->rowSize = size;
     this->columnSize = size;
@@ -32,6 +28,12 @@ Matrix::Matrix(int size) {
     }
 }
 
+/**
+ * @brief 行数,列数がsizeであり、要素が全てvalueである正方行列を作成する
+ * 
+ * @param[in] size 行列のサイズ
+ * @param[in] value 要素の値
+ */
 Matrix::Matrix(int size, float value){
     this->rowSize = size;
     this->columnSize = size;
@@ -47,6 +49,13 @@ Matrix::Matrix(int size, float value){
     }
 }
 
+/**
+ * @brief　要素が全てvalueである行列を作成する
+ * 
+ * @param[in] rowSize　行数 
+ * @param[in] columnSize 列数
+ * @param[in] 要素の値
+ */
 Matrix::Matrix(int rowSize, int columnSize,float value){
     this->rowSize = rowSize;
     this->columnSize = columnSize;
@@ -77,23 +86,32 @@ Matrix::~Matrix() {
     }
 }
 
+/**
+ * @brief 行列を標準出力に出力する
+ */
 void Matrix::print(){
     for (int i = 0; i<rowSize; i++) {
         for (int j = 0; j<columnSize; j++) {
             printf("%1.4e ",nums[i][j]);
         }
-        printf("\r\n");
+        printf(0,stdout,"\r\n");
     }
-    printf("\r\n");
+    printf(0,stdout,"\r\n");
 }
 
+/**
+ * @brief 行列のコピーを行う。m1と自身は同じサイズである必要がある
+ * 
+ * @param[in] m1 コピー元の行列
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::copy(Matrix* m1){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->columnSize ||
                 this->rowSize != m1->rowSize ){
-            fprintf(stderr,"Copy: Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("Copy: Matrix size mismatch.\r\n");
+        	printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+        	printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -107,16 +125,22 @@ Matrix* Matrix::copy(Matrix* m1){
     return this;
 }
 
+/**
+ * @brief 行列の和
+ * 
+ * m1+m2を行い、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::add(Matrix* m1, Matrix* m2){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->columnSize ||
                 this->columnSize != m2->columnSize ||
                 this->rowSize != m1->rowSize ||
                 this->rowSize != m2->rowSize ){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
-            fprintf(stderr,"m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
+        	printf("Matrix size mismatch.\r\n");
+        	printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+        	printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
             return NULL;
         }
     }
@@ -129,20 +153,33 @@ Matrix* Matrix::add(Matrix* m1, Matrix* m2){
     
     return this;
 }
+
+/**
+ * @brief 行列の和
+ * 
+ * 自身+m2を計算し、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::add(Matrix* m2){
     add(this,m2);
     return this;
 }
+/**
+ * @brief 行列の差
+ * 
+ * m1-m2を計算し、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::sub(Matrix* m1, Matrix* m2){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->columnSize ||
                 this->columnSize != m2->columnSize ||
                 this->rowSize != m1->rowSize ||
                 this->rowSize != m2->rowSize ){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
-            fprintf(stderr,"m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
+        	printf("Matrix size mismatch.\r\n");
+        	printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+        	printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
             return NULL;
         }
     }
@@ -155,20 +192,32 @@ Matrix* Matrix::sub(Matrix* m1, Matrix* m2){
     
     return this;
 }
+/**
+ * @brief 行列の差
+ * 
+ * 自身-m2を計算し、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::sub(Matrix* m2){
     sub(this,m2);
     return this;
 }
 
+/**
+ * @brief 行列の積
+ * 
+ * m1*m2を計算し、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::mul(Matrix* m1, Matrix* m2){
     if(MATRIX_CHECK_SIZE){
         if(m1->columnSize != m2->rowSize ||
                 this->rowSize != m1->rowSize ||
                 this->columnSize != m2->columnSize ){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
-            fprintf(stderr,"m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
+        	printf("Matrix size mismatch.\r\n");
+        	printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+        	printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("m2  = (%d, %d).\r\n",m2->rowSize,m2->columnSize);
             return NULL;
         }
     }
@@ -188,13 +237,19 @@ Matrix* Matrix::mul(Matrix* m1, Matrix* m2){
     return this;
 }
 
+/**
+ * @brief 行列と実数の積
+ * 
+ * m1*fを計算し、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::mul(Matrix* m1, float scale){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->columnSize ||
                 this->rowSize != m1->rowSize){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("Matrix size mismatch.\r\n");
+        	printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+        	printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -205,13 +260,20 @@ Matrix* Matrix::mul(Matrix* m1, float scale){
     }
     return this;
 }
+
+/**
+ * @brief 行列の転地
+ * 
+ * m1の転地計算し、結果を自身に格納する
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::transposition(Matrix* m1){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != m1->rowSize ||
                 this->rowSize != m1->columnSize){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("Matrix size mismatch.\r\n");
+        	printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+        	printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -223,6 +285,14 @@ Matrix* Matrix::transposition(Matrix* m1){
     return this;
 }
 
+/**
+ * @brief 逆行列
+ * 
+ * m1の逆行列を計算し、結果を自身に格納する。m1,workは自身と同じサイズである必要がある
+ * @param[in] m1 逆行列を求める行列
+ * @param[out] work 作業用領域
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::inverse(Matrix* m1,Matrix* work){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != this->rowSize ||
@@ -230,9 +300,9 @@ Matrix* Matrix::inverse(Matrix* m1,Matrix* work){
                 this->columnSize != m1->columnSize ||
                 work->columnSize != work->rowSize ||
                 this->columnSize != work->rowSize){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+        	printf("Matrix size mismatch.\r\n");
+            printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -268,15 +338,26 @@ Matrix* Matrix::inverse(Matrix* m1,Matrix* work){
     return this;
 }
 
+/**
+ * @brief 行列の一部を抜き出す
+ * 
+ * 自身のサイズは抜き出した後の行列と同じサイズである必要がある
+ * @param[in] m1元となる行列
+ * @param[in] 抜き出す行の開始位置
+ * @param[in] 抜き出す列の開始位置
+ * @param[in] 抜き出す行の大きさ
+ * @param[in] 抜き出す列の大きさ
+ * @return 自身のポインタ
+ */
 Matrix* Matrix::subMatrix(Matrix* m1,int rowFrom,int columnFrom,int rowSize,int columnSize){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != columnSize ||
                 this->rowSize != rowSize ||
                 m1->columnSize < columnFrom+columnSize ||
                 m1->rowSize < rowFrom+rowSize ){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
+            printf("Matrix size mismatch.\r\n");
+            printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            printf("m1  = (%d, %d),\r\n",m1->rowSize,m1->columnSize);
             return NULL;
         }
     }
@@ -290,13 +371,20 @@ Matrix* Matrix::subMatrix(Matrix* m1,int rowFrom,int columnFrom,int rowSize,int 
     return this;
 }
 
+/**
+ * @brief クォータニオンからDCM(Direction Cosine Matrix)を求める
+ * 
+ * 自身は3x3の行列である必要がある
+ * @param q DCMを作成するクォータニオン
+ * @param 自身のポインタ
+ */
 Matrix* Matrix::quatToDcm(Quaternion* q){
     if(MATRIX_CHECK_SIZE){
         if(this->columnSize != 3 ||
                 this->rowSize != 3){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
-            fprintf(stderr,"this = (%d, %d),\r\n",this->rowSize,this->columnSize);
-            fprintf(stderr,"expected  = 3, 3.\r\n");
+            printf("Matrix size mismatch.\r\n");
+            printf("this = (%d, %d),\r\n",this->rowSize,this->columnSize);
+            printf("expected  = 3, 3.\r\n");
             return NULL;
         }
     }
@@ -315,11 +403,16 @@ Matrix* Matrix::quatToDcm(Quaternion* q){
     return this;
 }
 
-
+/**
+ * @brief 行列の要素に値をセットする
+ * 
+ * @param[in] column セットする列
+ * @param[in] row セットする行
+ */
 void Matrix::set(int column,int row,float value){
     if(MATRIX_CHECK_SIZE){
         if(column >= this->columnSize|| row >= this->rowSize){
-            fprintf(stderr,"Matrix size mismatch.\r\n");
+            printf("Matrix size mismatch.\r\n");
             return;
         }
     }
@@ -327,9 +420,18 @@ void Matrix::set(int column,int row,float value){
     this->nums[row][column] = value;
 }
 
+/**
+ * @brief 行数を返す
+ * @return 行数
+ */
 int Matrix::getRowSize(){
     return this->rowSize;
 }
+
+/**
+ * @brief 列数を返す
+ * @return 列数
+ */
 int Matrix::getColumnSize(){
     return this->columnSize;
 }

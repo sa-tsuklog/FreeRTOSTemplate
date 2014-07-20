@@ -44,13 +44,13 @@ private:
 	SemaphoreHandle_t startLoggingSem;
 	SemaphoreHandle_t stopLoggingSem;
 	
-	static const int BUF0_LENGTH = 1024;
-	static const int BUF1_LENGTH = 1024;
+	static const int BUF0_LENGTH = 512;
+	static const int BUF1_LENGTH = 512;
 	static const int BUF2_LENGTH = 1;
 	static const int BUF3_LENGTH = 1;	
 	QueueHandle_t buf[4];
 	
-	char lineBuf[BUF0_LENGTH+1];
+	char lineBuf[BUF0_LENGTH];
 	
 	int fileOpen();
 	int fileClose();

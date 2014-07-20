@@ -4,10 +4,17 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.4"/>
-<title>FreeRTOSTemplate: src/App/Gains/ImuData.h Source File</title>
+<title>FreeRTOSTemplate: src/MyLib/Gains/ImuData.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+  $(window).load(resizeHeight);
+</script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
@@ -39,6 +46,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -64,12 +72,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){initNavTree('ImuData_8h_source.html','');});
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Groups</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Groups</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -78,11 +101,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0181a16102d35c8a818ac6add4403235.html">src</a></li><li class="navelem"><a class="el" href="dir_367ba8c6db8b9e505a15bd4852c19973.html">App</a></li><li class="navelem"><a class="el" href="dir_f2046b242ef0c18c69494b01c0fec0ac.html">Gains</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">ImuData.h</div>  </div>
@@ -98,39 +116,52 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef IMUDATA_H_</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IMUDATA_H_</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;../Util/Quaternion.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;Common/Quaternion.h&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">class </span>ImuData{</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    ImuData(<span class="keywordtype">float</span> rpsRateX,<span class="keywordtype">float</span> rpsRateY,<span class="keywordtype">float</span> rpsRateZ,</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="keywordtype">float</span> mpspsAclX,<span class="keywordtype">float</span> mpspsAclY,<span class="keywordtype">float</span> mpspsAclZ,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="keywordtype">float</span> uTCmpsX,<span class="keywordtype">float</span> uTCmpsY,<span class="keywordtype">float</span> uTCmpsZ,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <span class="keywordtype">float</span> prsPressure,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordtype">int</span> isCmpsValid,<span class="keywordtype">int</span> isPressureValid){</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        this-&gt;rpsRate = Quaternion(0,rpsRateX,rpsRateY,rpsRateZ);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        this-&gt;mpspsAcl = Quaternion(0,mpspsAclX,mpspsAclY,mpspsAclZ);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        this-&gt;uTCmps   = Quaternion(0,uTCmpsX,uTCmpsY,uTCmpsZ);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        this-&gt;prsPressure = prsPressure;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        this-&gt;isCmpsValid = isCmpsValid;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        this-&gt;isPressureValid= isPressureValid;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    Quaternion mpspsAcl;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    Quaternion rpsRate;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    Quaternion uTCmps;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">float</span> prsPressure;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">int</span> isCmpsValid;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">int</span> isPressureValid;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;};</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* IMUDATA_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="code" href="classImuData.html">   21</a></span>&#160;<span class="keyword">class </span><a class="code" href="classImuData.html" title="慣性センサのデータ受け渡しに使用するクラス ">ImuData</a>{</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="classImuData.html" title="慣性センサのデータ受け渡しに使用するクラス ">ImuData</a>(<span class="keywordtype">float</span> rpsRateX,<span class="keywordtype">float</span> rpsRateY,<span class="keywordtype">float</span> rpsRateZ,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            <span class="keywordtype">float</span> mpspsAclX,<span class="keywordtype">float</span> mpspsAclY,<span class="keywordtype">float</span> mpspsAclZ,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordtype">float</span> uTCmpsX,<span class="keywordtype">float</span> uTCmpsY,<span class="keywordtype">float</span> uTCmpsZ,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            <span class="keywordtype">float</span> <a class="code" href="classImuData.html#a37cad26dd67e80429d2b5e0ed63933fe">paPressure</a>,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keywordtype">int</span> <a class="code" href="classImuData.html#a0d007872c5e204d802af9d07c35acb57">isCmpsValid</a>,<span class="keywordtype">int</span> <a class="code" href="classImuData.html#ae47365c27553732412c1910941eb661b">isPressureValid</a>){</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        this-&gt;<a class="code" href="classImuData.html#a0f1f8f133266de3d56328806bc2fd042">rpsRate</a> = <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a>(0,rpsRateX,rpsRateY,rpsRateZ);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        this-&gt;<a class="code" href="classImuData.html#aea022276e8d47134408398ef9a043dde">mpspsAcl</a> = <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a>(0,mpspsAclX,mpspsAclY,mpspsAclZ);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        this-&gt;<a class="code" href="classImuData.html#a9ba0c01d00a0df705f3e5aab46288638">uTCmps</a>   = <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a>(0,uTCmpsX,uTCmpsY,uTCmpsZ);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        this-&gt;paPressure = <a class="code" href="classImuData.html#a37cad26dd67e80429d2b5e0ed63933fe">paPressure</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        this-&gt;isCmpsValid = <a class="code" href="classImuData.html#a0d007872c5e204d802af9d07c35acb57">isCmpsValid</a>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        this-&gt;isPressureValid= <a class="code" href="classImuData.html#ae47365c27553732412c1910941eb661b">isPressureValid</a>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="classImuData.html" title="慣性センサのデータ受け渡しに使用するクラス ">ImuData</a>(){</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        this-&gt;<a class="code" href="classImuData.html#a0f1f8f133266de3d56328806bc2fd042">rpsRate</a> = <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a>(0,0,0,0);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        this-&gt;<a class="code" href="classImuData.html#aea022276e8d47134408398ef9a043dde">mpspsAcl</a>= <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a>(0,0,0,0);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        this-&gt;<a class="code" href="classImuData.html#a9ba0c01d00a0df705f3e5aab46288638">uTCmps</a>  = <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a>(0,0,0,0);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        this-&gt;paPressure=0;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        this-&gt;isCmpsValid=0;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        this-&gt;isPressureValid=0;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="code" href="classImuData.html#aea022276e8d47134408398ef9a043dde">   44</a></span>&#160;    <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a> <a class="code" href="classImuData.html#aea022276e8d47134408398ef9a043dde">mpspsAcl</a>; </div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="code" href="classImuData.html#a0f1f8f133266de3d56328806bc2fd042">   45</a></span>&#160;    <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a> <a class="code" href="classImuData.html#a0f1f8f133266de3d56328806bc2fd042">rpsRate</a>;  </div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="code" href="classImuData.html#a9ba0c01d00a0df705f3e5aab46288638">   46</a></span>&#160;    <a class="code" href="classQuaternion.html" title="単精度浮動小数点によるクォータニオン ">Quaternion</a> <a class="code" href="classImuData.html#a9ba0c01d00a0df705f3e5aab46288638">uTCmps</a>;   </div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="code" href="classImuData.html#a37cad26dd67e80429d2b5e0ed63933fe">   47</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classImuData.html#a37cad26dd67e80429d2b5e0ed63933fe">paPressure</a>;    </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="code" href="classImuData.html#a0d007872c5e204d802af9d07c35acb57">   48</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classImuData.html#a0d007872c5e204d802af9d07c35acb57">isCmpsValid</a>;     </div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="code" href="classImuData.html#ae47365c27553732412c1910941eb661b">   49</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classImuData.html#ae47365c27553732412c1910941eb661b">isPressureValid</a>; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">float</span> <a class="code" href="classImuData.html#a34bbf521e3a39579be43142826d27a88" title="気圧差から相対高度を求める ">paToRelativeHeight</a>(<span class="keywordtype">float</span> paPressure,<span class="keywordtype">float</span> paRefPressure);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* IMUDATA_H_ */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated on Wed May 28 2014 19:03:04 for FreeRTOSTemplate by &#160;<a href="http://www.doxygen.org/index.html">
-<img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.4
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc5e93d4e000b5426cb8f9c5b366cfb8.html">MyLib</a></li><li class="navelem"><a class="el" href="dir_3c1503c310f3701a46648bcdb6662684.html">Gains</a></li><li class="navelem"><b>ImuData.h</b></li>
+    <li class="footer">Generated on Tue Jul 15 2014 22:10:22 for FreeRTOSTemplate by
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.4 </li>
+  </ul>
+</div>
 </body>
 </html>

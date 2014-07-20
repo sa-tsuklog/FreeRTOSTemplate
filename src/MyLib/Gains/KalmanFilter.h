@@ -13,10 +13,10 @@
 
 class KalmanFilter {
 public:
-    KalmanFilter(Quaternion* velocity, Quaternion* position, Quaternion* attitude);
+    KalmanFilter(float secTimeStep,Quaternion* velocity, Quaternion* position, Quaternion* attitude);
     KalmanFilter(const KalmanFilter& orig);
     virtual ~KalmanFilter();
-
+    
     void predict(Quaternion* mpspsAccel, Quaternion* rpsGyro);
     void update(Quaternion* gpsVel, Quaternion* gpsPos, Quaternion* uTCmps);
 
@@ -26,12 +26,12 @@ public:
     
     void reset();
     
+    float secTimeStep;
     static Quaternion insToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass);
     static Quaternion angleToPosition(float lambda, float phi);
 
 
 private:
-    static const float SEC_TIMESTEP = 1.0f/102.5f;
     static const float EARTH_RADIUS = 6378137.0f;
     const Quaternion* EARTH_RATE;
     const Quaternion* GRAVITY;

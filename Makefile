@@ -1,11 +1,14 @@
 ### You only have to modify here when you add a new file.
 OSPATH = src/OS
 MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
-		    src/MyLib/Gains src/MyLib/Gains/Driver/Adis16488 src/MyLib/Gains/Driver/Gps src/MyLib/Gains/Driver/Mpu9250 src/MyLib/Gains/Driver/SupersonicHeight \
+		    src/MyLib/Gains src/MyLib/Gains/Driver/Adis16488 src/MyLib/Gains/Driver/Gps src/MyLib/Gains/Driver/Mpu9250 src/MyLib/Gains/Driver/SupersonicHeight src/MyLib/Gains/Driver/DummyGps \
 		    src/MyLib/Logger \
 		    src/MyLib/Stdout src/MyLib/Stdout/Driver \
 		    src/MyLib/Util src/MyLib/Util/Driver \
-		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver
+		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver \
+		    src/MyLib/CmdServo src/MyLibCmdServo/Driver \
+		    src/MyLib/Servo src/MyLib/Servo/Driver \
+		    src/App
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App
 ###
@@ -16,12 +19,16 @@ OBJDIR = objs
 BINDIR = bin
 
 ifeq ($(OS),Windows_NT)
-	SHELL = cmd.exe
-	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
+#	SHELL = cmd.exe
+#	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
+	SHELL = sh
+	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
 	TOOLDIR = ../../yagarto/bin/
 	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
-	MKOBJDIR = $(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
-	MKBINDIR = $(shell if not exist $(BINDIR) mkdir $(BINDIR))
+	#MKOBJDIR = $(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
+	#MKBINDIR = $(shell if not exist $(BINDIR) mkdir $(BINDIR))
+	MKOBJDIR = 
+	MKBINDIR = 
 else
 	SHELL = sh
 	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
@@ -107,3 +114,20 @@ $(OBJDIR)/startup_stm32f4xx.o:
 
 clean:
 	$(REMOVE)
+
+
+
+#TOOLDIR = ../../yagarto/bin/
+#CXX     = $(TOOLDIR)arm-none-eabi-g++
+#ECHO	= echo aaaa
+#
+#all:main
+#
+#main:a.out
+#
+#a.out:main.o
+#	$(CXX) -c -o a.out src/main.cpp
+#	$(ECHO)
+#
+#main.o:src/main.cpp
+#	$(CXX) -c src/main.cpp

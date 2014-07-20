@@ -7,9 +7,9 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
-#include "TIM1.h"
+#include "ServoTim1.h"
 
-TIM1Class::TIM1Class(){
+ServoTim1::ServoTim1(){
 	/////////////////////////////////////
 	//GPIO
 	/////////////////////////////////////
@@ -71,7 +71,7 @@ TIM1Class::TIM1Class(){
 	oc1def.TIM_OCMode = TIM_OCMode_PWM1;
 	oc1def.TIM_OutputState = TIM_OutputState_Enable;
 	oc1def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc1def.TIM_Pulse = 1500-4;
+	oc1def.TIM_Pulse = 1500-1;
 	TIM_OC1Init(TIM1,&oc1def);
 	
 	TIM_OCInitTypeDef oc2def;
@@ -79,7 +79,7 @@ TIM1Class::TIM1Class(){
 	oc2def.TIM_OCMode = TIM_OCMode_PWM1;
 	oc2def.TIM_OutputState = TIM_OutputState_Enable;
 	oc2def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc2def.TIM_Pulse = 1600-4;
+	oc2def.TIM_Pulse = 1500-1;
 	TIM_OC2Init(TIM1,&oc2def);
 	
 	TIM_OCInitTypeDef oc3def;
@@ -87,7 +87,7 @@ TIM1Class::TIM1Class(){
 	oc3def.TIM_OCMode = TIM_OCMode_PWM1;
 	oc3def.TIM_OutputState = TIM_OutputState_Enable;
 	oc3def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc3def.TIM_Pulse = 1700-4;
+	oc3def.TIM_Pulse = 1500-1;
 	TIM_OC3Init(TIM1,&oc3def);
 	
 	TIM_OCInitTypeDef oc4def;
@@ -95,15 +95,27 @@ TIM1Class::TIM1Class(){
 	oc4def.TIM_OCMode = TIM_OCMode_PWM1;
 	oc4def.TIM_OutputState = TIM_OutputState_Enable;
 	oc4def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc4def.TIM_Pulse = 1800-4;
+	oc4def.TIM_Pulse = 1500-1;
 	TIM_OC4Init(TIM1,&oc4def);
+	
+	TIM_OC1PreloadConfig(TIM1,TIM_OCPreload_Enable);
+	TIM_OC2PreloadConfig(TIM1,TIM_OCPreload_Enable);
+	TIM_OC3PreloadConfig(TIM1,TIM_OCPreload_Enable);
+	TIM_OC4PreloadConfig(TIM1,TIM_OCPreload_Enable);
 	
 	TIM_CtrlPWMOutputs(TIM1,ENABLE);
 }
 
-void TIM1Class::timerStart(){
+void ServoTim1::timerStart(){
 	TIM_Cmd(TIM1,ENABLE);
 }
-
+void ServoTim1::setDuty(int ch,uint32_t duty){
+	switch(ch){
+	case 1:TIM_SetCompare1(TIM1,duty);break;
+	case 2:TIM_SetCompare2(TIM1,duty);break;
+	case 3:TIM_SetCompare3(TIM1,duty);break;
+	case 4:TIM_SetCompare4(TIM1,duty);break;
+	}
+}
 
 

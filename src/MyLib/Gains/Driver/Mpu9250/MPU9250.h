@@ -8,6 +8,9 @@
 #ifndef MPU_9250_H_
 #define MPU_9250_H_
 
+#include "FreeRTOS.h"
+#include "semphr.h"
+
 class Mpu9250 {
 	// Singleton pattern definition
 private:
@@ -23,13 +26,29 @@ public:
 
 	// Class definition
 private:
+	static const float MPSPS_PER_LSB	=9.8*16.0/(65536/2);
+	static const float RPS_PER_LSB		=500*3.1415/180/(65536/2);
+	static const float UT_PER_LSB		=4800.0/(65536/2);
+	static const float DEG_PER_LSB      =1.0;
 	float cmpsGain[3];
 	
+	static const int SAMPLES_FOR_CALIBRATION = 500;
+	float calibrationBuf[3];
 	
+	float mpspsAcl[3];
+	float rpsRate[3];
+	float uTCmps[3];
+	float degTemp;
 	
+	SemaphoreHandle_t gyroCalibrationSem;
+	SemaphoreHandle_t aclCalibrationSem;
 public:
 	void init();
+	void waitNewData();
 	void readMpu9250();
+	
+	void startGyroCalibration();
+	void startAclCalibration();
 	
 	void prvMpu9250Task(void *pvParameters);
 };

@@ -47,20 +47,26 @@ private:
 	int m_address;
 	int m_state;
 
-	xSemaphoreHandle m_sem;
+	xSemaphoreHandle rwCompleteSem;
+	xSemaphoreHandle dataReadySem;
 	
 	void myEV_IRQ_Write();
 	void myEV_IRQ_ReadN();
 	void myEV_IRQ_Read1();
 public:
+	void start();
+	
 	int write(char i2cAddress, char regAddress, unsigned char* writeData, int writeLength);
 	int write1(char i2cAddress,char regAddress, unsigned char writeData);
 	int read(char i2cAddress,char regAddress, unsigned char* readBuf, int readLength);
+	
+	void waitNewData();
 	
 	void myEV_IRQHandler();
 	void myER_IRQHandler();
 	void myDMA1_Stream2_IRQHandler();
 	void myDMA1_Stream7_IRQHandler();
+	void myEXTI12IRQHandler();
 };
 
 

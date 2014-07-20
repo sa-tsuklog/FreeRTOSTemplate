@@ -20,12 +20,15 @@ public:
 		static MoterDriver instance;
 		return &instance;
 	}
-
+	
 	// Class definition
 private:
+	static const int USE_CH0 = 0;//marked as "servo 4-7"
+	static const int USE_CH1 = 0;//marked as "propo"
+	
 	static const int MAX_DUTY = (int)(65535*0.90);
 public:
-	void setPower(float torque,int direction,int brake);
+	void setPower(int ch,float torque,int direction,int brake);
 	
 };
 

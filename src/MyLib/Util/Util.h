@@ -7,10 +7,19 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
+#include "FreeRTOS.h"
+#include "semphr.h"
+
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "UserFlashData.h"
 
 
+/**
+ * @class Util
+ * @brief ï÷óòä÷êîÇ¢ÇÎÇ¢ÇÎ
+ */
 class Util {
 	// Singleton pattern definition
 private:
@@ -23,16 +32,18 @@ public:
     	static Util instance;
     	return &instance;
 	}
-
 	// Class definition
 private:
+	SemaphoreHandle_t printfMutex;
+	
+	void initFlashData();
 public:
 	UserflashData flashData; 
 	
 	uint32_t getUsTime();
 	float getVoltInputVoltage();
 	void userflashFlush();
-	
+	void myFprintf(portTickType blockTime,FILE* stream,const char* format,...);
 	static void initUtil();
 };
 

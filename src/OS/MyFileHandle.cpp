@@ -21,6 +21,8 @@
 #include "MyLib/CmdServo/Driver/USART1.h"
 #include "MyLib/Logger/Logger.h"
 
+#include "MyLib/Util/Util.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -36,52 +38,52 @@ FIL fileHandles[MAX_FILEHANDLE_NUM];
 
 FATFS* fatfs=NULL;
 void printfFresult(FRESULT res){
-	printf("file:");
+	Util::GetInstance()->myFprintf(0,stdout,"file:");
 	switch(res){
-		case FR_OK:printf("FR_OK");break;
-		case FR_DISK_ERR:printf("FR_DISK_ERR");break;
-		case FR_INT_ERR:printf("FR_INT_ERR");break;
-		case FR_NOT_READY:printf("FR_NOT_READY");break;
-		case FR_NO_FILE:printf("FR_NO_FILE");break;
-		case FR_NO_PATH:printf("FR_NO_PATH");break;
-		case FR_INVALID_NAME:printf("FR_INVALID_NAME");break;
-		case FR_DENIED:printf("FR_DENIED");break;
-		case FR_EXIST:printf("FR_EXIST");break;
-		case FR_INVALID_OBJECT:printf("FR_INVALID_OBJECT");break;
-		case FR_WRITE_PROTECTED:printf("FR_WRITE_PROTECTED");break;
-		case FR_INVALID_DRIVE:printf("FR_INVALIDE_DRIVE");break;
-		case FR_NOT_ENABLED:printf("FR_NOT_ENABLED");break;
-		case FR_NO_FILESYSTEM:printf("FR_MKFS_ABORTED");break;
-		case FR_TIMEOUT:printf("FR_TIMEOUT");break;
-		case FR_LOCKED:printf("FR_LOCKED");break;
-		case FR_NOT_ENOUGH_CORE:printf("FR_NOT_ENOUGH_CORE");break;
-		case FR_TOO_MANY_OPEN_FILES:printf("FR_TOO_MANY_OPEN_FILES");break;
-		case FR_INVALID_PARAMETER:printf("FR_INVALID_PARAMETER");break;
-		default: printf("error code = %d",res);break;
+		case FR_OK:Util::GetInstance()->myFprintf(0,stdout,"FR_OK");break;
+		case FR_DISK_ERR:Util::GetInstance()->myFprintf(0,stdout,"FR_DISK_ERR");break;
+		case FR_INT_ERR:Util::GetInstance()->myFprintf(0,stdout,"FR_INT_ERR");break;
+		case FR_NOT_READY:Util::GetInstance()->myFprintf(0,stdout,"FR_NOT_READY");break;
+		case FR_NO_FILE:Util::GetInstance()->myFprintf(0,stdout,"FR_NO_FILE");break;
+		case FR_NO_PATH:Util::GetInstance()->myFprintf(0,stdout,"FR_NO_PATH");break;
+		case FR_INVALID_NAME:Util::GetInstance()->myFprintf(0,stdout,"FR_INVALID_NAME");break;
+		case FR_DENIED:Util::GetInstance()->myFprintf(0,stdout,"FR_DENIED");break;
+		case FR_EXIST:Util::GetInstance()->myFprintf(0,stdout,"FR_EXIST");break;
+		case FR_INVALID_OBJECT:Util::GetInstance()->myFprintf(0,stdout,"FR_INVALID_OBJECT");break;
+		case FR_WRITE_PROTECTED:Util::GetInstance()->myFprintf(0,stdout,"FR_WRITE_PROTECTED");break;
+		case FR_INVALID_DRIVE:Util::GetInstance()->myFprintf(0,stdout,"FR_INVALIDE_DRIVE");break;
+		case FR_NOT_ENABLED:Util::GetInstance()->myFprintf(0,stdout,"FR_NOT_ENABLED");break;
+		case FR_NO_FILESYSTEM:Util::GetInstance()->myFprintf(0,stdout,"FR_MKFS_ABORTED");break;
+		case FR_TIMEOUT:Util::GetInstance()->myFprintf(0,stdout,"FR_TIMEOUT");break;
+		case FR_LOCKED:Util::GetInstance()->myFprintf(0,stdout,"FR_LOCKED");break;
+		case FR_NOT_ENOUGH_CORE:Util::GetInstance()->myFprintf(0,stdout,"FR_NOT_ENOUGH_CORE");break;
+		case FR_TOO_MANY_OPEN_FILES:Util::GetInstance()->myFprintf(0,stdout,"FR_TOO_MANY_OPEN_FILES");break;
+		case FR_INVALID_PARAMETER:Util::GetInstance()->myFprintf(0,stdout,"FR_INVALID_PARAMETER");break;
+		default: Util::GetInstance()->myFprintf(0,stdout,"error code = %d",res);break;
 	}
-	printf("\r\n");
+	Util::GetInstance()->myFprintf(0,stdout,"\r\n");
 }
 void printFatfsMode(BYTE mode){
-	printf("mode:");
+	Util::GetInstance()->myFprintf(0,stdout,"mode:");
 	if(mode & FA_READ){
-		printf("FA_READ|");
+		Util::GetInstance()->myFprintf(0,stdout,"FA_READ|");
 	}
 	if(mode & FA_WRITE){
-		printf("FA_WRITE|");
+		Util::GetInstance()->myFprintf(0,stdout,"FA_WRITE|");
 	}
 	if(mode & FA_OPEN_EXISTING){
-		printf("FA_OPEN_EXISTING|");
+		Util::GetInstance()->myFprintf(0,stdout,"FA_OPEN_EXISTING|");
 	}
 	if(mode & FA_OPEN_ALWAYS){
-		printf("FA_OPEN_ALWAYS|");
+		Util::GetInstance()->myFprintf(0,stdout,"FA_OPEN_ALWAYS|");
 	}
 	if(mode & FA_CREATE_NEW){
-		printf("FA_CREATE_NEW|");
+		Util::GetInstance()->myFprintf(0,stdout,"FA_CREATE_NEW|");
 	}
 	if(mode & FA_CREATE_ALWAYS){
-		printf("FA_CREATE_ALWAYS|");
+		Util::GetInstance()->myFprintf(0,stdout,"FA_CREATE_ALWAYS|");
 	}
-	printf("\r\n");
+	Util::GetInstance()->myFprintf(0,stdout,"\r\n");
 }
 
 
@@ -185,7 +187,7 @@ int myWrite (struct _reent *r, int file, char * ptr, int len)
 		FIL* fp = &fileHandles[id];
 		FRESULT res = f_write(fp,ptr,len,&bw);
 		
-		//printf("write %d:",id);
+		//Util::GetInstance()->myFprintf(0,stdout,"write %d:",id);
 		//printfFresult(res);
 		
 		if(res != FR_OK){
@@ -226,12 +228,12 @@ int myOpen(struct _reent *r,const char *path,int mode){
 		fatfs = malloc(sizeof(FATFS));
 		
 		res = f_mount(fatfs,"sd",1);
-//		printf("mount:");
+//		Util::GetInstance()->myFprintf(0,stdout,"mount:");
 //		printfFresult(res);
 		
 		if(res != FR_OK){
 			free(fatfs);
-			printf("not mounted\r\n");
+			Util::GetInstance()->myFprintf(0,stdout,"not mounted\r\n");
 			return -1;
 		}
 	}
@@ -246,7 +248,7 @@ int myOpen(struct _reent *r,const char *path,int mode){
 		}
 	}
 	if(handleId == MAX_FILEHANDLE_NUM){
-		printf("cannot open\r\n");
+		Util::GetInstance()->myFprintf(0,stdout,"cannot open\r\n");
 		return -1;
 	}
 	
@@ -254,10 +256,10 @@ int myOpen(struct _reent *r,const char *path,int mode){
 	BYTE fatMode = newlibModeToFatFsMode(mode);
 	res = f_open(&fileHandles[handleId],path,fatMode);
 	
-	//printf("open:%s",path);
+	//Util::GetInstance()->myFprintf(0,stdout,"open:%s",path);
 	//printfFresult(res);
 	//printFatfsMode(fatMode);
-	//printf("id = %d\r\n",handleId);
+	//Util::GetInstance()->myFprintf(0,stdout,"id = %d\r\n",handleId);
 	
 	if(res == FR_OK){
 		if(mode & O_APPEND){
@@ -280,13 +282,13 @@ int myOpen(struct _reent *r,const char *path,int mode){
 int myClose (struct _reent *r, int file)
 {
 	if(file < FILEHANDLE_OFFSET || FILEHANDLE_OFFSET+MAX_FILEHANDLE_NUM <= file){
-		//printf("close: invalid file %d\r\n",file);
+		//Util::GetInstance()->myFprintf(0,stdout,"close: invalid file %d\r\n",file);
 		return -1;
 	}
 	
 	int id = file - FILEHANDLE_OFFSET;
 	if(fileHandleInUse[id] != 1){
-		//printf("id %d is not open\r\n",id);
+		//Util::GetInstance()->myFprintf(0,stdout,"id %d is not open\r\n",id);
 		return -1;
 	}
 	
@@ -296,7 +298,7 @@ int myClose (struct _reent *r, int file)
 	fileHandleInUse[id] = 0;
 	
 	if(res == FR_OK){
-		//printf("id %d closed\r\n",id);
+		//Util::GetInstance()->myFprintf(0,stdout,"id %d closed\r\n",id);
 		return 0;
 	}else{
 		return -1;

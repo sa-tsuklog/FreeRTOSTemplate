@@ -30,7 +30,7 @@ Gps::Gps(){
 	degCourse=0;
 	valid=0;
 	
-	fp = fopen("/log0","w");
+	fp = fopen("/log1","w");
 }
 
 
@@ -55,8 +55,9 @@ void Gps::decodeNMEA(char* line){
 		//do nothing.
 	}
 
-	//fprintf(fp,"%s\r\n",line);
-	//printf("%s\r\n",line);
+	//Util::GetInstance()->myFprintf(0,fp,"%s\r\n",line);
+	//Util::GetInstance()->myFprintf(0,stdout,"%s\r\n",line);
+
 }
 
 int Gps::isValid(){

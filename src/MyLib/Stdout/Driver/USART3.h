@@ -34,11 +34,14 @@ private:
 	char m_txBuf[TX_BUFFERSIZE];
 	char m_rxBuf[RX_BUFFERSIZE];
 	char m_lineBuf[LINE_BUF_SIZE];
+	int rxBufIndex;
 	
 	int echo;
 public:
 	virtual void Tx();
-	virtual void Rx();
+	//virtual void Rx();
+	virtual char* readLine();
+	virtual char getChar();
 	virtual void setEcho(int newValue){echo = newValue;};
 	xQueueHandle GetQueue(){ return m_queue3; }
 

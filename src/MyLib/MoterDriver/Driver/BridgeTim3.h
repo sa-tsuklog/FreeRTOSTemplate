@@ -8,7 +8,9 @@
 #ifndef BRIDGETIM3_H_
 #define BRIDGETIM3_H_
 
-class BridgeTim3 {
+#include "BridgeTim.h"
+
+class BridgeTim3:public BridgeTim{
 	// Singleton pattern definition
 private:
 	BridgeTim3();

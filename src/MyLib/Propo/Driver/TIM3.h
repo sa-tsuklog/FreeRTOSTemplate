@@ -8,16 +8,16 @@
 #ifndef HALTIM_H_
 #define HALTIM_H_
 
-class TIM3Class {
+class ServoTim3 {
 	// Singleton pattern definition
 private:
-	TIM3Class();
-	TIM3Class(const TIM3Class& rhs);
-	TIM3Class& operator=(const TIM3Class& rhs);
-	virtual ~TIM3Class() {}
+	ServoTim3();
+	ServoTim3(const ServoTim3& rhs);
+	ServoTim3& operator=(const ServoTim3& rhs);
+	virtual ~ServoTim3() {}
 public:
-	static TIM3Class* GetInstance() {
-    	static TIM3Class instance;
+	static ServoTim3* GetInstance() {
+    	static ServoTim3 instance;
     	return &instance;
 	}
 

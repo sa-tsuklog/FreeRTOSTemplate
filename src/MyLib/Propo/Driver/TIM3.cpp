@@ -2,7 +2,7 @@
 #include "stm32f4xx_conf.h"
 #include "TIM3.h"
 
-TIM3Class::TIM3Class(){
+ServoTim3::ServoTim3(){
 	/////////////////////////////////////
 	//GPIO
 	/////////////////////////////////////
@@ -95,6 +95,6 @@ TIM3Class::TIM3Class(){
 	TIM_OC4Init(TIM3,&oc4def);
 }
 
-void TIM3Class::timerStart(){
+void ServoTim3::timerStart(){
 	TIM_Cmd(TIM3,ENABLE);
 }

@@ -10,16 +10,27 @@
 
 #include "Common/Quaternion.h"
 
+/**
+ * @class GpsData
+ * 
+ * @brief GPSの情報の受け渡しに使用するクラス
+ * 
+ * NED座標系
+ */
 class GpsData{
 private:
 public:
 	GpsData(float mGpsRelativePosX,float mGpsRelativePosY,float mGpsRelativePosZ,
 			float mpsGpsSpeedX,float mpsGpsSpeedY,float mpsGpsSpeedZ){
 		this->mGpsRelativePos = Quaternion(0,mGpsRelativePosX,mGpsRelativePosY,mGpsRelativePosZ);
-		this->mpsGpsRelativeSpeed = Quaternion(0,mpsGpsSpeedX,mpsGpsSpeedY,mpsGpsSpeedZ);
+		this->mpsGpsSpeed = Quaternion(0,mpsGpsSpeedX,mpsGpsSpeedY,mpsGpsSpeedZ);
 	}
-	Quaternion mGpsRelativePos;
-	Quaternion mpsGpsRelativeSpeed;
+	GpsData(){
+		this->mGpsRelativePos = Quaternion(0,0,0,0);
+		this->mpsGpsSpeed = Quaternion(0,0,0,0);
+	}
+	Quaternion mGpsRelativePos; /**<GPS初期化時の座標からの相対位置[m]。ベクトルとして使用(w=0)*/
+	Quaternion mpsGpsSpeed; /**<速度[m/s]。ベクトルとして使用(w=0)*/
 };
 
 

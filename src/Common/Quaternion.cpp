@@ -1,35 +1,38 @@
-/*
- * Quaternion.cpp
+/**
+ * @file Quaternion.cpp
+ * @brief 単精度浮動小数点によるクォータニオン
  *
- *  Created on: 2014/04/13
- *      Author: sa
- */
-
-
-
-
-/* 
- * File:   Quaternion.cpp
- * Author: sa
+ * @author sa
+ * @date 2014-04-13
  * 
- * Created on 2014/03/15, 17:40
  */
 
 #include "stdio.h"
 #include "math.h"
+#include "MyLib/Util/Util.h"
 
 #include "Quaternion.h"
 
+/**
+ * @brief 全ての要素が0であるクォータニオンを作成する
+ */
 Quaternion::Quaternion() {
     this->w = this->x = this->y = this->z = 0;
 }
 
+/**
+ * @brief 要素がそれぞれw,x,y,zであるクォータニオンを作成する。
+ */
 Quaternion::Quaternion(float w, float x, float y, float z) {
     this->w = w;
     this->x = x;
     this->y = y;
     this->z = z;
 }
+
+/**
+ * @brief クォータニオンをコピーする。
+ */
 Quaternion::Quaternion(const Quaternion& orig){
     this->w = orig.w;
     this->x = orig.x;
@@ -41,6 +44,12 @@ Quaternion::Quaternion(const Quaternion& orig){
 Quaternion::~Quaternion() {
 }
 
+/**
+ * @brief クォータニオンをコピーする
+ * 
+ * @param[in] q1 コピー元のクォータニオンのポインタ 
+ * @return 自身のポインタ
+ */
 Quaternion* Quaternion::clone(const Quaternion* q1){
     this->w = q1->w;
     this->x = q1->x;
@@ -49,7 +58,21 @@ Quaternion* Quaternion::clone(const Quaternion* q1){
     
     return this;
 }
-
+/**
+ * @brief クォータニオンの和
+ * 
+ * 自身+q1の和を計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
+Quaternion* Quaternion::add(const Quaternion* q1) {
+    return add(this,q1);
+}
+/**
+ * @brief クォータニオンの和
+ * 
+ * q1+q2を計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::add(const Quaternion* q1,const Quaternion* q2) {
     this->w = q1->w+q2->w;
     this->x = q1->x+q2->x;
@@ -57,10 +80,22 @@ Quaternion* Quaternion::add(const Quaternion* q1,const Quaternion* q2) {
     this->z = q1->z+q2->z;
     return this;
 }
+
+/**
+ * @brief クォータニオンの差
+ * 
+ * 自身-q1を計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::sub(const Quaternion* q1) {
     return sub(this,q1);
 }
-
+/**
+ * @brief クォータニオンの差
+ * 
+ * q1-q2を計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::sub(const Quaternion* q1,const Quaternion* q2) {
     this->w = q1->w-q2->w;
     this->x = q1->x-q2->x;
@@ -68,10 +103,13 @@ Quaternion* Quaternion::sub(const Quaternion* q1,const Quaternion* q2) {
     this->z = q1->z-q2->z;
     return this;
 }
-Quaternion* Quaternion::add(const Quaternion* q1) {
-    return add(this,q1);
-}
 
+/**
+ * @brief クォータニオンの積
+ * 
+ * q1*q2を計算し、結果を自身に格納する
+ * @return 自身へのポインタを返す
+ */
 Quaternion* Quaternion::mul(const Quaternion* q1,const Quaternion* q2) {
     float w,x,y,z;
     
@@ -88,41 +126,85 @@ Quaternion* Quaternion::mul(const Quaternion* q1,const Quaternion* q2) {
     return this;
 }
 
+/**
+ * @brief クォータニオンの積
+ * 
+ * 自身*q1を計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::mul(const Quaternion* q1){
     return mul(this,q1);
 }
 
-Quaternion* Quaternion::mul(const Quaternion* q,float f) {
-    this->w =q->w * f;
-    this->x =q->x * f;
-    this->y =q->y * f;
-    this->z =q->z * f;
+/**
+ * @brief クォータニオンと実数の積
+ * 
+ * q1*fを計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
+Quaternion* Quaternion::mul(const Quaternion* q1,float f) {
+    this->w =q1->w * f;
+    this->x =q1->x * f;
+    this->y =q1->y * f;
+    this->z =q1->z * f;
     
     return this;
 }
+
+/**
+ * @brief クォータニオンと実数の積
+ * 
+ * 自身*fを計算し、結果を自身に格納する
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::mul(float f){
     return mul(this,f);
 }
 
-Quaternion* Quaternion::con(const Quaternion* q) {
-    this->w = q->w;
-    this->x = -q->x;
-    this->y = -q->y;
-    this->z = -q->z;
+/**
+ * @brief 共役クォータニオン
+ * 
+ * q1の共役クォータニオンを自身に格納する
+ * @return 自身のポインタを返す
+ */
+Quaternion* Quaternion::con(const Quaternion* q1) {
+    this->w = q1->w;
+    this->x = -q1->x;
+    this->y = -q1->y;
+    this->z = -q1->z;
     
     return this;
 }
 
+/**
+ * @brief 共役クォータニオン
+ * 
+ * 自身の共役クォータニオンを自身に格納する
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::con() {
     this->x *= -1;
     this->y *= -1;
     this->z *= -1;
+    
+    return this;
 }
 
+/**
+ * @brief クォータニオンのノルム
+ * 
+ * @return 自身のノルムを返す
+ */
 float Quaternion::norm() const{
     return sqrtf(this->w * this->w + this->x * this->x + this->y * this->y + this->z * this->z);
 }
 
+/**
+ * @brief クォータニオンの正規化
+ * 
+ * 自身を正規化し、結果を自身に格納する
+ * @return 正規化前のノルムを返す
+ */
 float Quaternion::normalize() {
     float norm = sqrtf(this->w * this->w + this->x * this->x + this->y * this->y + this->z * this->z);
     this->w /= norm;
@@ -133,7 +215,12 @@ float Quaternion::normalize() {
     return norm;
 }
 
-
+/**
+ * @brief クォータニオンの正規化
+ * 
+ * qを正規化し、結果を自身に格納する
+ * @return 正規化前のノルムを返す
+ */
 float Quaternion::normalize(const Quaternion* q) {
     float norm = q->norm();
     this->w = q->w/norm;
@@ -144,6 +231,15 @@ float Quaternion::normalize(const Quaternion* q) {
     return norm;
 }
 
+/**
+ * @brief ベクトルの回転
+ * 
+ * ベクトルを回転し、結果を自身に格納する
+ * 
+ * @param[in] vect 回転させるベクトル
+ * @param[in] roter 回転を表すクォータニオン
+ * @return 自身へのポインタを返す。
+ */
 Quaternion* Quaternion::rotate(const Quaternion* vect,const Quaternion* roter){
     float norm;
     Quaternion tmp1 = *roter;
@@ -159,10 +255,24 @@ Quaternion* Quaternion::rotate(const Quaternion* vect,const Quaternion* roter){
     return this;
 }
 
+/**
+ * @brief ベクトルの回転
+ * 
+ * ベクトルを回転し、結果を自身に格納する
+ * 自身はベクトル(w=0)である必要がある。
+ * 
+ * @param[in] roter 回転を表すクォータニオン
+ * @return 自身へのポインタを返す。
+ */
 Quaternion* Quaternion::rotate(const Quaternion* roter) {
     return rotate(this,roter);
 }
 
+/**
+ * @brief 回転を表すクオータニオンからオイラー角のheadingを計算する
+ * 
+ * @return headingの値[rad]
+ */
 float Quaternion::getRadHeading() {
     Quaternion tmpQ1 = Quaternion(*this);
     Quaternion tmpQ2 = Quaternion(0.0, 1.0, 0.0, 0.0);
@@ -174,6 +284,12 @@ float Quaternion::getRadHeading() {
     return atan2f(tmpQ3.y, tmpQ3.x);
 }
 
+/**
+ * @brief 回転を表すクオータニオンからオイラー角のheadingを計算する
+ * 
+ * @param[in] クォータニオンのheading[rad]
+ * @return pitchの値[rad]
+ */
 float Quaternion::getRadPitch(float radHeading) {
     Quaternion tmpQ1 = Quaternion(cosf(-radHeading / 2), 0.0f, 0.0f, sinf(-radHeading / 2));
     Quaternion tmpQ2 = Quaternion(0.0f, 1.0f, 0.0f, 0.0f);
@@ -187,6 +303,13 @@ float Quaternion::getRadPitch(float radHeading) {
     return atan2f(-tmpQ1.z, tmpQ1.x);
 }
 
+/**
+ * @brief 回転を表すクオータニオンからオイラー角のroleを計算する
+ * 
+ * @param[in] クォータニオンのheading[rad]
+ * @param[in] クォータニオンのpitch[rad]
+ * @return roleの値[rad]
+ */
 float Quaternion::getRadRole(float radHeading, float radPitch) {
     float role;
     Quaternion tmpQ2 = Quaternion(cosf(-radHeading / 2), 0.0f, 0.0f, sinf(-radHeading / 2));
@@ -203,12 +326,24 @@ float Quaternion::getRadRole(float radHeading, float radPitch) {
     return role;
 }
 
+/**
+ * @brief 回転を表すクオータニオンからオイラー角のpitch,role,headingを計算する
+ * 
+ * @param[out] クォータニオンのpitch[rad]
+ * @param[out] クォータニオンのrole[rad]
+ * @param[out] クォータニオンのheading[rad]
+ */
 void Quaternion::getRadPitchRoleHeading(float* pitch, float* role, float* heading) {
     *heading = getRadHeading();
     *pitch = getRadPitch(*heading);
     *role = getRadRole(*heading, *pitch);
 }
 
+
+/**
+ * @brief 回転を表すクォータニオンからスラント角を計算する
+ * @return スラント角
+ */
 float Quaternion::getRadSlant() {
     float radHeading = this->getRadHeading();
 
@@ -220,10 +355,22 @@ float Quaternion::getRadSlant() {
 
 }
 
+/**
+ * @brief ベクトルのドット積を計算する
+ * 
+ * 自身とvectのドット積を計算する。自身、vectはベクトル(w=0)である必要がある
+ * @return 自身・vectの値
+ */
 float Quaternion::vectDot(const Quaternion* vect) {
     return this->x * vect->x + this->y * vect->y + this->z * vect->z;
 }
 
+/**
+ * @brief ベクトルのクロス積を計算する
+ * 
+ * 自身とvectのクロス積を計算する。自身、vectはベクトル(w=0)である必要がある。結果は自身に格納される
+ * @return 自身のポインタを返す
+ */
 Quaternion* Quaternion::vectCross(const Quaternion* vect) {
     float x, y, z;
     x = this->y * vect->z - this->z * vect->y;
@@ -238,15 +385,23 @@ Quaternion* Quaternion::vectCross(const Quaternion* vect) {
     return this;
 }
 
+/**
+ * @brief クォータニオンを標準出力に出力する
+ * 
+ * 形式はタブ区切りでw,x,y,zの順
+ */
 void Quaternion::print() {
-    printf("%f\t%fi\t%fj\t%fk\r\n", w, x, y, z);
+	printf("%f\t%fi\t%fj\t%fk\r\n", w, x, y, z);
 }
 
+/**
+ * @brief 回転を表すクォータニオンのオイラー角を標準出力に出力する
+ */
 void Quaternion::printPitchRoleHeading() {
     float pitch, role, heading;
     heading = getRadHeading();
     pitch = getRadPitch(heading);
     role = getRadRole(heading, pitch);
 
-    printf("pitch:%f,\trole%f,\theading%f\r\n", pitch * 180 / M_PI, role * 180 / M_PI, heading * 180 / M_PI);
+    Util::GetInstance()->myFprintf(0,stdout,"pitch:%f,\trole%f,\theading%f\r\n", pitch * 180 / M_PI, role * 180 / M_PI, heading * 180 / M_PI);
 }

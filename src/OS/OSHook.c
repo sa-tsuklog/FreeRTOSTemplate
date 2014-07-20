@@ -15,8 +15,7 @@ void vApplicationMallocFailedHook(void){
 	while(1);
 }
 
-void vApplicationStackOverflowHook(void* ptr, volatile char* taskname){
-	printf("stackoverflow at %s\r\n",taskname);
+void vApplicationStackOverflowHook(void* ptr, char* taskname){
 	while(1);
 }
 

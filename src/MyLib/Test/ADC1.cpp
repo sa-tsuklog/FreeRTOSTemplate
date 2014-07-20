@@ -73,7 +73,6 @@ uint16_t ADC1Class::GetData(int pinNum)
 {
 	if(pinNum >= 2){
 		// error handling
-		printf("Invalid pin number at ADC1\n");
 		UsageFault_Handler();
 	}
 	return m_value[pinNum];

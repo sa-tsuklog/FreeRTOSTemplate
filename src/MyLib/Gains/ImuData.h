@@ -10,27 +10,45 @@
 
 #include "Common/Quaternion.h"
 
+/**
+ * @class ImuData
+ * 
+ * @brief 慣性センサのデータ受け渡しに使用するクラス
+ * 
+ * 機体座標系
+ */
+
 class ImuData{
 private:
 public:
 	ImuData(float rpsRateX,float rpsRateY,float rpsRateZ,
 			float mpspsAclX,float mpspsAclY,float mpspsAclZ,
 			float uTCmpsX,float uTCmpsY,float uTCmpsZ,
-			float prsPressure,
+			float paPressure,
 			int isCmpsValid,int isPressureValid){
 		this->rpsRate = Quaternion(0,rpsRateX,rpsRateY,rpsRateZ);
 		this->mpspsAcl = Quaternion(0,mpspsAclX,mpspsAclY,mpspsAclZ);
 		this->uTCmps   = Quaternion(0,uTCmpsX,uTCmpsY,uTCmpsZ);
-		this->prsPressure = prsPressure;
+		this->paPressure = paPressure;
 		this->isCmpsValid = isCmpsValid;
 		this->isPressureValid= isPressureValid;
 	}
-	Quaternion mpspsAcl;
-	Quaternion rpsRate;
-	Quaternion uTCmps;
-	float prsPressure;
-	int isCmpsValid;
-	int isPressureValid;
+	ImuData(){
+		this->rpsRate = Quaternion(0,0,0,0);
+		this->mpspsAcl= Quaternion(0,0,0,0);
+		this->uTCmps  = Quaternion(0,0,0,0);
+		this->paPressure=0;
+		this->isCmpsValid=0;
+		this->isPressureValid=0;
+	}
+	Quaternion mpspsAcl; /**<加速度[m/(s^2)]。ベクトルとして使用(w=0)*/
+	Quaternion rpsRate;  /**<角速度[rad/s]。ベクトルとして使用(w=0)*/
+	Quaternion uTCmps;   /**<磁気[uT]。ベクトルとして使用*/
+	float paPressure;    /**<気圧[pa]*/
+	int isCmpsValid;     /**<磁気のデータに更新があった場合1、それ以外の場合0*/
+	int isPressureValid; /**<気圧のデータに更新があった場合1、それ以外の場合0*/
+	
+	static float paToRelativeHeight(float paPressure,float paRefPressure);
 };
 
 

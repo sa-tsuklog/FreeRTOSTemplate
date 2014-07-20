@@ -127,8 +127,8 @@ void USART2Class::Rx()
 	while(1){
 		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
 			m_rxBuf[rxBufIndex]=0;
-			if(c=='\n'){
-			}else if(c=='\r'){
+			if(c=='\r'){
+			}else if(c=='\n'){
 				m_lineBuf[lineBufIndex]=0;
 	
 				//HandleSerialCommand(m_lineBuf);

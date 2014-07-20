@@ -50,7 +50,7 @@ portTickType Seeker::DoTask(){
 		bandpass = m_filter.bandpass(adData);
 		allpass = m_filter.allpass(bandpass);
 		if(m_decimate <128){
-			printf("%d %d %d\r\n",m_decimate,(int)adData,(int)bandpass);
+			Util::GetInstance()->myFprintf(0,stdout,"%d %d %d\r\n",m_decimate,(int)adData,(int)bandpass);
 		}
 		m_decimate=(m_decimate+1)%8196;
 	}
@@ -59,7 +59,7 @@ portTickType Seeker::DoTask(){
 	m_intensity = m_filter.myAbs(bandpass,allpass);
 	
 	if(m_decimate%200 == 0){
-		//printf("%d\r\n",(int)intensity[0]);
+		//Util::GetInstance()->myFprintf(0,stdout,"%d\r\n",(int)intensity[0]);
 	}
 	
 	m_decimate++;

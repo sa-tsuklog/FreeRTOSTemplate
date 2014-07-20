@@ -15,6 +15,7 @@
 #include "MyLib/Gains/Gains.h"
 #include "MyLib/Logger/Logger.h"
 #include "Test.h"
+#include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
 
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)‚Æ
@@ -35,7 +36,7 @@ void prvTaskA(void *pvParameters){
 	while(1){
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
-		printf("idle:%d\r\n",idle_count-previousIdleCount);
+		Util::GetInstance()->myFprintf(0,stdout,"idle:%d\r\n",idle_count-previousIdleCount);
 		previousIdleCount = idle_count;
 		vTaskDelay(100);
 	}
@@ -58,28 +59,13 @@ int main(void) {
 	SystemInit();
 	LEDInit();
 	
-	//GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-	//TIM2Class::GetInstance()->timerStart();
-	//TIM3Class::GetInstance()->timerStart();
-	//TIM4Class::GetInstance()->timerStart();
-	//TIM1Class::GetInstance()->timerStart();
-	
-	//xTaskCreate(prvTaskA,"TaskA",512,NULL,4,NULL);
-
-//	xTaskCreate(&USART1Class::prvTxTask,"u1tx",512,USART1,2,NULL);
-//	xTaskCreate(&USART1Class::prvRxTask,"u1rx",1024,USART1,2,NULL);
-//	xTaskCreate(&ADC3Class::prvTask,"ADC",1024,NULL,2,NULL);
-	//xTaskCreate(prvAd7176Task,"ad71",4096,NULL,4,NULL);
-	//xTaskCreate(prvSeekerTask,"skr",1024,NULL,2,NULL);
-	//xTaskCreate(prvTIM2TestTask,"tim2",128,NULL,1,NULL);
-	//xTaskCreate(prvTIM5TestTask,"tim5",128,NULL,1,NULL);
-	
 	Util::initUtil();
 	Stdout::initStdout();
 	Gains::initGains();
 	Logger::initLogger();
 	
-	xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
+	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
+	
 	
 	vTaskStartScheduler();
 
@@ -88,4 +74,3 @@ int main(void) {
 
 	}
 }
-

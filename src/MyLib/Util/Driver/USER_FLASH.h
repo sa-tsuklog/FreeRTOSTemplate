@@ -41,15 +41,11 @@ private:
 	static const int BLOCK_NUM = BYTE_SECTOR_SIZE/WORD_BLOCK_SIZE/sizeof(uint32_t);
 	static const uint16_t voltage_range = VoltageRange_1;
 	
-	uint32_t cache[WORD_BLOCK_SIZE];
-	int dirty;
-	
 	int getBlockOffset();
 	void erase();
 public:
 	uint32_t read(uint32_t wordOffset);
-	void write(uint32_t wordOffset, uint32_t data);
-	void flush();
+	void flush(void* data,unsigned int wordLength);
 	int getWordBlockSize(){return WORD_BLOCK_SIZE;}
 	
 };

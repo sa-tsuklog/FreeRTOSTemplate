@@ -8,16 +8,18 @@
 #ifndef TIM1_H_
 #define TIM1_H_
 
-class TIM1Class {
+#include <stdint.h>
+
+class ServoTim1 {
 	// Singleton pattern definition
 private:
-	TIM1Class();
-	TIM1Class(const TIM1Class& rhs);
-	TIM1Class& operator=(const TIM1Class& rhs);
-	virtual ~TIM1Class() {}
+	ServoTim1();
+	ServoTim1(const ServoTim1& rhs);
+	ServoTim1& operator=(const ServoTim1& rhs);
+	virtual ~ServoTim1() {}
 public:
-	static TIM1Class* GetInstance() {
-    	static TIM1Class instance;
+	static ServoTim1* GetInstance() {
+    	static ServoTim1 instance;
     	return &instance;
 	}
 
@@ -25,6 +27,7 @@ public:
 private:
 public:
 	void timerStart();
+	void setDuty(int ch,uint32_t duty);
 };
 
 

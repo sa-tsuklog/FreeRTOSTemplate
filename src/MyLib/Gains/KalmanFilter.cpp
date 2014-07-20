@@ -16,10 +16,11 @@
 
 //float<->doubleØ‚è‘Ö‚¦‚É’uŠ·‚ª•K—v‚ÈŠÖ”:sin,cos,atan2
 
-KalmanFilter::KalmanFilter(Quaternion* velocity, Quaternion* position, Quaternion* attitude) {
+KalmanFilter::KalmanFilter(float secTimeStep,Quaternion* velocity, Quaternion* position, Quaternion* attitude) {
+	this->secTimeStep = secTimeStep;
     //this->EARTH_RATE = new Quaternion(0,0,0,M_PI/24/60/60);
     //this->EARTH_RATE = new Quaternion(0,0,0,0);
-    this->GRAVITY = new Quaternion(0,0,0,-9.8);
+    this->GRAVITY = new Quaternion(0,0,0,-9.796);
     this->CMPS_BASE = new Quaternion(0.0f,0.6624362551216327f,-0.08216263629415599f,0.7445988914157886f);
     
     this->velocity = new Quaternion();
@@ -35,9 +36,9 @@ KalmanFilter::KalmanFilter(Quaternion* velocity, Quaternion* position, Quaternio
     
     //allocate working area
     sysErrorPhi = new Matrix(9);
-    sysErrorPhi->nums[3][0] = 1.0*SEC_TIMESTEP;
-    sysErrorPhi->nums[4][1] = 1.0*SEC_TIMESTEP;
-    sysErrorPhi->nums[5][2] = 1.0*SEC_TIMESTEP;
+    sysErrorPhi->nums[3][0] = 1.0*secTimeStep;
+    sysErrorPhi->nums[4][1] = 1.0*secTimeStep;
+    sysErrorPhi->nums[5][2] = 1.0*secTimeStep;
     ctrlErrorGamma = new Matrix(9,6,0.0);
     
     attitudeDelta = new Quaternion();
@@ -105,13 +106,13 @@ void KalmanFilter::predictMisc(){
 
 void KalmanFilter::predictVelocityDelta(Quaternion* mpspsAccel){
     velocityDelta->clone(attitude);
-    ((velocityDelta->mul(mpspsAccel))->mul(attitudeCon)->sub(GRAVITY))->mul(SEC_TIMESTEP);
+    ((velocityDelta->mul(mpspsAccel))->mul(attitudeCon)->sub(GRAVITY))->mul(secTimeStep);
 }
 void KalmanFilter::predictPositionDelta(){
-    (positionDelta->mul(velocity,SEC_TIMESTEP));
+    (positionDelta->mul(velocity,secTimeStep));
 }
 void KalmanFilter::predictAttitudeDelta(Quaternion* rpsGyro){
-    (attitudeDelta->mul(attitude,rpsGyro))->mul(0.5*SEC_TIMESTEP);
+    (attitudeDelta->mul(attitude,rpsGyro))->mul(0.5*secTimeStep);
 }
 void KalmanFilter::predictP(Quaternion* mpspsAccel){
     predictPhi(mpspsAccel);
@@ -122,9 +123,9 @@ void KalmanFilter::predictP(Quaternion* mpspsAccel){
         phiP->nums[0][i]=sysErrorPhi->nums[0][7]*errorP->nums[7][i]+sysErrorPhi->nums[0][8]*errorP->nums[8][i];
         phiP->nums[1][i]=sysErrorPhi->nums[1][6]*errorP->nums[6][i]+sysErrorPhi->nums[1][8]*errorP->nums[8][i];
         phiP->nums[2][i]=sysErrorPhi->nums[2][6]*errorP->nums[6][i]+sysErrorPhi->nums[2][7]*errorP->nums[7][i];
-        phiP->nums[3][i]=errorP->nums[0][i]*SEC_TIMESTEP;
-        phiP->nums[4][i]=errorP->nums[1][i]*SEC_TIMESTEP;
-        phiP->nums[5][i]=errorP->nums[2][i]*SEC_TIMESTEP;
+        phiP->nums[3][i]=errorP->nums[0][i]*secTimeStep;
+        phiP->nums[4][i]=errorP->nums[1][i]*secTimeStep;
+        phiP->nums[5][i]=errorP->nums[2][i]*secTimeStep;
     }
     for (int i = 0; i<6; i++) {
         for (int j = 0; j<9; j++) {
@@ -137,9 +138,9 @@ void KalmanFilter::predictP(Quaternion* mpspsAccel){
         phiP->nums[i][0]=errorP->nums[i][7]*sysErrorPhi->nums[0][7]+errorP->nums[i][8]*sysErrorPhi->nums[0][8];
         phiP->nums[i][1]=errorP->nums[i][6]*sysErrorPhi->nums[1][6]+errorP->nums[i][8]*sysErrorPhi->nums[1][8];
         phiP->nums[i][2]=errorP->nums[i][6]*sysErrorPhi->nums[2][6]+errorP->nums[i][7]*sysErrorPhi->nums[2][7];
-        phiP->nums[i][3]=errorP->nums[i][0]*SEC_TIMESTEP;
-        phiP->nums[i][4]=errorP->nums[i][1]*SEC_TIMESTEP;
-        phiP->nums[i][5]=errorP->nums[i][2]*SEC_TIMESTEP;
+        phiP->nums[i][3]=errorP->nums[i][0]*secTimeStep;
+        phiP->nums[i][4]=errorP->nums[i][1]*secTimeStep;
+        phiP->nums[i][5]=errorP->nums[i][2]*secTimeStep;
     }
    for (int i = 0; i<9; i++) {
         for (int j = 0; j<6; j++) {
@@ -173,39 +174,39 @@ void KalmanFilter::predictP(Quaternion* mpspsAccel){
 }
 
 void KalmanFilter::predictPhi(Quaternion* mpspsAccel){
-    sysErrorPhi->nums[0][7] = -2*SEC_TIMESTEP*(-attitudeDcm->nums[0][2]*mpspsAccel->x - attitudeDcm->nums[1][2]*mpspsAccel->y - attitudeDcm->nums[2][2]*mpspsAccel->z);
-    sysErrorPhi->nums[0][8] = -2*SEC_TIMESTEP*( attitudeDcm->nums[0][1]*mpspsAccel->x + attitudeDcm->nums[1][1]*mpspsAccel->y + attitudeDcm->nums[2][1]*mpspsAccel->z);
+    sysErrorPhi->nums[0][7] = -2*secTimeStep*(-attitudeDcm->nums[0][2]*mpspsAccel->x - attitudeDcm->nums[1][2]*mpspsAccel->y - attitudeDcm->nums[2][2]*mpspsAccel->z);
+    sysErrorPhi->nums[0][8] = -2*secTimeStep*( attitudeDcm->nums[0][1]*mpspsAccel->x + attitudeDcm->nums[1][1]*mpspsAccel->y + attitudeDcm->nums[2][1]*mpspsAccel->z);
     sysErrorPhi->nums[1][6] = -sysErrorPhi->nums[0][7];
-    sysErrorPhi->nums[1][8] = -2*SEC_TIMESTEP*(-attitudeDcm->nums[0][0]*mpspsAccel->x - attitudeDcm->nums[1][0]*mpspsAccel->y - attitudeDcm->nums[2][0]*mpspsAccel->z);
+    sysErrorPhi->nums[1][8] = -2*secTimeStep*(-attitudeDcm->nums[0][0]*mpspsAccel->x - attitudeDcm->nums[1][0]*mpspsAccel->y - attitudeDcm->nums[2][0]*mpspsAccel->z);
     sysErrorPhi->nums[2][6] = -sysErrorPhi->nums[0][8];
     sysErrorPhi->nums[2][7] = -sysErrorPhi->nums[1][8];
 }
 void KalmanFilter::predictGamma(){
     //B_00 (attitude.con).getDCM
-    ctrlErrorGamma->nums[0][0] = SEC_TIMESTEP*attitudeDcm->nums[0][0];
-    ctrlErrorGamma->nums[0][1] = SEC_TIMESTEP*attitudeDcm->nums[1][0];
-    ctrlErrorGamma->nums[0][2] = SEC_TIMESTEP*attitudeDcm->nums[2][0];
+    ctrlErrorGamma->nums[0][0] = secTimeStep*attitudeDcm->nums[0][0];
+    ctrlErrorGamma->nums[0][1] = secTimeStep*attitudeDcm->nums[1][0];
+    ctrlErrorGamma->nums[0][2] = secTimeStep*attitudeDcm->nums[2][0];
     
-    ctrlErrorGamma->nums[1][0] = SEC_TIMESTEP*attitudeDcm->nums[0][1];
-    ctrlErrorGamma->nums[1][1] = SEC_TIMESTEP*attitudeDcm->nums[1][1];
-    ctrlErrorGamma->nums[1][2] = SEC_TIMESTEP*attitudeDcm->nums[2][1];
+    ctrlErrorGamma->nums[1][0] = secTimeStep*attitudeDcm->nums[0][1];
+    ctrlErrorGamma->nums[1][1] = secTimeStep*attitudeDcm->nums[1][1];
+    ctrlErrorGamma->nums[1][2] = secTimeStep*attitudeDcm->nums[2][1];
     
-    ctrlErrorGamma->nums[2][0] = SEC_TIMESTEP*attitudeDcm->nums[0][2];
-    ctrlErrorGamma->nums[2][1] = SEC_TIMESTEP*attitudeDcm->nums[1][2];
-    ctrlErrorGamma->nums[2][2] = SEC_TIMESTEP*attitudeDcm->nums[2][2];
+    ctrlErrorGamma->nums[2][0] = secTimeStep*attitudeDcm->nums[0][2];
+    ctrlErrorGamma->nums[2][1] = secTimeStep*attitudeDcm->nums[1][2];
+    ctrlErrorGamma->nums[2][2] = secTimeStep*attitudeDcm->nums[2][2];
     
     //B_21
-    ctrlErrorGamma->nums[6][3] = SEC_TIMESTEP*attitudeDcm->nums[0][0]*0.5;
-    ctrlErrorGamma->nums[6][4] = SEC_TIMESTEP*attitudeDcm->nums[1][0]*0.5;
-    ctrlErrorGamma->nums[6][5] = SEC_TIMESTEP*attitudeDcm->nums[2][0]*0.5;
+    ctrlErrorGamma->nums[6][3] = secTimeStep*attitudeDcm->nums[0][0]*0.5;
+    ctrlErrorGamma->nums[6][4] = secTimeStep*attitudeDcm->nums[1][0]*0.5;
+    ctrlErrorGamma->nums[6][5] = secTimeStep*attitudeDcm->nums[2][0]*0.5;
     
-    ctrlErrorGamma->nums[7][3] = SEC_TIMESTEP*attitudeDcm->nums[0][1]*0.5;
-    ctrlErrorGamma->nums[7][4] = SEC_TIMESTEP*attitudeDcm->nums[1][1]*0.5;
-    ctrlErrorGamma->nums[7][5] = SEC_TIMESTEP*attitudeDcm->nums[2][1]*0.5;
+    ctrlErrorGamma->nums[7][3] = secTimeStep*attitudeDcm->nums[0][1]*0.5;
+    ctrlErrorGamma->nums[7][4] = secTimeStep*attitudeDcm->nums[1][1]*0.5;
+    ctrlErrorGamma->nums[7][5] = secTimeStep*attitudeDcm->nums[2][1]*0.5;
     
-    ctrlErrorGamma->nums[8][3] = SEC_TIMESTEP*attitudeDcm->nums[0][2]*0.5;
-    ctrlErrorGamma->nums[8][4] = SEC_TIMESTEP*attitudeDcm->nums[1][2]*0.5;
-    ctrlErrorGamma->nums[8][5] = SEC_TIMESTEP*attitudeDcm->nums[2][2]*0.5;
+    ctrlErrorGamma->nums[8][3] = secTimeStep*attitudeDcm->nums[0][2]*0.5;
+    ctrlErrorGamma->nums[8][4] = secTimeStep*attitudeDcm->nums[1][2]*0.5;
+    ctrlErrorGamma->nums[8][5] = secTimeStep*attitudeDcm->nums[2][2]*0.5;
 }
 
 void KalmanFilter::update(Quaternion* gpsVel, Quaternion* gpsPos, Quaternion* uTCmps){
@@ -238,8 +239,11 @@ void KalmanFilter::updateEstimatedErrorDx(Quaternion* gpsVel, Quaternion* gpsPos
     diff->nums[4][0] = gpsPos->y - position->y;
     diff->nums[5][0] = gpsPos->z - position->z;
     
-    diff->nums[6][0] = -cmpsProducts->x;
-    diff->nums[7][0] = -cmpsProducts->y;
+    //diff->nums[6][0] = -cmpsProducts->x;
+    //diff->nums[7][0] = -cmpsProducts->y;
+    diff->nums[6][0] = 0;
+    diff->nums[7][0] = 0;
+    //diff->nums[8][0] = 0;
     diff->nums[8][0] = -cmpsProducts->z;
     
     estimatedErrorDx->mul(kalmanGainK,diff);

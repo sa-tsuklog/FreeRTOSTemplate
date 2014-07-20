@@ -8,6 +8,11 @@
 #ifndef QUATERNION_H_
 #define QUATERNION_H_
 
+/**
+ * @class Quaternion
+ * @brief 単精度浮動小数点によるクォータニオン
+ */
+
 class Quaternion{
 public:
   float w,x,y,z;

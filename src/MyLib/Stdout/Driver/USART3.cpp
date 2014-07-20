@@ -103,6 +103,7 @@ USART3Class::USART3Class(){
 	}
 	
 	echo = 1;
+	rxBufIndex=0;
 }
 
 void USART3Class::Tx()
@@ -128,23 +129,70 @@ void USART3Class::Tx()
 	}
 }
 
-void USART3Class::Rx()
+//void USART3Class::Rx()
+//{
+//	int rxBufIndex = 0;
+//	int lineBufIndex = 0;
+//
+//	char c;
+//	
+//	vTaskDelay(MS_INITIAL_DELAY);
+//	
+//	while(1){
+//		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
+//			m_rxBuf[rxBufIndex]=0;
+//			
+//			if(echo){
+//				if(c=='\n'){
+//				}else if(c=='\b'){
+//					putchar('\b');
+//					putchar(' ');
+//					putchar('\b');
+//					fflush(stdout);
+//				}else{
+//					putchar(c);
+//					fflush(stdout);
+//				}
+//			}
+//			
+//			
+//			if(c=='\n'){
+//			}else if(c=='\r'){
+//				m_lineBuf[lineBufIndex]=0;
+//	
+//				SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);
+//				lineBufIndex=0;
+//			}else if(c=='\b'){
+//				if(lineBufIndex > 0){
+//					lineBufIndex--;
+//				}
+//			}else{
+//				
+//				m_lineBuf[lineBufIndex]=c;
+//				if(lineBufIndex<LINE_BUF_SIZE-1){
+//					lineBufIndex++;
+//				}
+//			}
+//	
+//			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
+//		}
+//		
+////		end = TIM2Class::GetInstance()->getUsTime();
+////		printf("u3rx %d[us]\r\n",end-start);
+//		vTaskDelay(25);
+//	}
+//}
+
+char* USART3Class::readLine()
 {
-	int rxBufIndex = 0;
 	int lineBufIndex = 0;
 
 	char c;
 	
-	vTaskDelay(MS_INITIAL_DELAY);
-	
 	while(1){
-//		uint32_t start;
-//		uint32_t end;
-//		start = TIM2Class::GetInstance()->getUsTime();
-		
-
 		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
 			m_rxBuf[rxBufIndex]=0;
+			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 			
 			if(echo){
 				if(c=='\n'){
@@ -160,12 +208,15 @@ void USART3Class::Rx()
 			}
 			
 			
-			if(c=='\n'){
-			}else if(c=='\r'){
+			if(c=='\r'){
+			}else if(c=='\n'){
+				putchar('\r');
+				putchar('\n');
 				m_lineBuf[lineBufIndex]=0;
 	
-				SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);
+				//SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);
 				lineBufIndex=0;
+				return m_lineBuf;
 			}else if(c=='\b'){
 				if(lineBufIndex > 0){
 					lineBufIndex--;
@@ -177,8 +228,6 @@ void USART3Class::Rx()
 					lineBufIndex++;
 				}
 			}
-	
-			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 		}
 		
 //		end = TIM2Class::GetInstance()->getUsTime();
@@ -187,12 +236,25 @@ void USART3Class::Rx()
 	}
 }
 
+char USART3Class::getChar(){
+	char c;
+	while(1){
+		if((c = m_rxBuf[rxBufIndex]) != 0){
+			m_rxBuf[rxBufIndex]=0;
+			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
+			return c;
+		}
+		vTaskDelay(25);
+	}
+	return 0;
+}
+
 void USART3Class::prvTxTask(void *pvParameters)
 {
 	USART3Class::GetInstance()->Tx();
 }
 
-void USART3Class::prvRxTask(void *pvParameters)
-{
-	USART3Class::GetInstance()->Rx();
-}
+//void USART3Class::prvRxTask(void *pvParameters)
+//{
+//	USART3Class::GetInstance()->Rx();
+//}

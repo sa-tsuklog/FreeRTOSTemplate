@@ -9,16 +9,16 @@
 #define TIM4_H_
 
 
-class TIM4Class {
+class ServoTim4 {
 	// Singleton pattern definition
 private:
-	TIM4Class();
-	TIM4Class(const TIM4Class& rhs);
-	TIM4Class& operator=(const TIM4Class& rhs);
-	virtual ~TIM4Class() {}
+	ServoTim4();
+	ServoTim4(const ServoTim4& rhs);
+	ServoTim4& operator=(const ServoTim4& rhs);
+	virtual ~ServoTim4() {}
 public:
-	static TIM4Class* GetInstance() {
-    	static TIM4Class instance;
+	static ServoTim4* GetInstance() {
+    	static ServoTim4 instance;
     	return &instance;
 	}
 
@@ -26,6 +26,7 @@ public:
 private:
 public:
 	void timerStart();
+	void setDuty(int ch,uint32_t duty);
 };
 
 #endif /* TIM4_H_ */

@@ -5,6 +5,11 @@
  *      Author: sa
  */
 
+#include "CmdServo.h"
+
+void CmdServo::set(){
+	
+}
 
 
 

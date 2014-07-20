@@ -12,6 +12,7 @@
 #include "task.h"
 #include "GeneralConfig.h"
 
+#include "MyLib/Util/Util.h"
 #include "Logger.h"
 #include "OS/MyFileHandle.h"
 
@@ -46,19 +47,25 @@ void Logger::stopLogging(){
 	xSemaphoreGive(stopLoggingSem);
 }
 void Logger::appendLog(int bufNumber,char* string,int len){
+	if(logState != Logging){
+		return;
+	}
+	if(len > uxQueueSpacesAvailable(buf[bufNumber])){
+		//Util::GetInstance()->myFprintf(0,stdout,"queue full\n\r");
+		return;
+	}
+	
 	for(int i=0;i<len;i++){
 		if(xQueueSend(buf[bufNumber],&(string[i]),0) != pdTRUE){
-			if(logState == Logging){
-				printf("queue full\n\r");				
-			}
 			break;
 		}
 	}
 	
+	
 //	while(string[i]!=0){
 //		if(xQueueSend(buf[bufNumber],&(string[i]),0) != pdTRUE){
 //			if(logState == Logging){
-//				printf("queue full\n\r");				
+//				Util::GetInstance()->myFprintf(0,stdout,"queue full\n\r");				
 //			}
 //			break;
 //		}
@@ -80,12 +87,16 @@ int Logger::fileOpen(){
 	
 	FRESULT res = f_open(&fp,filenameBuf,FA_WRITE|FA_CREATE_ALWAYS);
 	
-	logState = Logging;
-	//if(fp!=NULL)
 	if(res == FR_OK){
+		//dummy write to minimize delay. 
+//		UINT bw;
+//		f_write(&fp," ",1,&bw);
+//		f_write(&fp," ",1,&bw);
+//		f_lseek(&fp,0);
+//		
 		return 1;
 	}else{
-		printf("cannot open file%s\r\n",filenameBuf);
+		Util::GetInstance()->myFprintf(0,stdout,"cannot open file%s\r\n",filenameBuf);
 		return 0;
 	}
 }
@@ -94,7 +105,6 @@ int Logger::fileClose(){
 	//fp = NULL;
 	//fclose(tmpFp);
 	f_close(&fp);
-	logState = logIdle;
 	return 1;
 }
 
@@ -106,8 +116,7 @@ int Logger::flushBuffers(int bufNumber){
 			xQueueReceive(buf[bufNumber],&c,0);
 			lineBuf[i] = c; 
 		}
-		lineBuf[charCount] = 0;
-		//fprintf(fp,lineBuf);
+		//Util::GetInstance()->myFprintf(0,fp,lineBuf);
 		UINT bw;
 		f_write(&fp,lineBuf,charCount,&bw);
 	}
@@ -117,36 +126,39 @@ int Logger::flushBuffers(int bufNumber){
 void Logger::loggerTask(){
 	Logger::GetInstance();
 	vTaskDelay(MS_INITIAL_DELAY);
-	
+	uint32_t t1,t2;
 	while(1){
+		
 		if(logState == logIdle){//when not logging
 			if(xSemaphoreTake(startLoggingSem,0)==pdTRUE){
-				//clearing sem and queues
-				for(int i=0;i<4;i++){
-					xQueueReset(buf[i]);
+				if(fileOpen() == 1){
+					//clearing sem and queues
+					xSemaphoreTake(stopLoggingSem,0);
+					for(int i=0;i<4;i++){
+						xQueueReset(buf[i]);
+					}
+					logState = Logging;
+					Util::GetInstance()->myFprintf(0,stdout,"log start\r\n");
 				}
 				
-				fileOpen();
 				
-				//clearing sem and queues
-				xSemaphoreTake(stopLoggingSem,0);
-				for(int i=0;i<4;i++){
-					xQueueReset(buf[i]);
-				}
 			}
-		}else if(logState == Logging){//when logging.
+		}
+		if(logState == Logging){//when logging.
 			for(int i=0;i<4;i++){
 				flushBuffers(i);
 			}
 			
 			if(xSemaphoreTake(stopLoggingSem,0)==pdTRUE){
+				logState = logIdle;
 				fileClose();
 				//clearing sem and queues
 				xSemaphoreTake(startLoggingSem,0);
 				xQueueReset(filenameQueue);
 			}
 		}
-		vTaskDelay(10);
+		
+		vTaskDelay(25);
 	}
 }
 

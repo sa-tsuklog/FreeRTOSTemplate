@@ -137,8 +137,8 @@ void USART1Class::Rx()
 		//start = TIM2Class::GetInstance()->getUsTime();
 		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
 			m_rxBuf[rxBufIndex]=0;
-			if(c=='\n'){
-			}else if(c=='\r'){
+			if(c=='\r'){
+			}else if(c=='\n'){
 				m_lineBuf[lineBufIndex]=0;
 	
 				

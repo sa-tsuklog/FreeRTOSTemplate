@@ -345,7 +345,7 @@ void SPI2Class::timerStart(){
 
 void SPI2Class::waitNewData(){
 	//xSemaphoreTake(SPI2_TIM8_dataReadySem,portMAX_DELAY);
-	xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
+	//xSemaphoreTake(SPI2_TIM8_dataReadySem,0);
 	xSemaphoreTake(SPI2_TIM8_dataReadySem,portMAX_DELAY);
 }
 void SPI2Class::setTxBuf(int index,unsigned short data){
@@ -393,5 +393,5 @@ void SPI2Class::myTIM8_IRQHandler(){
 	
 	TIM_ClearITPendingBit(TIM8,TIM_IT_Update);
 	xSemaphoreGiveFromISR(SPI2_TIM8_dataReadySem,&xSwitchRequired);
-	portEND_SWITCHING_ISR(xSwitchRequired );
+	portEND_SWITCHING_ISR(xSwitchRequired);
 }
