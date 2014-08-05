@@ -104,7 +104,7 @@ PropoTim3::PropoTim3(){
 	
 	TIM_SelectSlaveMode(TIM3,TIM_SlaveMode_Reset);
 	TIM_SelectMasterSlaveMode(TIM3,TIM_MasterSlaveMode_Enable);
-	TIM_SelectInputTrigger(TIM3,TIM_TS_TI1FP1);
+	TIM_SelectInputTrigger(TIM3,TIM_TS_TI1F_ED);
 }
 
 void PropoTim3::timerStart(){
