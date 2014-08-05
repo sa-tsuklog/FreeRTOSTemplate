@@ -11,7 +11,7 @@
 #include "task.h"
 
 USART1Class::USART1Class(){
-	m_queue1 = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
+	txQueue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 
 	GPIO_InitTypeDef pb6def;
@@ -104,15 +104,15 @@ void USART1Class::Tx()
 {
 	int numTx;
 	portTickType xLastWakeTime = xTaskGetTickCount();
-	if(m_queue1 == NULL){
+	if(txQueue == NULL){
 		while(1);
 	}
 	
 	while(1){
-		if(DMA_GetCmdStatus(DMA2_Stream7)==DISABLE && (numTx = uxQueueMessagesWaiting(m_queue1)) != 0){
+		if(DMA_GetCmdStatus(DMA2_Stream7)==DISABLE && (numTx = uxQueueMessagesWaiting(txQueue)) != 0){
 			for(int i=0;i<numTx;i++){
 				char c;
-				xQueueReceive(m_queue1,&c,0);
+				xQueueReceive(txQueue,&c,0);
 				m_txBuf[i] = c;
 			}
 	
@@ -123,6 +123,10 @@ void USART1Class::Tx()
 		}
 		vTaskDelayUntil(&xLastWakeTime,1);
 	}
+}
+
+inline void USART1Class::uputchar(char c){
+	xQueueSendToBack(txQueue,&c,0);
 }
 
 void USART1Class::Rx()

@@ -30,14 +30,15 @@ private:
 	static const int TX_BUFFERSIZE = 1024;
 	static const int RX_BUFFERSIZE = 64;
 	static const int LINE_BUF_SIZE = 64;
-	xQueueHandle m_queue1;
+	xQueueHandle txQueue;
 	char m_txBuf[TX_BUFFERSIZE];
 	char m_rxBuf[RX_BUFFERSIZE];
 	char m_lineBuf[LINE_BUF_SIZE];
 public:
 	virtual void Tx();
 	virtual void Rx();
-	xQueueHandle GetQueue(){ return m_queue1; }
+	xQueueHandle GetQueue(){ return txQueue; }
+	inline virtual void uputchar(char c);
 
 	// Task definition
 public:

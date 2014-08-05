@@ -34,6 +34,7 @@ public:
 		MARITIME,
 		E_FRAME,
 		DEBUG,
+		INS,
 	};
 };
 

@@ -2,7 +2,7 @@
 #include "stm32f4xx_conf.h"
 #include "TIM3.h"
 
-ServoTim3::ServoTim3(){
+PropoTim3::PropoTim3(){
 	/////////////////////////////////////
 	//GPIO
 	/////////////////////////////////////
@@ -62,39 +62,51 @@ ServoTim3::ServoTim3(){
 	timebase.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM3,&timebase);
 	
-	TIM_OCInitTypeDef oc1def;
-	TIM_OCStructInit(&oc1def);
-	oc1def.TIM_OCMode = TIM_OCMode_PWM1;
-	oc1def.TIM_OutputState = TIM_OutputState_Enable;
-	oc1def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc1def.TIM_Pulse = 1500-4;
-	TIM_OC1Init(TIM3,&oc1def);
+	TIM_ICInitTypeDef ic1def;
+	TIM_ICStructInit(&ic1def);
+	ic1def.TIM_Channel = TIM_Channel_1;
+	ic1def.TIM_ICPolarity = TIM_ICPolarity_Falling;
+	ic1def.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	ic1def.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+	ic1def.TIM_ICFilter = 0x2;
+	TIM_ICInit(TIM3,&ic1def);
+	TIM_CCxCmd(TIM3,TIM_Channel_1,TIM_CCx_Enable);
 	
-	TIM_OCInitTypeDef oc2def;
-	TIM_OCStructInit(&oc2def);
-	oc2def.TIM_OCMode = TIM_OCMode_PWM1;
-	oc2def.TIM_OutputState = TIM_OutputState_Enable;
-	oc2def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc2def.TIM_Pulse = 1600-4;
-	TIM_OC2Init(TIM3,&oc2def);
+	TIM_ICInitTypeDef ic2def;
+	TIM_ICStructInit(&ic2def);
+	ic2def.TIM_Channel = TIM_Channel_2;
+	ic2def.TIM_ICPolarity = TIM_ICPolarity_Falling;
+	ic2def.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	ic2def.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+	ic2def.TIM_ICFilter = 0x2;
+	TIM_ICInit(TIM3,&ic2def);
+	TIM_CCxCmd(TIM3,TIM_Channel_2,TIM_CCx_Enable);
 	
-	TIM_OCInitTypeDef oc3def;
-	TIM_OCStructInit(&oc3def);
-	oc3def.TIM_OCMode = TIM_OCMode_PWM1;
-	oc3def.TIM_OutputState = TIM_OutputState_Enable;
-	oc3def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc3def.TIM_Pulse = 1700-4;
-	TIM_OC3Init(TIM3,&oc3def);
+	TIM_ICInitTypeDef ic3def;
+	TIM_ICStructInit(&ic3def);
+	ic3def.TIM_Channel = TIM_Channel_3;
+	ic3def.TIM_ICPolarity = TIM_ICPolarity_Falling;
+	ic3def.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	ic3def.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+	ic3def.TIM_ICFilter = 0x2;
+	TIM_ICInit(TIM3,&ic3def);
+	TIM_CCxCmd(TIM3,TIM_Channel_3,TIM_CCx_Enable);
 	
-	TIM_OCInitTypeDef oc4def;
-	TIM_OCStructInit(&oc4def);
-	oc4def.TIM_OCMode = TIM_OCMode_PWM1;
-	oc4def.TIM_OutputState = TIM_OutputState_Enable;
-	oc4def.TIM_OCPolarity = TIM_OCPolarity_High;
-	oc4def.TIM_Pulse = 1800-4;
-	TIM_OC4Init(TIM3,&oc4def);
+	TIM_ICInitTypeDef ic4def;
+	TIM_ICStructInit(&ic4def);
+	ic4def.TIM_Channel = TIM_Channel_4;
+	ic4def.TIM_ICPolarity = TIM_ICPolarity_Falling;
+	ic4def.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	ic4def.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+	ic4def.TIM_ICFilter = 0x2;
+	TIM_ICInit(TIM3,&ic4def);
+	TIM_CCxCmd(TIM3,TIM_Channel_4,TIM_CCx_Enable);
+	
+	TIM_SelectSlaveMode(TIM3,TIM_SlaveMode_Reset);
+	TIM_SelectMasterSlaveMode(TIM3,TIM_MasterSlaveMode_Enable);
+	TIM_SelectInputTrigger(TIM3,TIM_TS_TI1FP1);
 }
 
-void ServoTim3::timerStart(){
+void PropoTim3::timerStart(){
 	TIM_Cmd(TIM3,ENABLE);
 }

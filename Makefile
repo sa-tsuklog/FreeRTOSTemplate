@@ -8,6 +8,7 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver \
 		    src/MyLib/CmdServo src/MyLibCmdServo/Driver \
 		    src/MyLib/Servo src/MyLib/Servo/Driver \
+		    src/MyLib/Propo src/MyLib/Propo/Driver \
 		    src/App
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App

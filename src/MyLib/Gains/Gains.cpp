@@ -43,7 +43,7 @@ Gains::Gains(){
 	
 	gpsWatchDog = 0;
 	
-	printMode = GainsPrintMode::MARITIME;
+	printMode = GainsPrintMode::NONE;
 }
 
 void Gains::prvGainsTask(void *pvParameters){
@@ -207,6 +207,10 @@ void Gains::print(){
 		
 		printf("acl:%6.3f,%6.3f,%6.3f,cmps:%6.3f,%6.3f,%6.3f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,earthFrameCmps.x,earthFrameCmps.y,earthFrameCmps.z);
 		
+	}else if(printMode == GainsPrintMode::INS){
+		printf("%.3f,%.3f,%.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
+		printf("%.3f,%.3f,%.3f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
+		printf("%.3f,%.3f,%.3f\r\n",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
 	}else{
 		float radHeading;
 		float radPitch;
@@ -457,9 +461,9 @@ void Gains::initGains(){
 		xTaskCreate(prvMpu9250TaskEntry,"mpubmp",1024,NULL,4,NULL);
 	}
 	if(GPS_TYPE == GpsType::USART_GPS){
-		xTaskCreate(&USART2Class::prvTxTask,"gpstx",512,USART2,2,NULL);
-		xTaskCreate(&USART2Class::prvRxTask,"gpsrx",1024,USART2,2,NULL);
+		xTaskCreate(&USART2Class::prvTxTask,"gpstx",512,USART2,3,NULL);
+		xTaskCreate(&USART2Class::prvRxTask,"gpsrx",1024,USART2,3,NULL);
 	}else if(GPS_TYPE == GpsType::DUMMY_GPS){
-		xTaskCreate(&DummyGps::prvDummyGpsTask,"dmygps",512,NULL,2,NULL);
+		xTaskCreate(&DummyGps::prvDummyGpsTask,"dmygps",512,NULL,3,NULL);
 	}
 }

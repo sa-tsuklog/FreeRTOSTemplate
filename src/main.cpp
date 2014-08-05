@@ -16,6 +16,7 @@
 #include "MyLib/Logger/Logger.h"
 #include "Test.h"
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
+#include "MyLib/CmdServo/CmdServo.h"
 
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)‚Æ
@@ -63,6 +64,7 @@ int main(void) {
 	Stdout::initStdout();
 	Gains::initGains();
 	Logger::initLogger();
+	CmdServo::initCmdServo();
 	
 	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
 	

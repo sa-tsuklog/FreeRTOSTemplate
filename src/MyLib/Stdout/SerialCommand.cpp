@@ -87,12 +87,14 @@ void SerialCommand::setServo(){
 	SerialCommand* cmd = SerialCommand::GetInstance();
 	char* args = cmd->getArgs();
 	unsigned char pitch    = cmd->hexToUchar(args);
-	unsigned char role     = cmd->hexToUchar(args+3);
+	unsigned char roll     = cmd->hexToUchar(args+3);
 	unsigned char yaw      = cmd->hexToUchar(args+6);
 	unsigned char throttle = cmd->hexToUchar(args+9);
 	unsigned char flaps    = cmd->hexToUchar(args+12);
 	
-	ControlParams controlParams = ControlParams(pitch,role,yaw,throttle,flaps);
+	printf("pitch,role=%x,%x\r\n",pitch,roll);
+	
+	ControlParams controlParams = ControlParams(pitch,roll,yaw,throttle,flaps);
 	
 	setControlParms(&controlParams);
 }
@@ -459,6 +461,8 @@ void SerialCommand::setGainsPrintMode(char* arg){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::MARITIME);
 	}else if(strncmp(arg,"eframe",6)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::E_FRAME);
+	}else if(strncmp(arg,"ins",3)==0){
+		Gains::GetInstance()->setPrintType(GainsPrintMode::INS);
 	}else if(strncmp(arg,"debug",5)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::DEBUG);
 	}

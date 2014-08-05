@@ -10,16 +10,16 @@
 
 class ControlParams{
 public:
-	ControlParams(unsigned char pitch,unsigned char role,unsigned char yaw,
+	ControlParams(unsigned char pitch,unsigned char roll,unsigned char yaw,
 			unsigned char throttle,unsigned char flaps){
 		this->pitch    = pitch;
-		this->role     = role;
+		this->roll     = roll;
 		this->yaw      = yaw;
 		this->throttle = throttle;
 		this->flaps    = flaps;
 	}
 	unsigned char pitch;
-	unsigned char role;
+	unsigned char roll;
 	unsigned char yaw;
 	unsigned char throttle;
 	unsigned char flaps;

@@ -8,16 +8,16 @@
 #ifndef HALTIM_H_
 #define HALTIM_H_
 
-class ServoTim3 {
+class PropoTim3 {
 	// Singleton pattern definition
 private:
-	ServoTim3();
-	ServoTim3(const ServoTim3& rhs);
-	ServoTim3& operator=(const ServoTim3& rhs);
-	virtual ~ServoTim3() {}
+	PropoTim3();
+	PropoTim3(const PropoTim3& rhs);
+	PropoTim3& operator=(const PropoTim3& rhs);
+	virtual ~PropoTim3() {}
 public:
-	static ServoTim3* GetInstance() {
-    	static ServoTim3 instance;
+	static PropoTim3* GetInstance() {
+    	static PropoTim3 instance;
     	return &instance;
 	}
 
