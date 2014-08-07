@@ -187,7 +187,7 @@ void test(){
 	Servo::GetInstance()->setPos(7,1.0);
 	
 	while(1){
-		printf("%d,%d,%d,%d\r\n",TIM_GetCapture1(TIM3),TIM_GetCapture2(TIM3),TIM_GetCapture3(TIM3),TIM_GetCapture4(TIM3));
+		//printf("%d,%d,%d,%d\r\n",TIM_GetCapture1(TIM3),TIM_GetCapture2(TIM3),TIM_GetCapture3(TIM3),TIM_GetCapture4(TIM3));
 		vTaskDelay(20);
 	}
 }

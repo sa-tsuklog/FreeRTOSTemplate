@@ -9,13 +9,13 @@
 #include "math.h"
 
 /**
- * @brief ‹Cˆ³·‚©‚ç‘Š‘Î‚“x‚ğ‹‚ß‚é
+ * @brief æ°—åœ§å·®ã‹ã‚‰ç›¸å¯¾é«˜åº¦ã‚’æ±‚ã‚ã‚‹
  * 
- * ‚“x·‘å‚«‚¢ê‡‚Ü‚½‚ÍŠî€‚Æ‚È‚é‚“x‚ªŠC–Ê‚“x‚©‚ç‘å‚«‚­—£‚ê‚Ä‚¢‚éê‡¸“x‚ª—ò‰»‚·‚é
+ * é«˜åº¦å·®å¤§ãã„å ´åˆã¾ãŸã¯åŸºæº–ã¨ãªã‚‹é«˜åº¦ãŒæµ·é¢é«˜åº¦ã‹ã‚‰å¤§ããé›¢ã‚Œã¦ã„ã‚‹å ´åˆç²¾åº¦ãŒåŠ£åŒ–ã™ã‚‹
  * 
- * @param[in] paPressure Œ»İ‚Ì‹Cˆ³[pa]
- * @param[in] paRefPressure Šî€‚Æ‚È‚éˆÊ’u‚Å‚Ì‹Cˆ³[pa]
- * @return ‚“x·[m]
+ * @param[in] paPressure ç¾åœ¨ã®æ°—åœ§[pa]
+ * @param[in] paRefPressure åŸºæº–ã¨ãªã‚‹ä½ç½®ã§ã®æ°—åœ§[pa]
+ * @return é«˜åº¦å·®[m]
  */
 
 float ImuData::paToRelativeHeight(float paPressure,float paRefPressure){

@@ -12,7 +12,7 @@
 
 /**
  * @class Servo
- * @brief ƒT[ƒ{§Œä—pƒNƒ‰ƒX
+ * @brief ã‚µãƒ¼ãƒœåˆ¶å¾¡ç”¨ã‚¯ãƒ©ã‚¹
  */
 
 
@@ -25,7 +25,7 @@ private:
 	virtual ~Servo() {}
 public:
 	/**
-	 * @brief ‚±‚ÌƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Ô‚·
+	 * @brief ã“ã®ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¿”ã™
 	 */
 	static Servo* GetInstance() {
 		static Servo instance;
@@ -34,16 +34,16 @@ public:
 
 	// Class definition
 private:
-	static const int USE_CH0_3 = 1;/**<1:ch0`3‚ğg—p‚·‚é 0:ch0`3‚ğg—p‚µ‚È‚¢*/
-	static const int USE_CH4_7 = 1;/**<1:ch4`7‚ğg—p‚·‚é 0:ch4`7‚ğg—p‚µ‚È‚¢*/
-	static const int USE_CH8_11 = 0;/**<1:ch8`11‚ğg—p‚·‚é 0:ch8`11‚ğg—p‚µ‚È‚¢Bch8`11‚Í"Propo"‚ÆƒVƒ‹ƒN‚³‚ê‚Ä‚¢‚é*/
-	static const int USE_CH12 = 0;/**<1:ch0`3‚ğg—p‚·‚é 0:ch0`3‚ğg—p‚µ‚È‚¢Bch12‚Í"height"‚ÆƒVƒ‹ƒN‚³‚ê‚Ä‚¢‚é*/
+	static const int USE_CH0_3 = 1;/**<@brief 1:ch0ï½3ã‚’ä½¿ç”¨ã™ã‚‹ 0:ch0ï½3ã‚’ä½¿ç”¨ã—ãªã„*/
+	static const int USE_CH4_7 = 1;/**<@brief 1:ch4ï½7ã‚’ä½¿ç”¨ã™ã‚‹ 0:ch4ï½7ã‚’ä½¿ç”¨ã—ãªã„*/
+	static const int USE_CH8_11 = 0;/**<@brief 1:ch8ï½11ã‚’ä½¿ç”¨ã™ã‚‹ 0:ch8ï½11ã‚’ä½¿ç”¨ã—ãªã„ã€‚ch8ï½11ã¯"Propo"ã¨ã‚·ãƒ«ã‚¯ã•ã‚Œã¦ã„ã‚‹*/
+	static const int USE_CH12 = 0;/**<@brief 1:ch0ï½3ã‚’ä½¿ç”¨ã™ã‚‹ 0:ch0ï½3ã‚’ä½¿ç”¨ã—ãªã„ã€‚ch12ã¯"height"ã¨ã‚·ãƒ«ã‚¯ã•ã‚Œã¦ã„ã‚‹*/
 	
-	static const uint32_t US_DUTY_CENTER = 1500;/**<’†—§ˆÊ’u(pos = 0)‚Å‚Ìƒpƒ‹ƒX•*/
-	static const uint32_t US_DUTY_GAIN = 500;/**<ƒpƒ‹ƒX•‚Ì•Ï‰»—Ê*/
+	static const uint32_t US_DUTY_CENTER = 1500;/**<@brief ä¸­ç«‹ä½ç½®(pos = 0)ã§ã®ãƒ‘ãƒ«ã‚¹å¹…*/
+	static const uint32_t US_DUTY_GAIN = 500;/**<@brief ãƒ‘ãƒ«ã‚¹å¹…ã®å¤‰åŒ–é‡*/
 	
 public:
-	static const int CH_NUM = 13; /**<Å‘åƒ`ƒƒƒ“ƒlƒ‹”*/
+	static const int CH_NUM = 13; /**<@brief æœ€å¤§ãƒãƒ£ãƒ³ãƒãƒ«æ•°*/
 	
 	void start();
 	void setPos(int ch,float pos);

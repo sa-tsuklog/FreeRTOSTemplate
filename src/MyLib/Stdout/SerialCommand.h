@@ -10,10 +10,10 @@ extern "C" {
 /**
  * @class SerialCommand
  * 
- * @brief �R���\�[�����͂̏������s��
+ * @brief コンソール入力の処理を行う
  * 
- * ���̃N���X�̊֐��͊�{�I�ɊO������͌Ă΂ꂸ�A
- * handleSerialCommand����R�}���h���͂ɂ���ČĂ΂��B
+ * このクラスの関数は基本的に外部からは呼ばれず、
+ * handleSerialCommandからコマンド入力によって呼ばれる。
  */
 
 class SerialCommand{

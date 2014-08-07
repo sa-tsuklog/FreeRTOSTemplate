@@ -110,3 +110,18 @@ PropoTim3::PropoTim3(){
 void PropoTim3::timerStart(){
 	TIM_Cmd(TIM3,ENABLE);
 }
+int PropoTim3::getUsTime(int ch){
+	if(ch == 0){
+		return TIM_GetCapture1(TIM3);
+	}else if(ch == 1){
+		return TIM_GetCapture2(TIM3);
+	}else if(ch == 2){
+		return TIM_GetCapture3(TIM3);
+	}else if(ch == 3){
+		return TIM_GetCapture4(TIM3);
+	}else{
+		return 0;
+	}
+}
+
+

@@ -12,17 +12,17 @@
 #include "Quaternion.h"
 
 
-#define MATRIX_CHECK_SIZE 0 /**<1�ł���΍s��̌v�Z���ɍs��T�C�Y�̊m�F���s�� */
+#define MATRIX_CHECK_SIZE 0 /**<1であれば行列の計算時に行列サイズの確認を行う */
 
 /**
  * @class Matrix
- * @brief �P���x���������_�ɂ��s��
+ * @brief 単精度浮動小数点による行列
  */
 
 
 class Matrix {
 public:
-    float** nums; /**<�s��̗v�f*/
+    float** nums; /**<行列の要素*/
     Matrix(int size);
     Matrix(int size,float value);
     Matrix(int rowSize, int columnSize,float value);
@@ -49,8 +49,8 @@ public:
     
     void print();
 private:
-    int rowSize;/**<�s��̍s��*/
-    int columnSize;/**<�s��̗�*/
+    int rowSize;/**<行列の行数*/
+    int columnSize;/**<行列の列数*/
 };
 
 #endif /* MATRIX_H_ */

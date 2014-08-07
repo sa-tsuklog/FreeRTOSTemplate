@@ -15,7 +15,7 @@
 **
 **  Environment : Atollic TrueSTUDIO(R)
 **
-**  Distribution: The file is distributed 殿s is,�without any warranty
+**  Distribution: The file is distributed 谿ｿs is,�ｽwithout any warranty
 **                of any kind.
 **
 **  (c)Copyright Atollic AB.

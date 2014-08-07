@@ -296,7 +296,7 @@ void Gains::appendGpsData(GpsData* gpsData){
 
 
 void Gains::resetImu(){
-	//TODO: ‚±‚±”r‘¼§Œä‚·‚éB
+	//TODO: ã“ã“æ’ä»–åˆ¶å¾¡ã™ã‚‹ã€‚
 	Gps::GetInstance()->resetRefPosition();
 	kf->reset();
 }
@@ -306,12 +306,12 @@ void Gains::resetImu(){
 /////////////////////////////////////
 
 /**
- * @brief ‰Á‘¬“x‚ğ•Ô‚·
+ * @brief åŠ é€Ÿåº¦ã‚’è¿”ã™
  * 
- * Œ`®‚Í[m/(s^2)]
+ * å½¢å¼ã¯[m/(s^2)]
  * 
- * ƒNƒH[ƒ^ƒjƒIƒ“‚ğƒxƒNƒgƒ‹‚Æ‚µ‚Äg—p(w=0)
- * @return Œ»İ‚Ì‰Á‘¬“x‚ğ•Ô‚·
+ * ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨(w=0)
+ * @return ç¾åœ¨ã®åŠ é€Ÿåº¦ã‚’è¿”ã™
  */
 Quaternion Gains::getMpspsAcl(){
 	Quaternion rt;
@@ -321,12 +321,12 @@ Quaternion Gains::getMpspsAcl(){
 	return rt;
 }
 /**
- * @brief Šp‘¬“x‚ğ•Ô‚·
+ * @brief è§’é€Ÿåº¦ã‚’è¿”ã™
  * 
- * Œ`®‚Í[rad/s]
+ * å½¢å¼ã¯[rad/s]
  * 
- * ƒNƒH[ƒ^ƒjƒIƒ“‚ğƒxƒNƒgƒ‹‚Æ‚µ‚Äg—p(w=0)
- * @return Œ»İ‚ÌŠp‘¬“x‚ğ•Ô‚· 
+ * ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨(w=0)
+ * @return ç¾åœ¨ã®è§’é€Ÿåº¦ã‚’è¿”ã™ 
  */
 Quaternion Gains::getRpsRate(){
 	Quaternion rt;
@@ -337,14 +337,14 @@ Quaternion Gains::getRpsRate(){
 }
 
 /**
- * @brief EKF‚É‚æ‚Á‚Ä„’è‚µ‚½Œ»İ‚Ì‘¬“x‚ğ•Ô‚·
+ * @brief EKFã«ã‚ˆã£ã¦æ¨å®šã—ãŸç¾åœ¨ã®é€Ÿåº¦ã‚’è¿”ã™
  * 
- * Œ`®‚Í‘¬“x[m/s]
+ * å½¢å¼ã¯é€Ÿåº¦[m/s]
  * 
- * ƒNƒH[ƒ^ƒjƒIƒ“‚ğƒxƒNƒgƒ‹‚Æ‚µ‚Äg—p(w=0)
+ * ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨(w=0)
  * 
- * ‘½‚­‚Ìê‡(“Á‚ÉŠµ«ƒZƒ“ƒT‚Æ‚µ‚ÄMPU-9250‚ğg—p‚·‚éê‡)AGPS’P‘Ì‚©‚çæ“¾‚µ‚½‹——£‚Ì•û‚ª³Šm‚Å‚ ‚é
- * @return Œ»İ‚ÌˆÊ’u
+ * å¤šãã®å ´åˆ(ç‰¹ã«æ…£æ€§ã‚»ãƒ³ã‚µã¨ã—ã¦MPU-9250ã‚’ä½¿ç”¨ã™ã‚‹å ´åˆ)ã€GPSå˜ä½“ã‹ã‚‰å–å¾—ã—ãŸè·é›¢ã®æ–¹ãŒæ­£ç¢ºã§ã‚ã‚‹
+ * @return ç¾åœ¨ã®ä½ç½®
  */
 Quaternion Gains::getMpsSpeed(){
 	Quaternion rt;
@@ -355,14 +355,14 @@ Quaternion Gains::getMpsSpeed(){
 }
 
 /**
- * @brief EKF‚É‚æ‚Á‚Ä„’è‚µ‚½Œ»İ‚ÌˆÊ’u‚ğ•Ô‚·
+ * @brief EKFã«ã‚ˆã£ã¦æ¨å®šã—ãŸç¾åœ¨ã®ä½ç½®ã‚’è¿”ã™
  * 
- * Œ`®‚Í‰Šú‰»‚ÌˆÊ’u‚©‚ç‚Ì‹——£[m]
+ * å½¢å¼ã¯åˆæœŸåŒ–æ™‚ã®ä½ç½®ã‹ã‚‰ã®è·é›¢[m]
  * 
- * ƒNƒH[ƒ^ƒjƒIƒ“‚ğƒxƒNƒgƒ‹‚Æ‚µ‚Äg—p(w=0)
+ * ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨(w=0)
  * 
- * ‘½‚­‚Ìê‡(“Á‚ÉŠµ«ƒZƒ“ƒT‚Æ‚µ‚ÄMPU-9250‚ğg—p‚·‚éê‡)AGPS’P‘Ì‚©‚çæ“¾‚µ‚½‹——£‚Ì•û‚ª³Šm‚Å‚ ‚é
- * @return Œ»İ‚ÌˆÊ’u
+ * å¤šãã®å ´åˆ(ç‰¹ã«æ…£æ€§ã‚»ãƒ³ã‚µã¨ã—ã¦MPU-9250ã‚’ä½¿ç”¨ã™ã‚‹å ´åˆ)ã€GPSå˜ä½“ã‹ã‚‰å–å¾—ã—ãŸè·é›¢ã®æ–¹ãŒæ­£ç¢ºã§ã‚ã‚‹
+ * @return ç¾åœ¨ã®ä½ç½®
  */
 Quaternion Gains::getMRelativePos(){
 	Quaternion rt;
@@ -373,9 +373,9 @@ Quaternion Gains::getMRelativePos(){
 }
 
 /**
- * @brief Œ»İ‚Ìp¨‚ğ•Ô‚·
+ * @brief ç¾åœ¨ã®å§¿å‹¢ã‚’è¿”ã™
  * 
- * @return Œ»İ‚Ìp¨
+ * @return ç¾åœ¨ã®å§¿å‹¢
  */
 Quaternion Gains::getAttitude(){
 	Quaternion rt;
@@ -386,33 +386,33 @@ Quaternion Gains::getAttitude(){
 }
 
 /**
- * @brief GPS‚Ì‰Šú‰»‚ÌÀ•W‚ğ•Ô‚·
+ * @brief GPSã®åˆæœŸåŒ–æ™‚ã®åº§æ¨™ã‚’è¿”ã™
  * 
  * 
- * ’PˆÊ‚Í[deg]*1000000B
+ * å˜ä½ã¯[deg]*1000000ã€‚
  * 
- * —áF–kˆÜ35.123456‹‚Ìê‡A35123456‚ğ•Ô‚·B
- * @return GPS‚Ì‰Šú‰»‚ÌŒo“xB
+ * ä¾‹ï¼šåŒ—ç·¯35.123456Â°ã®å ´åˆã€35123456ã‚’è¿”ã™ã€‚
+ * @return GPSã®åˆæœŸåŒ–æ™‚ã®çµŒåº¦ã€‚
  */
 int Gains::getLattitudeRef(){
 	return Gps::GetInstance()->mPosXToDegX1M_Latitude(0.0);
 }
 
 /**
- * @brief GPS‚Ì‰Šú‰»‚ÌÀ•W‚ğ•Ô‚·
+ * @brief GPSã®åˆæœŸåŒ–æ™‚ã®åº§æ¨™ã‚’è¿”ã™
  * 
- * ’PˆÊ‚Í[deg]*1000000B
+ * å˜ä½ã¯[deg]*1000000ã€‚
  * 
- * —áF“ŒŒo139.123456‹‚Ìê‡A139123456‚ğ•Ô‚·B
- * @return GPS‚Ì‰Šú‰»‚ÌŒo“xB
+ * ä¾‹ï¼šæ±çµŒ139.123456Â°ã®å ´åˆã€139123456ã‚’è¿”ã™ã€‚
+ * @return GPSã®åˆæœŸåŒ–æ™‚ã®çµŒåº¦ã€‚
  */
 int Gains::getLongitudeRef(){
 	return Gps::GetInstance()->mPosYToDegX1M_Longitude(0.0);
 }
 /**
- * @brief Šµ«ƒZƒ“ƒT‚©‚ç‚Ìƒf[ƒ^‚ğ•Ô‚·
+ * @brief æ…£æ€§ã‚»ãƒ³ã‚µã‹ã‚‰ã®ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™
  * 
- * @return ÅV‚ÌŠµ«ƒZƒ“ƒT‚Ìƒf[ƒ^
+ * @return æœ€æ–°ã®æ…£æ€§ã‚»ãƒ³ã‚µã®ãƒ‡ãƒ¼ã‚¿
  */
 ImuData Gains::getImuData(){
 	ImuData rt;
@@ -423,9 +423,9 @@ ImuData Gains::getImuData(){
 }
 
 /**
- * @brief GPS‚©‚ç‚Ìƒf[ƒ^‚ğ•Ô‚·
+ * @brief GPSã‹ã‚‰ã®ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™
  * 
- * @return ÅV‚ÌGPSƒf[ƒ^BˆÊ’u‚Í‰Šú‰»‚ÌˆÊ’u‚©‚ç‚Ì‹——£[m]‚Å‚ ‚é‚±‚Æ‚É’ˆÓB
+ * @return æœ€æ–°ã®GPSãƒ‡ãƒ¼ã‚¿ã€‚ä½ç½®ã¯åˆæœŸåŒ–æ™‚ã®ä½ç½®ã‹ã‚‰ã®è·é›¢[m]ã§ã‚ã‚‹ã“ã¨ã«æ³¨æ„ã€‚
  */
 GpsData Gains::getGpsData(){
 	GpsData rt;
@@ -440,7 +440,7 @@ void Gains::setPrintType(GainsPrintMode::Mode mode){
 }
 
 /**
- * @brief Gains‚ÌŠÖ˜Aƒ^ƒXƒN‚Ì‹N“®AƒNƒ‰ƒX‚Ì‰Šú‰»‚ğs‚¤
+ * @brief Gainsã®é–¢é€£ã‚¿ã‚¹ã‚¯ã®èµ·å‹•ã€ã‚¯ãƒ©ã‚¹ã®åˆæœŸåŒ–ã‚’è¡Œã†
  */
 void Gains::initGains(){
 	if(IMU_TYPE == ImuType::SELECTABLE){

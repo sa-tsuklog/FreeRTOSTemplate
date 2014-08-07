@@ -39,46 +39,46 @@ void Util::initFlashData(){
 }
 
 /**
- * @brief flashData‚Ì“à—e‚ğƒtƒ‰ƒbƒVƒ…ƒƒ‚ƒŠ‚É‘‚«‚Ş
+ * @brief flashDataã®å†…å®¹ã‚’ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ãƒ¡ãƒ¢ãƒªã«æ›¸ãè¾¼ã‚€
  */
 void Util::userflashFlush(){
 	FLASHClass::GetInstance()->flush((void*)&flashData,sizeof(UserflashData)/sizeof(uint32_t));
 }
 
 /**
- * @brief ƒ}ƒCƒNƒ•b’PˆÊ‚ÅŒ»İ‚Ì‚ğ•Ô‚·B
+ * @brief ãƒã‚¤ã‚¯ãƒ­ç§’å˜ä½ã§ç¾åœ¨ã®æ™‚åˆ»ã‚’è¿”ã™ã€‚
  * 
- * •Ô‚·’l‚Í32bit‚ÌƒtƒŠ[ƒ‰ƒ“ƒJƒEƒ“ƒ^‚Ì’l‚Å‚ ‚éB
+ * è¿”ã™å€¤ã¯32bitã®ãƒ•ãƒªãƒ¼ãƒ©ãƒ³ã‚«ã‚¦ãƒ³ã‚¿ã®å€¤ã§ã‚ã‚‹ã€‚
  * 
- * ƒvƒƒOƒ‰ƒ€‚ÌÀsŠÔ‚ğŒv‘ª‚·‚é‚Ì‚Ég—p‚·‚éB
- * —áF
+ * ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®å®Ÿè¡Œæ™‚é–“ã‚’è¨ˆæ¸¬ã™ã‚‹ã®ã«ä½¿ç”¨ã™ã‚‹ã€‚
+ * ä¾‹ï¼š
  * 
  * uint32_t t1 = Util::GetInstance()->getUsTime();
  * 
- * (‚È‚ñ‚ç‚©‚Ìˆ—)
+ * (ãªã‚“ã‚‰ã‹ã®å‡¦ç†)
  * 
  * uint32_t t2 = Util::GetInstance()->getUsTime();
  * 
  * printf("%d[us]\r\n",t2-t1);
  * 
- * @return Œ»İ‚ÌŠÔ[us]
+ * @return ç¾åœ¨ã®æ™‚é–“[us]
  */
 uint32_t Util::getUsTime(){
 	return TIM2Class::GetInstance()->getUsTime();
 }
 
 /**
- * @brief “dŒ¹“ü—Í‚Ì“dˆ³‚ğ•Ô‚·
+ * @brief é›»æºå…¥åŠ›ã®é›»åœ§ã‚’è¿”ã™
  * 
- * –{ŠÖ”‚ªŒÄ‚Î‚ê‚é‚ÆA‘O‰ñŒv‘ª‚µ‚½“dˆ³‚ğ•Ô‚·‚Æ‚Æ‚à‚ÉAŸ‚ÌŒv‘ª‚ğŠJn‚·‚éB
+ * æœ¬é–¢æ•°ãŒå‘¼ã°ã‚Œã‚‹ã¨ã€å‰å›è¨ˆæ¸¬ã—ãŸé›»åœ§ã‚’è¿”ã™ã¨ã¨ã‚‚ã«ã€æ¬¡ã®è¨ˆæ¸¬ã‚’é–‹å§‹ã™ã‚‹ã€‚
  * 
- * ‚·‚È‚í‚¿A–{ŠÖ”‚Ì•Ô‚è’l‚Í‘O‰ñŒÄ‚Ño‚µ‚Ì“dˆ³‚Å‚ ‚éB
+ * ã™ãªã‚ã¡ã€æœ¬é–¢æ•°ã®è¿”ã‚Šå€¤ã¯å‰å›å‘¼ã³å‡ºã—æ™‚ã®é›»åœ§ã§ã‚ã‚‹ã€‚
  * 
- * –{ŠÖ”‚ÌŒÄ‚Ño‚µ‚Ì•p“x‚ª’á‚¢ê‡‚É‚Í’ˆÓ‚ª•K—v‚Å‚ ‚éB
+ * æœ¬é–¢æ•°ã®å‘¼ã³å‡ºã—ã®é »åº¦ãŒä½ã„å ´åˆã«ã¯æ³¨æ„ãŒå¿…è¦ã§ã‚ã‚‹ã€‚
  * 
- * –{ŠÖ”‚Ì‰‰ñŒÄ‚Ño‚µ‚ÍAUtil‚ğ‰Šú‰»‚µ‚½‚Ì“dˆ³‚ğ•Ô‚·B
+ * æœ¬é–¢æ•°ã®åˆå›å‘¼ã³å‡ºã—æ™‚ã¯ã€Utilã‚’åˆæœŸåŒ–ã—ãŸæ™‚ã®é›»åœ§ã‚’è¿”ã™ã€‚
  * 
- * @return ‘O‰ñŒÄ‚Ño‚µ‚Ì“dˆ³[V]
+ * @return å‰å›å‘¼ã³å‡ºã—æ™‚ã®é›»åœ§[V]
  */
 float Util::getVoltInputVoltage(){
 	return ADC3Class::GetInstance()->getNextData();
@@ -96,7 +96,7 @@ void Util::myFprintf(portTickType blockTime,FILE* stream,const char* format,...)
 }
 
 /**
- * @brief Util‚ğ‚Ì‰Šú‰»‚ğs‚¤BUtil‚Å‚Íƒ^ƒXƒN‚Íg—p‚µ‚È‚¢‚½‚ßA‹N“®‚³‚ê‚È‚¢B
+ * @brief Utilã‚’ã®åˆæœŸåŒ–ã‚’è¡Œã†ã€‚Utilã§ã¯ã‚¿ã‚¹ã‚¯ã¯ä½¿ç”¨ã—ãªã„ãŸã‚ã€èµ·å‹•ã•ã‚Œãªã„ã€‚
  */
 static void Util::initUtil(){
 	Util::GetInstance();

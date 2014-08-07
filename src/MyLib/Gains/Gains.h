@@ -21,17 +21,17 @@
 
 /**
  * @class Gains 
- * @brief EKF‚É‚æ‚ép¨„’è
+ * @brief EKFã«ã‚ˆã‚‹å§¿å‹¢æ¨å®š
  * 
- * ƒZƒ“ƒT‚ÍˆÈ‰º‚Ì‚à‚Ì‚©‚ç‘I‘ğ‰ÂB
+ * ã‚»ãƒ³ã‚µã¯ä»¥ä¸‹ã®ã‚‚ã®ã‹ã‚‰é¸æŠå¯ã€‚
  * 
- *   Šµ«ƒZƒ“ƒTFADIS16488 or MPU-9250 or MPU-9250 + BMP850
+ *   æ…£æ€§ã‚»ãƒ³ã‚µï¼šADIS16488 or MPU-9250 or MPU-9250 + BMP850
  *   
- *   GPS:ƒVƒŠƒAƒ‹Ú‘±‚ÌGPS or ƒ_ƒ~[‚ÌGPS
+ *   GPS:ã‚·ãƒªã‚¢ãƒ«æ¥ç¶šã®GPS or ãƒ€ãƒŸãƒ¼ã®GPS
  *   
- * ƒZƒ“ƒT‚Ì‘I‘ğ‚ÍGainsConfig.h‚Ås‚¤B
+ * ã‚»ãƒ³ã‚µã®é¸æŠã¯GainsConfig.hã§è¡Œã†ã€‚
  * 
- * NEDÀ•WŒn‚ğg—pB
+ * NEDåº§æ¨™ç³»ã‚’ä½¿ç”¨ã€‚
  */
 
 class Gains{
@@ -43,7 +43,7 @@ private:
 	virtual ~Gains() {}
 public:
 	/**
-	 * @brief ‚±‚ÌƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Ô‚·
+	 * @brief ã“ã®ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¿”ã™
 	 */
 	static Gains* GetInstance() {
     	static Gains instance;

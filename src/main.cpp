@@ -19,16 +19,16 @@
 #include "MyLib/CmdServo/CmdServo.h"
 
 /*
- *  stm32F407 Discovery (Xtal = 8MHz)��
- *  stm32F429           (Xtal = 12MHz)�ł̗v�ύX�ӏ�
+ *  stm32F407 Discovery (Xtal = 8MHz)と
+ *  stm32F429           (Xtal = 12MHz)での要変更箇所
  *
- *  1.Makefile�ł�HSE_VALUE�̐ݒ�,-DSTM32F429��define
- *  2.stm32_flash.ld��FLASH,RAM�T�C�Y
- *  3.USER_FLASH�̗̈�ݒ�
+ *  1.MakefileでのHSE_VALUEの設定,-DSTM32F429のdefine
+ *  2.stm32_flash.ldのFLASH,RAMサイズ
+ *  3.USER_FLASHの領域設定
  * */
 
-//TODO: ���쒆��SD�J�[�h�̔��������������ꍇ�A�ŏ���fopen�������̏�Ԃ̂���œ��삵�Ă���͗l�B
-//      �����Ă���ēxfopen���Ă��A�G���[���b�Z�[�W���o�Ȃ��B
+//TODO: 動作中にSDカードの抜き差しをした場合、最初にfopenした時の状態のつもりで動作している模様。
+//      抜いてから再度fopenしても、エラーメッセージが出ない。
 
 extern unsigned int idle_count;
 void prvTaskA(void *pvParameters){

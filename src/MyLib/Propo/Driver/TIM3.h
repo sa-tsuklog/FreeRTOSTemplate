@@ -25,6 +25,7 @@ public:
 private:
 public:
 	void timerStart();
+	int getUsTime(int ch);
 };
 
 

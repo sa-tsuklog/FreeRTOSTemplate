@@ -13,9 +13,9 @@
 /**
  * @class GpsData
  * 
- * @brief GPS�̏��̎󂯓n���Ɏg�p����N���X
+ * @brief GPSの情報の受け渡しに使用するクラス
  * 
- * NED���W�n
+ * NED座標系
  */
 class GpsData{
 private:
@@ -29,8 +29,8 @@ public:
 		this->mGpsRelativePos = Quaternion(0,0,0,0);
 		this->mpsGpsSpeed = Quaternion(0,0,0,0);
 	}
-	Quaternion mGpsRelativePos; /**<GPS���������̍��W����̑��Έʒu[m]�B�x�N�g���Ƃ��Ďg�p(w=0)*/
-	Quaternion mpsGpsSpeed; /**<���x[m/s]�B�x�N�g���Ƃ��Ďg�p(w=0)*/
+	Quaternion mGpsRelativePos; /**<GPS初期化時の座標からの相対位置[m]。ベクトルとして使用(w=0)*/
+	Quaternion mpsGpsSpeed; /**<速度[m/s]。ベクトルとして使用(w=0)*/
 };
 
 

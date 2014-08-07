@@ -18,7 +18,7 @@
 
 /**
  * @class Util
- * @brief •Ö—˜ŠÖ”‚¢‚ë‚¢‚ë
+ * @brief ä¾¿åˆ©é–¢æ•°ã„ã‚ã„ã‚
  */
 class Util {
 	// Singleton pattern definition

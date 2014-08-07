@@ -48,7 +48,7 @@ void SerialCommand::serialCommandTask(void* pvParameters){
 }
 
 /**
- * @brief �R�}���h���p�[�X���ACommandList.h�Œ�`���ꂽ�A�Ή�����֐����Ăяo���B
+ * @brief コマンドをパースし、CommandList.hで定義された、対応する関数を呼び出す。
  */
 void SerialCommand::handleSerialCommand(char* line){
 	int i=0;
@@ -70,18 +70,18 @@ void SerialCommand::handleSerialCommand(char* line){
 }
 
 /**
- * @brief �R�}���h�̈�����Ԃ�
+ * @brief コマンドの引数を返す
  * 
- * @return �R�}���h�̈���
+ * @return コマンドの引数
  */
 char* SerialCommand::getArgs(){
 	return args;
 }
 
 /**
- * @brief �W���C�p�b�h���͂𐧌�^�X�N�ɓn��
+ * @brief ジョイパッド入力を制御タスクに渡す
  * 
- * ������HH,HH,HH,HH,HH,HH\n�ł��邱�ƁBH��ascii�R�[�h��16�i���̈ꕶ���������B
+ * 引数はHH,HH,HH,HH,HH,HH\nであること。Hはasciiコードの16進数の一文字を現す。
  */
 void SerialCommand::setServo(){
 	SerialCommand* cmd = SerialCommand::GetInstance();
@@ -100,11 +100,11 @@ void SerialCommand::setServo(){
 }
 
 /**
- * @brief ascii�R�[�h��16�i��2���̕������unsigned char�ɕϊ�����B
+ * @brief asciiコードの16進数2桁の文字列をunsigned charに変換する。
  * 
- * ��FhexString = "2A"�̏ꍇ�A16*2 + 10 = 42��Ԃ� 
+ * 例：hexString = "2A"の場合、16*2 + 10 = 42を返す 
  * 
- * @return �����񂪕\���l
+ * @return 文字列が表す値
  */
 unsigned char SerialCommand::hexToUchar(char* hexString){
 	unsigned int upper;
@@ -128,7 +128,7 @@ unsigned char SerialCommand::hexToUchar(char* hexString){
 }
 
 /**
- * @brief CommandList.h�Œ�`���ꂽ�R�}���h�̈ꗗ��W���o�͂ɏo�͂���B
+ * @brief CommandList.hで定義されたコマンドの一覧を標準出力に出力する。
  */
 void SerialCommand::printHelp(){
 	int i=0;
@@ -139,9 +139,9 @@ void SerialCommand::printHelp(){
 }
 
 /**
- * @brief ���݋N�����̃^�X�N�Ǝc��X�^�b�N�ʂ̈ꗗ��Ԃ��B
+ * @brief 現在起動中のタスクと残りスタック量の一覧を返す。
  * 
- * ������vTaskList���ĂсA���̌��ʂ�W���o�͂ɏo�͂��Ă���B
+ * 内部でvTaskListを呼び、その結果を標準出力に出力している。
  */
 void SerialCommand::printTaskList(){
 	vTaskList(vTaskListBuf);
@@ -150,9 +150,9 @@ void SerialCommand::printTaskList(){
 }
 
 /**
- * @brief ���O��SD�J�[�h�̏������݂��J�n����B
+ * @brief ログのSDカードの書き込みを開始する。
  * 
- * @param[in] arg �������݂��J�n����t�@�C����
+ * @param[in] arg 書き込みを開始するファイル名
  */
 void SerialCommand::startLogging(char* arg){
 	if(arg[0] == 0){
@@ -165,48 +165,48 @@ void SerialCommand::startLogging(char* arg){
 }
 
 /**
- * @brief ���O��SD�J�[�h�ւ̏������݂��~����
+ * @brief ログのSDカードへの書き込みを停止する
  */
 void SerialCommand::stopLogging(){
 	Logger::GetInstance()->stopLogging();
 }
 
 /**
- * @brief EKF�̈ʒu�A���x�̐���l��0�ɖ߂�
+ * @brief EKFの位置、速度の推定値を0に戻す
  */
 void SerialCommand::resetImu(){
 	Gains::GetInstance()->resetImu();
 }
 /**
- * @brief GPS�̊���W�����݂̍��W�ɂ���
+ * @brief GPSの基準座標を現在の座標にする
  */
 void SerialCommand::resetGpsRef(){
 	Gps::GetInstance()->resetRefPosition();
 }
 /**
- * @brief �R���\�[�����͎��A���͂���������W���o�͂ɕ\������
+ * @brief コンソール入力時、入力した文字を標準出力に表示する
  */
 void SerialCommand::echoOn(){
 	USART3Class::GetInstance()->setEcho(1);
 }
 /**
- * @brief �R���\�[�����͎��A���͂���������W���o�͂ɕ\�����Ȃ�
+ * @brief コンソール入力時、入力した文字を標準出力に表示しない
  */
 void SerialCommand::echoOff(){
 	USART3Class::GetInstance()->setEcho(0);
 }
 /**
- * @brief �T�[�{�̃g�����������s��
+ * @brief サーボのトリム調整を行う
  * 
- * �g����������u�Ad����͂��邱�Ƃōs���B
+ * トリム調整はu、dを入力することで行う。
  * 
- * u�Ńp���X���������Ȃ�����ɁAd�Ńp���X�����Z���Ȃ�����ɕω�����B
+ * uでパルス幅が長くなる方向に、dでパルス幅が短くなる方向に変化する。
  * 
- * shift�L�[�������Ȃ���u,d���������ƂŔ��������s����B
+ * shiftキーを押しながらu,dを押すことで微調整が行える。
  * 
- * �g�����ݒ肪����������enter���������ƂŁA���̃T�[�{�̃g���������Ɉڂ�
+ * トリム設定が完了したらenterを押すことで、次のサーボのトリム調整に移る
  * 
- * �g�����̒l�̓t���b�V���ɋL�^����A�d����؂�������L���ł���B
+ * トリムの値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setServosTrim(){
 	for(int i=0;i<Servo::CH_NUM;i++){
@@ -234,17 +234,17 @@ void SerialCommand::setServosTrim(){
 }
 
 /**
- * @brief PID����̂��߂̃p�����[�^��ݒ肷��
+ * @brief PID制御のためのパラメータを設定する
  * 
- * ���������_������͂��Aenter���������ƂŃp�����[�^���㏑�������B
+ * 浮動小数点数を入力し、enterを押すことでパラメータが上書きされる。
  * 
- * �s���ȕ����񂪓��͂��ꂽ�ꍇ�A�p�����[�^��0�ƂȂ�B
+ * 不正な文字列が入力された場合、パラメータは0となる。
  * 
- * �������͂�����enter���������ꍇ�A�ȑO�̐ݒ�l�����̂܂ܕێ������B
+ * 何も入力せずにenterを押した場合、以前の設定値がそのまま保持される。
  * 
- * �p�����[�^��P,I,D���ꂼ���3�Â���A0:role 1:pitch 2:yaw�����̃Q�C���ł���B
+ * パラメータはP,I,Dそれぞれに3つづつあり、0:role 1:pitch 2:yaw方向のゲインである。
  * 
- * �p�����[�^�̓t���b�V���ɋL�^����A�d����؂�������L���ł���B
+ * パラメータはフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setPidGain(){
 	for(int i=0;i<3;i++){
@@ -284,26 +284,26 @@ void SerialCommand::setPidGain(){
 }
 
 /**
- * @brief MPU-9250�̃W���C���̍Z�����s���B
+ * @brief MPU-9250のジャイロの校正を行う。
  * 
- * 5�b�ԃW���C���̃f�[�^���v�����A���ϒl��0�ƂȂ�悤�W���C���̕␳�l��ݒ肷��B
+ * 5秒間ジャイロのデータを計測し、平均値が0となるようジャイロの補正値を設定する。
  * 
- * �v�����s���Ă���5�b�Ԃ̊Ԃ͊�Ɋp���x��^����ׂ��ł͂Ȃ��B
+ * 計測を行っている5秒間の間は基板に角速度を与えるべきではない。
  * 
- * �␳�l�̓t���b�V���ɋL�^����A�d����؂�������L���ł���B
+ * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::calibrateMpuGyro(){
 	Mpu9250::getInstance()->startGyroCalibration();
 }
 
 /**
- * @brief MPU-9250�̉����x�̍Z�����s��
+ * @brief MPU-9250の加速度の校正を行う
  * 
- * �␳�l�𕂓������_���œ��͂���B
+ * 補正値を浮動小数点数で入力する。
  * 
- * �␳�l�̐���͎蓮�ōs���K�v������B
+ * 補正値の推定は手動で行う必要がある。
  * 
- * �␳�l�̓t���b�V���ɋL�^����A�d����؂�������L���ł���B
+ * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setMpuAclBias(){
 	for(int i=0;i<3;i++){
@@ -321,13 +321,13 @@ void SerialCommand::setMpuAclBias(){
 }
 
 /**
- * @brief MPU-9250�̒n���C�Z���T�̍Z�����s��
+ * @brief MPU-9250の地磁気センサの校正を行う
  * 
- * �␳�l�𕂓������_���œ��͂���B
+ * 補正値を浮動小数点数で入力する。
  * 
- * �␳�l�̐���͎蓮�ōs���K�v������B
+ * 補正値の推定は手動で行う必要がある。
  * 
- * �␳�l�̓t���b�V���ɋL�^����A�d����؂�������L���ł���B
+ * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setMpuCmpsBias(){
 	for(int i=0;i<3;i++){
@@ -345,13 +345,13 @@ void SerialCommand::setMpuCmpsBias(){
 }
 
 /**
- * @brief ADIS16488�̒n���C�Z���T�̍Z�����s��
+ * @brief ADIS16488の地磁気センサの校正を行う
  * 
- * �␳�l�𕂓������_���œ��͂���B
+ * 補正値を浮動小数点数で入力する。
  * 
- * �␳�l�̐���͎蓮�ōs���K�v������B
+ * 補正値の推定は手動で行う必要がある。
  * 
- * �␳�l�̓t���b�V���ɋL�^����A�d����؂�������L���ł���B
+ * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setAdisCmpsBias(){
 	for(int i=0;i<3;i++){
@@ -369,7 +369,7 @@ void SerialCommand::setAdisCmpsBias(){
 }
 
 /**
- * @brief Gains�Ŏg�p����Z���T��\������
+ * @brief Gainsで使用するセンサを表示する
  */
 void SerialCommand::showGainsConfig(){
 	printf("imu type:\r\n");
@@ -393,11 +393,11 @@ void SerialCommand::showGainsConfig(){
 	}
 }
 /**
- * @brief Gains�Ŏg�p����Z���T��ݒ肷��B
+ * @brief Gainsで使用するセンサを設定する。
  * 
- * �{�ݒ�͎���N��������L���ł���B
+ * 本設定は次回起動時から有効である。
  * 
- * �ݒ�̓t���b�V���ɕۑ�����A�d����؂�������L���ł���B
+ * 設定はフラッシュに保存され、電源を切った後も有効である。
  */
 void SerialCommand::setGainsConfig(){
 	char c;
@@ -480,9 +480,9 @@ void SerialCommand::initializeUserFlash(){
 }
 
 /**
- * @brief �f�o�b�O�p�R�}���h0
+ * @brief デバッグ用コマンド0
  * 
- * �֐��̒��g�����������A�f�o�b�O�p�Ɏg�p�\
+ * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd0(){
 	while(1){
@@ -492,17 +492,17 @@ void SerialCommand::testCmd0(){
 	}
 }
 /**
- * @brief �f�o�b�O�p�R�}���h1
+ * @brief デバッグ用コマンド1
  * 
- * �֐��̒��g�����������A�f�o�b�O�p�Ɏg�p�\
+ * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd1(){
 	
 }
 /**
- * @brief �f�o�b�O�p�R�}���h2
+ * @brief デバッグ用コマンド2
  * 
- * �֐��̒��g�����������A�f�o�b�O�p�Ɏg�p�\
+ * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd2(){
 	

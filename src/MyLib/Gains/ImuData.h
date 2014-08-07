@@ -13,9 +13,9 @@
 /**
  * @class ImuData
  * 
- * @brief Šµ«ƒZƒ“ƒT‚Ìƒf[ƒ^Žó‚¯“n‚µ‚ÉŽg—p‚·‚éƒNƒ‰ƒX
+ * @brief æ…£æ€§ã‚»ãƒ³ã‚µã®ãƒ‡ãƒ¼ã‚¿å—ã‘æ¸¡ã—ã«ä½¿ç”¨ã™ã‚‹ã‚¯ãƒ©ã‚¹
  * 
- * ‹@‘ÌÀ•WŒn
+ * æ©Ÿä½“åº§æ¨™ç³»
  */
 
 class ImuData{
@@ -41,12 +41,12 @@ public:
 		this->isCmpsValid=0;
 		this->isPressureValid=0;
 	}
-	Quaternion mpspsAcl; /**<‰Á‘¬“x[m/(s^2)]BƒxƒNƒgƒ‹‚Æ‚µ‚ÄŽg—p(w=0)*/
-	Quaternion rpsRate;  /**<Šp‘¬“x[rad/s]BƒxƒNƒgƒ‹‚Æ‚µ‚ÄŽg—p(w=0)*/
-	Quaternion uTCmps;   /**<Ž¥‹C[uT]BƒxƒNƒgƒ‹‚Æ‚µ‚ÄŽg—p*/
-	float paPressure;    /**<‹Cˆ³[pa]*/
-	int isCmpsValid;     /**<Ž¥‹C‚Ìƒf[ƒ^‚ÉXV‚ª‚ ‚Á‚½ê‡1A‚»‚êˆÈŠO‚Ìê‡0*/
-	int isPressureValid; /**<‹Cˆ³‚Ìƒf[ƒ^‚ÉXV‚ª‚ ‚Á‚½ê‡1A‚»‚êˆÈŠO‚Ìê‡0*/
+	Quaternion mpspsAcl; /**<åŠ é€Ÿåº¦[m/(s^2)]ã€‚ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨(w=0)*/
+	Quaternion rpsRate;  /**<è§’é€Ÿåº¦[rad/s]ã€‚ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨(w=0)*/
+	Quaternion uTCmps;   /**<ç£æ°—[uT]ã€‚ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨*/
+	float paPressure;    /**<æ°—åœ§[pa]*/
+	int isCmpsValid;     /**<ç£æ°—ã®ãƒ‡ãƒ¼ã‚¿ã«æ›´æ–°ãŒã‚ã£ãŸå ´åˆ1ã€ãã‚Œä»¥å¤–ã®å ´åˆ0*/
+	int isPressureValid; /**<æ°—åœ§ã®ãƒ‡ãƒ¼ã‚¿ã«æ›´æ–°ãŒã‚ã£ãŸå ´åˆ1ã€ãã‚Œä»¥å¤–ã®å ´åˆ0*/
 	
 	static float paToRelativeHeight(float paPressure,float paRefPressure);
 };

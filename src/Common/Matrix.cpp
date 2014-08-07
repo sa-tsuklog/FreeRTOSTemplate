@@ -4,9 +4,9 @@
 #include "MyLib/Util/Util.h"
 
 /**
- * @brief s”,—ñ”‚ªsize‚Ì’PˆÊs—ñ‚ğì¬‚·‚é
+ * @brief è¡Œæ•°,åˆ—æ•°ãŒsizeã®å˜ä½è¡Œåˆ—ã‚’ä½œæˆã™ã‚‹
  * 
- * @param[in] size s—ñ‚ÌƒTƒCƒY
+ * @param[in] size è¡Œåˆ—ã®ã‚µã‚¤ã‚º
  */
 Matrix::Matrix(int size) {
     this->rowSize = size;
@@ -29,10 +29,10 @@ Matrix::Matrix(int size) {
 }
 
 /**
- * @brief s”,—ñ”‚ªsize‚Å‚ ‚èA—v‘f‚ª‘S‚Ävalue‚Å‚ ‚é³•ûs—ñ‚ğì¬‚·‚é
+ * @brief è¡Œæ•°,åˆ—æ•°ãŒsizeã§ã‚ã‚Šã€è¦ç´ ãŒå…¨ã¦valueã§ã‚ã‚‹æ­£æ–¹è¡Œåˆ—ã‚’ä½œæˆã™ã‚‹
  * 
- * @param[in] size s—ñ‚ÌƒTƒCƒY
- * @param[in] value —v‘f‚Ì’l
+ * @param[in] size è¡Œåˆ—ã®ã‚µã‚¤ã‚º
+ * @param[in] value è¦ç´ ã®å€¤
  */
 Matrix::Matrix(int size, float value){
     this->rowSize = size;
@@ -50,11 +50,11 @@ Matrix::Matrix(int size, float value){
 }
 
 /**
- * @brief@—v‘f‚ª‘S‚Ävalue‚Å‚ ‚és—ñ‚ğì¬‚·‚é
+ * @briefã€€è¦ç´ ãŒå…¨ã¦valueã§ã‚ã‚‹è¡Œåˆ—ã‚’ä½œæˆã™ã‚‹
  * 
- * @param[in] rowSize@s” 
- * @param[in] columnSize —ñ”
- * @param[in] —v‘f‚Ì’l
+ * @param[in] rowSizeã€€è¡Œæ•° 
+ * @param[in] columnSize åˆ—æ•°
+ * @param[in] è¦ç´ ã®å€¤
  */
 Matrix::Matrix(int rowSize, int columnSize,float value){
     this->rowSize = rowSize;
@@ -87,7 +87,7 @@ Matrix::~Matrix() {
 }
 
 /**
- * @brief s—ñ‚ğ•W€o—Í‚Éo—Í‚·‚é
+ * @brief è¡Œåˆ—ã‚’æ¨™æº–å‡ºåŠ›ã«å‡ºåŠ›ã™ã‚‹
  */
 void Matrix::print(){
     for (int i = 0; i<rowSize; i++) {
@@ -100,10 +100,10 @@ void Matrix::print(){
 }
 
 /**
- * @brief s—ñ‚ÌƒRƒs[‚ğs‚¤Bm1‚Æ©g‚Í“¯‚¶ƒTƒCƒY‚Å‚ ‚é•K—v‚ª‚ ‚é
+ * @brief è¡Œåˆ—ã®ã‚³ãƒ”ãƒ¼ã‚’è¡Œã†ã€‚m1ã¨è‡ªèº«ã¯åŒã˜ã‚µã‚¤ã‚ºã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹
  * 
- * @param[in] m1 ƒRƒs[Œ³‚Ìs—ñ
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * @param[in] m1 ã‚³ãƒ”ãƒ¼å…ƒã®è¡Œåˆ—
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::copy(Matrix* m1){
     if(MATRIX_CHECK_SIZE){
@@ -126,10 +126,10 @@ Matrix* Matrix::copy(Matrix* m1){
 }
 
 /**
- * @brief s—ñ‚Ì˜a
+ * @brief è¡Œåˆ—ã®å’Œ
  * 
- * m1+m2‚ğs‚¢AŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * m1+m2ã‚’è¡Œã„ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::add(Matrix* m1, Matrix* m2){
     if(MATRIX_CHECK_SIZE){
@@ -155,20 +155,20 @@ Matrix* Matrix::add(Matrix* m1, Matrix* m2){
 }
 
 /**
- * @brief s—ñ‚Ì˜a
+ * @brief è¡Œåˆ—ã®å’Œ
  * 
- * ©g+m2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * è‡ªèº«+m2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::add(Matrix* m2){
     add(this,m2);
     return this;
 }
 /**
- * @brief s—ñ‚Ì·
+ * @brief è¡Œåˆ—ã®å·®
  * 
- * m1-m2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * m1-m2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::sub(Matrix* m1, Matrix* m2){
     if(MATRIX_CHECK_SIZE){
@@ -193,10 +193,10 @@ Matrix* Matrix::sub(Matrix* m1, Matrix* m2){
     return this;
 }
 /**
- * @brief s—ñ‚Ì·
+ * @brief è¡Œåˆ—ã®å·®
  * 
- * ©g-m2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * è‡ªèº«-m2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::sub(Matrix* m2){
     sub(this,m2);
@@ -204,10 +204,10 @@ Matrix* Matrix::sub(Matrix* m2){
 }
 
 /**
- * @brief s—ñ‚ÌÏ
+ * @brief è¡Œåˆ—ã®ç©
  * 
- * m1*m2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * m1*m2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::mul(Matrix* m1, Matrix* m2){
     if(MATRIX_CHECK_SIZE){
@@ -238,10 +238,10 @@ Matrix* Matrix::mul(Matrix* m1, Matrix* m2){
 }
 
 /**
- * @brief s—ñ‚ÆÀ”‚ÌÏ
+ * @brief è¡Œåˆ—ã¨å®Ÿæ•°ã®ç©
  * 
- * m1*f‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * m1*fã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::mul(Matrix* m1, float scale){
     if(MATRIX_CHECK_SIZE){
@@ -262,10 +262,10 @@ Matrix* Matrix::mul(Matrix* m1, float scale){
 }
 
 /**
- * @brief s—ñ‚Ì“]’n
+ * @brief è¡Œåˆ—ã®è»¢åœ°
  * 
- * m1‚Ì“]’nŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * m1ã®è»¢åœ°è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::transposition(Matrix* m1){
     if(MATRIX_CHECK_SIZE){
@@ -286,12 +286,12 @@ Matrix* Matrix::transposition(Matrix* m1){
 }
 
 /**
- * @brief ‹ts—ñ
+ * @brief é€†è¡Œåˆ—
  * 
- * m1‚Ì‹ts—ñ‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚éBm1,work‚Í©g‚Æ“¯‚¶ƒTƒCƒY‚Å‚ ‚é•K—v‚ª‚ ‚é
- * @param[in] m1 ‹ts—ñ‚ğ‹‚ß‚és—ñ
- * @param[out] work ì‹Æ—p—Ìˆæ
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * m1ã®é€†è¡Œåˆ—ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹ã€‚m1,workã¯è‡ªèº«ã¨åŒã˜ã‚µã‚¤ã‚ºã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹
+ * @param[in] m1 é€†è¡Œåˆ—ã‚’æ±‚ã‚ã‚‹è¡Œåˆ—
+ * @param[out] work ä½œæ¥­ç”¨é ˜åŸŸ
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::inverse(Matrix* m1,Matrix* work){
     if(MATRIX_CHECK_SIZE){
@@ -339,15 +339,15 @@ Matrix* Matrix::inverse(Matrix* m1,Matrix* work){
 }
 
 /**
- * @brief s—ñ‚Ìˆê•”‚ğ”²‚«o‚·
+ * @brief è¡Œåˆ—ã®ä¸€éƒ¨ã‚’æŠœãå‡ºã™
  * 
- * ©g‚ÌƒTƒCƒY‚Í”²‚«o‚µ‚½Œã‚Ìs—ñ‚Æ“¯‚¶ƒTƒCƒY‚Å‚ ‚é•K—v‚ª‚ ‚é
- * @param[in] m1Œ³‚Æ‚È‚és—ñ
- * @param[in] ”²‚«o‚·s‚ÌŠJnˆÊ’u
- * @param[in] ”²‚«o‚·—ñ‚ÌŠJnˆÊ’u
- * @param[in] ”²‚«o‚·s‚Ì‘å‚«‚³
- * @param[in] ”²‚«o‚·—ñ‚Ì‘å‚«‚³
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * è‡ªèº«ã®ã‚µã‚¤ã‚ºã¯æŠœãå‡ºã—ãŸå¾Œã®è¡Œåˆ—ã¨åŒã˜ã‚µã‚¤ã‚ºã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹
+ * @param[in] m1å…ƒã¨ãªã‚‹è¡Œåˆ—
+ * @param[in] æŠœãå‡ºã™è¡Œã®é–‹å§‹ä½ç½®
+ * @param[in] æŠœãå‡ºã™åˆ—ã®é–‹å§‹ä½ç½®
+ * @param[in] æŠœãå‡ºã™è¡Œã®å¤§ãã•
+ * @param[in] æŠœãå‡ºã™åˆ—ã®å¤§ãã•
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::subMatrix(Matrix* m1,int rowFrom,int columnFrom,int rowSize,int columnSize){
     if(MATRIX_CHECK_SIZE){
@@ -372,11 +372,11 @@ Matrix* Matrix::subMatrix(Matrix* m1,int rowFrom,int columnFrom,int rowSize,int 
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚©‚çDCM(Direction Cosine Matrix)‚ğ‹‚ß‚é
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰DCM(Direction Cosine Matrix)ã‚’æ±‚ã‚ã‚‹
  * 
- * ©g‚Í3x3‚Ìs—ñ‚Å‚ ‚é•K—v‚ª‚ ‚é
- * @param q DCM‚ğì¬‚·‚éƒNƒH[ƒ^ƒjƒIƒ“
- * @param ©g‚Ìƒ|ƒCƒ“ƒ^
+ * è‡ªèº«ã¯3x3ã®è¡Œåˆ—ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹
+ * @param q DCMã‚’ä½œæˆã™ã‚‹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
+ * @param è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Matrix* Matrix::quatToDcm(Quaternion* q){
     if(MATRIX_CHECK_SIZE){
@@ -404,10 +404,10 @@ Matrix* Matrix::quatToDcm(Quaternion* q){
 }
 
 /**
- * @brief s—ñ‚Ì—v‘f‚É’l‚ğƒZƒbƒg‚·‚é
+ * @brief è¡Œåˆ—ã®è¦ç´ ã«å€¤ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
  * 
- * @param[in] column ƒZƒbƒg‚·‚é—ñ
- * @param[in] row ƒZƒbƒg‚·‚és
+ * @param[in] column ã‚»ãƒƒãƒˆã™ã‚‹åˆ—
+ * @param[in] row ã‚»ãƒƒãƒˆã™ã‚‹è¡Œ
  */
 void Matrix::set(int column,int row,float value){
     if(MATRIX_CHECK_SIZE){
@@ -421,16 +421,16 @@ void Matrix::set(int column,int row,float value){
 }
 
 /**
- * @brief s”‚ğ•Ô‚·
- * @return s”
+ * @brief è¡Œæ•°ã‚’è¿”ã™
+ * @return è¡Œæ•°
  */
 int Matrix::getRowSize(){
     return this->rowSize;
 }
 
 /**
- * @brief —ñ”‚ğ•Ô‚·
- * @return —ñ”
+ * @brief åˆ—æ•°ã‚’è¿”ã™
+ * @return åˆ—æ•°
  */
 int Matrix::getColumnSize(){
     return this->columnSize;

@@ -18,5 +18,7 @@ var classMatrix =
     [ "sub", "classMatrix.html#a5710af0a5877959ebebe1013708d9a0c", null ],
     [ "subMatrix", "classMatrix.html#a7e2a1c6d25928d2aaa0968b83690a8f6", null ],
     [ "transposition", "classMatrix.html#adfb51f56ea9dc0276ef4add53dad6828", null ],
-    [ "nums", "classMatrix.html#aed30468ead450aa524b8375e76a68491", null ]
+    [ "columnSize", "classMatrix.html#aab666250ce075e35e1d7d0d8097cc884", null ],
+    [ "nums", "classMatrix.html#aed30468ead450aa524b8375e76a68491", null ],
+    [ "rowSize", "classMatrix.html#aa5b31a8cec6508cf23b72394ff8aabe7", null ]
 ];

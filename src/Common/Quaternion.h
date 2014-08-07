@@ -10,7 +10,7 @@
 
 /**
  * @class Quaternion
- * @brief 単精度浮動小数点によるクォータニオン
+ * @brief 蜊倡ｲｾ蠎ｦ豬ｮ蜍募ｰ乗焚轤ｹ縺ｫ繧医ｋ繧ｯ繧ｩ繝ｼ繧ｿ繝九が繝ｳ
  */
 
 class Quaternion{

@@ -12,9 +12,9 @@
 #include <stdlib.h>
 #include "KalmanFilter.h"
 
-//TODO:‹ts—ñ‚ÌŒvZ‚ğ‚‘¬‰»‚·‚é‚×‚«‚©B
+//TODO:é€†è¡Œåˆ—ã®è¨ˆç®—ã‚’é«˜é€ŸåŒ–ã™ã‚‹ã¹ãã‹ã€‚
 
-//float<->doubleØ‚è‘Ö‚¦‚É’uŠ·‚ª•K—v‚ÈŠÖ”:sin,cos,atan2
+//float<->doubleåˆ‡ã‚Šæ›¿ãˆã«ç½®æ›ãŒå¿…è¦ãªé–¢æ•°:sin,cos,atan2
 
 KalmanFilter::KalmanFilter(float secTimeStep,Quaternion* velocity, Quaternion* position, Quaternion* attitude) {
 	this->secTimeStep = secTimeStep;
@@ -118,7 +118,7 @@ void KalmanFilter::predictP(Quaternion* mpspsAccel){
     predictPhi(mpspsAccel);
     predictGamma();
     
-    //ax‚ÌŒvZ : Phi * P
+    //axã®è¨ˆç®— : Phi * P
     for (int i = 0; i<9; i++) {
         phiP->nums[0][i]=sysErrorPhi->nums[0][7]*errorP->nums[7][i]+sysErrorPhi->nums[0][8]*errorP->nums[8][i];
         phiP->nums[1][i]=sysErrorPhi->nums[1][6]*errorP->nums[6][i]+sysErrorPhi->nums[1][8]*errorP->nums[8][i];
@@ -133,8 +133,8 @@ void KalmanFilter::predictP(Quaternion* mpspsAccel){
         }
     }
     
-    //ax‚ÌŒvZ : (Phi*P) * Phi_T
-    for (int i = 0; i<9; i++) {//phiP,eerorP‚ğg‚¢‰ñ‚µB
+    //axã®è¨ˆç®— : (Phi*P) * Phi_T
+    for (int i = 0; i<9; i++) {//phiP,eerorPã‚’ä½¿ã„å›ã—ã€‚
         phiP->nums[i][0]=errorP->nums[i][7]*sysErrorPhi->nums[0][7]+errorP->nums[i][8]*sysErrorPhi->nums[0][8];
         phiP->nums[i][1]=errorP->nums[i][6]*sysErrorPhi->nums[1][6]+errorP->nums[i][8]*sysErrorPhi->nums[1][8];
         phiP->nums[i][2]=errorP->nums[i][6]*sysErrorPhi->nums[2][6]+errorP->nums[i][7]*sysErrorPhi->nums[2][7];

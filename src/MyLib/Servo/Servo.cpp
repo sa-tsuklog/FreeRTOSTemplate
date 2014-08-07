@@ -27,7 +27,7 @@ Servo::Servo(){
 	}
 }
 /**
- * @brief �p���X�̏o�͂��J�n����
+ * @brief パルスの出力を開始する
  */
 void Servo::start(){
 	if(USE_CH0_3){
@@ -45,10 +45,10 @@ void Servo::start(){
 }
 
 /**
- * @brief �p���X����ݒ肷��
+ * @brief パルス幅を設定する
  * 
- * @param[in] ch �p���X����ݒ肷��`�����l��
- * @param[in] pos �p���X���B-1.0�`1.0�B�͈͊O�̒l�����͂��ꂽ�ꍇ�A���ꂼ��-1.0�A1.0�Ƃ��Ĉ�����B
+ * @param[in] ch パルス幅を設定するチャンネル
+ * @param[in] pos パルス幅。-1.0～1.0。範囲外の値が入力された場合、それぞれ-1.0、1.0として扱われる。
  * 
  */
 void Servo::setPos(int ch,float pos){

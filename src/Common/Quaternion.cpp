@@ -1,6 +1,6 @@
 /**
  * @file Quaternion.cpp
- * @brief ’P¸“x•‚“®¬”“_‚É‚æ‚éƒNƒH[ƒ^ƒjƒIƒ“
+ * @brief å˜ç²¾åº¦æµ®å‹•å°æ•°ç‚¹ã«ã‚ˆã‚‹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
  *
  * @author sa
  * @date 2014-04-13
@@ -14,14 +14,14 @@
 #include "Quaternion.h"
 
 /**
- * @brief ‘S‚Ä‚Ì—v‘f‚ª0‚Å‚ ‚éƒNƒH[ƒ^ƒjƒIƒ“‚ğì¬‚·‚é
+ * @brief å…¨ã¦ã®è¦ç´ ãŒ0ã§ã‚ã‚‹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ä½œæˆã™ã‚‹
  */
 Quaternion::Quaternion() {
     this->w = this->x = this->y = this->z = 0;
 }
 
 /**
- * @brief —v‘f‚ª‚»‚ê‚¼‚êw,x,y,z‚Å‚ ‚éƒNƒH[ƒ^ƒjƒIƒ“‚ğì¬‚·‚éB
+ * @brief è¦ç´ ãŒãã‚Œãã‚Œw,x,y,zã§ã‚ã‚‹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ä½œæˆã™ã‚‹ã€‚
  */
 Quaternion::Quaternion(float w, float x, float y, float z) {
     this->w = w;
@@ -31,7 +31,7 @@ Quaternion::Quaternion(float w, float x, float y, float z) {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ğƒRƒs[‚·‚éB
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚
  */
 Quaternion::Quaternion(const Quaternion& orig){
     this->w = orig.w;
@@ -45,10 +45,10 @@ Quaternion::~Quaternion() {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ğƒRƒs[‚·‚é
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
  * 
- * @param[in] q1 ƒRƒs[Œ³‚ÌƒNƒH[ƒ^ƒjƒIƒ“‚Ìƒ|ƒCƒ“ƒ^ 
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^
+ * @param[in] q1 ã‚³ãƒ”ãƒ¼å…ƒã®ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ãƒã‚¤ãƒ³ã‚¿ 
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿
  */
 Quaternion* Quaternion::clone(const Quaternion* q1){
     this->w = q1->w;
@@ -59,19 +59,19 @@ Quaternion* Quaternion::clone(const Quaternion* q1){
     return this;
 }
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ì˜a
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å’Œ
  * 
- * ©g+q1‚Ì˜a‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * è‡ªèº«+q1ã®å’Œã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::add(const Quaternion* q1) {
     return add(this,q1);
 }
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ì˜a
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å’Œ
  * 
- * q1+q2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * q1+q2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::add(const Quaternion* q1,const Quaternion* q2) {
     this->w = q1->w+q2->w;
@@ -82,19 +82,19 @@ Quaternion* Quaternion::add(const Quaternion* q1,const Quaternion* q2) {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ì·
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å·®
  * 
- * ©g-q1‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * è‡ªèº«-q1ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::sub(const Quaternion* q1) {
     return sub(this,q1);
 }
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ì·
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å·®
  * 
- * q1-q2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * q1-q2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::sub(const Quaternion* q1,const Quaternion* q2) {
     this->w = q1->w-q2->w;
@@ -105,10 +105,10 @@ Quaternion* Quaternion::sub(const Quaternion* q1,const Quaternion* q2) {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ÌÏ
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ç©
  * 
- * q1*q2‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * q1*q2ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::mul(const Quaternion* q1,const Quaternion* q2) {
     float w,x,y,z;
@@ -127,20 +127,20 @@ Quaternion* Quaternion::mul(const Quaternion* q1,const Quaternion* q2) {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ÌÏ
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ç©
  * 
- * ©g*q1‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * è‡ªèº«*q1ã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::mul(const Quaternion* q1){
     return mul(this,q1);
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ÆÀ”‚ÌÏ
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã¨å®Ÿæ•°ã®ç©
  * 
- * q1*f‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * q1*fã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::mul(const Quaternion* q1,float f) {
     this->w =q1->w * f;
@@ -152,20 +152,20 @@ Quaternion* Quaternion::mul(const Quaternion* q1,float f) {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ÆÀ”‚ÌÏ
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã¨å®Ÿæ•°ã®ç©
  * 
- * ©g*f‚ğŒvZ‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * è‡ªèº«*fã‚’è¨ˆç®—ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::mul(float f){
     return mul(this,f);
 }
 
 /**
- * @brief ‹¤–ğƒNƒH[ƒ^ƒjƒIƒ“
+ * @brief å…±å½¹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
  * 
- * q1‚Ì‹¤–ğƒNƒH[ƒ^ƒjƒIƒ“‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * q1ã®å…±å½¹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::con(const Quaternion* q1) {
     this->w = q1->w;
@@ -177,10 +177,10 @@ Quaternion* Quaternion::con(const Quaternion* q1) {
 }
 
 /**
- * @brief ‹¤–ğƒNƒH[ƒ^ƒjƒIƒ“
+ * @brief å…±å½¹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
  * 
- * ©g‚Ì‹¤–ğƒNƒH[ƒ^ƒjƒIƒ“‚ğ©g‚ÉŠi”[‚·‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * è‡ªèº«ã®å…±å½¹ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::con() {
     this->x *= -1;
@@ -191,19 +191,19 @@ Quaternion* Quaternion::con() {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ìƒmƒ‹ƒ€
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ãƒãƒ«ãƒ 
  * 
- * @return ©g‚Ìƒmƒ‹ƒ€‚ğ•Ô‚·
+ * @return è‡ªèº«ã®ãƒãƒ«ãƒ ã‚’è¿”ã™
  */
 float Quaternion::norm() const{
     return sqrtf(this->w * this->w + this->x * this->x + this->y * this->y + this->z * this->z);
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ì³‹K‰»
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®æ­£è¦åŒ–
  * 
- * ©g‚ğ³‹K‰»‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ³‹K‰»‘O‚Ìƒmƒ‹ƒ€‚ğ•Ô‚·
+ * è‡ªèº«ã‚’æ­£è¦åŒ–ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return æ­£è¦åŒ–å‰ã®ãƒãƒ«ãƒ ã‚’è¿”ã™
  */
 float Quaternion::normalize() {
     float norm = sqrtf(this->w * this->w + this->x * this->x + this->y * this->y + this->z * this->z);
@@ -216,10 +216,10 @@ float Quaternion::normalize() {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚Ì³‹K‰»
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®æ­£è¦åŒ–
  * 
- * q‚ğ³‹K‰»‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * @return ³‹K‰»‘O‚Ìƒmƒ‹ƒ€‚ğ•Ô‚·
+ * qã‚’æ­£è¦åŒ–ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * @return æ­£è¦åŒ–å‰ã®ãƒãƒ«ãƒ ã‚’è¿”ã™
  */
 float Quaternion::normalize(const Quaternion* q) {
     float norm = q->norm();
@@ -232,13 +232,13 @@ float Quaternion::normalize(const Quaternion* q) {
 }
 
 /**
- * @brief ƒxƒNƒgƒ‹‚Ì‰ñ“]
+ * @brief ãƒ™ã‚¯ãƒˆãƒ«ã®å›è»¢
  * 
- * ƒxƒNƒgƒ‹‚ğ‰ñ“]‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
+ * ãƒ™ã‚¯ãƒˆãƒ«ã‚’å›è»¢ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
  * 
- * @param[in] vect ‰ñ“]‚³‚¹‚éƒxƒNƒgƒ‹
- * @param[in] roter ‰ñ“]‚ğ•\‚·ƒNƒH[ƒ^ƒjƒIƒ“
- * @return ©g‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·B
+ * @param[in] vect å›è»¢ã•ã›ã‚‹ãƒ™ã‚¯ãƒˆãƒ«
+ * @param[in] roter å›è»¢ã‚’è¡¨ã™ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
+ * @return è‡ªèº«ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™ã€‚
  */
 Quaternion* Quaternion::rotate(const Quaternion* vect,const Quaternion* roter){
     float norm;
@@ -256,22 +256,22 @@ Quaternion* Quaternion::rotate(const Quaternion* vect,const Quaternion* roter){
 }
 
 /**
- * @brief ƒxƒNƒgƒ‹‚Ì‰ñ“]
+ * @brief ãƒ™ã‚¯ãƒˆãƒ«ã®å›è»¢
  * 
- * ƒxƒNƒgƒ‹‚ğ‰ñ“]‚µAŒ‹‰Ê‚ğ©g‚ÉŠi”[‚·‚é
- * ©g‚ÍƒxƒNƒgƒ‹(w=0)‚Å‚ ‚é•K—v‚ª‚ ‚éB
+ * ãƒ™ã‚¯ãƒˆãƒ«ã‚’å›è»¢ã—ã€çµæœã‚’è‡ªèº«ã«æ ¼ç´ã™ã‚‹
+ * è‡ªèº«ã¯ãƒ™ã‚¯ãƒˆãƒ«(w=0)ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
  * 
- * @param[in] roter ‰ñ“]‚ğ•\‚·ƒNƒH[ƒ^ƒjƒIƒ“
- * @return ©g‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·B
+ * @param[in] roter å›è»¢ã‚’è¡¨ã™ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
+ * @return è‡ªèº«ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™ã€‚
  */
 Quaternion* Quaternion::rotate(const Quaternion* roter) {
     return rotate(this,roter);
 }
 
 /**
- * @brief ‰ñ“]‚ğ•\‚·ƒNƒI[ƒ^ƒjƒIƒ“‚©‚çƒIƒCƒ‰[Šp‚Ìheading‚ğŒvZ‚·‚é
+ * @brief å›è»¢ã‚’è¡¨ã™ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’ã®headingã‚’è¨ˆç®—ã™ã‚‹
  * 
- * @return heading‚Ì’l[rad]
+ * @return headingã®å€¤[rad]
  */
 float Quaternion::getRadHeading() {
     Quaternion tmpQ1 = Quaternion(*this);
@@ -285,10 +285,10 @@ float Quaternion::getRadHeading() {
 }
 
 /**
- * @brief ‰ñ“]‚ğ•\‚·ƒNƒI[ƒ^ƒjƒIƒ“‚©‚çƒIƒCƒ‰[Šp‚Ìheading‚ğŒvZ‚·‚é
+ * @brief å›è»¢ã‚’è¡¨ã™ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’ã®headingã‚’è¨ˆç®—ã™ã‚‹
  * 
- * @param[in] ƒNƒH[ƒ^ƒjƒIƒ“‚Ìheading[rad]
- * @return pitch‚Ì’l[rad]
+ * @param[in] ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®heading[rad]
+ * @return pitchã®å€¤[rad]
  */
 float Quaternion::getRadPitch(float radHeading) {
     Quaternion tmpQ1 = Quaternion(cosf(-radHeading / 2), 0.0f, 0.0f, sinf(-radHeading / 2));
@@ -304,11 +304,11 @@ float Quaternion::getRadPitch(float radHeading) {
 }
 
 /**
- * @brief ‰ñ“]‚ğ•\‚·ƒNƒI[ƒ^ƒjƒIƒ“‚©‚çƒIƒCƒ‰[Šp‚Ìrole‚ğŒvZ‚·‚é
+ * @brief å›è»¢ã‚’è¡¨ã™ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’ã®roleã‚’è¨ˆç®—ã™ã‚‹
  * 
- * @param[in] ƒNƒH[ƒ^ƒjƒIƒ“‚Ìheading[rad]
- * @param[in] ƒNƒH[ƒ^ƒjƒIƒ“‚Ìpitch[rad]
- * @return role‚Ì’l[rad]
+ * @param[in] ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®heading[rad]
+ * @param[in] ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®pitch[rad]
+ * @return roleã®å€¤[rad]
  */
 float Quaternion::getRadRole(float radHeading, float radPitch) {
     float role;
@@ -327,11 +327,11 @@ float Quaternion::getRadRole(float radHeading, float radPitch) {
 }
 
 /**
- * @brief ‰ñ“]‚ğ•\‚·ƒNƒI[ƒ^ƒjƒIƒ“‚©‚çƒIƒCƒ‰[Šp‚Ìpitch,role,heading‚ğŒvZ‚·‚é
+ * @brief å›è»¢ã‚’è¡¨ã™ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’ã®pitch,role,headingã‚’è¨ˆç®—ã™ã‚‹
  * 
- * @param[out] ƒNƒH[ƒ^ƒjƒIƒ“‚Ìpitch[rad]
- * @param[out] ƒNƒH[ƒ^ƒjƒIƒ“‚Ìrole[rad]
- * @param[out] ƒNƒH[ƒ^ƒjƒIƒ“‚Ìheading[rad]
+ * @param[out] ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®pitch[rad]
+ * @param[out] ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®role[rad]
+ * @param[out] ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®heading[rad]
  */
 void Quaternion::getRadPitchRoleHeading(float* pitch, float* role, float* heading) {
     *heading = getRadHeading();
@@ -341,8 +341,8 @@ void Quaternion::getRadPitchRoleHeading(float* pitch, float* role, float* headin
 
 
 /**
- * @brief ‰ñ“]‚ğ•\‚·ƒNƒH[ƒ^ƒjƒIƒ“‚©‚çƒXƒ‰ƒ“ƒgŠp‚ğŒvZ‚·‚é
- * @return ƒXƒ‰ƒ“ƒgŠp
+ * @brief å›è»¢ã‚’è¡¨ã™ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚¹ãƒ©ãƒ³ãƒˆè§’ã‚’è¨ˆç®—ã™ã‚‹
+ * @return ã‚¹ãƒ©ãƒ³ãƒˆè§’
  */
 float Quaternion::getRadSlant() {
     float radHeading = this->getRadHeading();
@@ -356,20 +356,20 @@ float Quaternion::getRadSlant() {
 }
 
 /**
- * @brief ƒxƒNƒgƒ‹‚ÌƒhƒbƒgÏ‚ğŒvZ‚·‚é
+ * @brief ãƒ™ã‚¯ãƒˆãƒ«ã®ãƒ‰ãƒƒãƒˆç©ã‚’è¨ˆç®—ã™ã‚‹
  * 
- * ©g‚Ævect‚ÌƒhƒbƒgÏ‚ğŒvZ‚·‚éB©gAvect‚ÍƒxƒNƒgƒ‹(w=0)‚Å‚ ‚é•K—v‚ª‚ ‚é
- * @return ©gEvect‚Ì’l
+ * è‡ªèº«ã¨vectã®ãƒ‰ãƒƒãƒˆç©ã‚’è¨ˆç®—ã™ã‚‹ã€‚è‡ªèº«ã€vectã¯ãƒ™ã‚¯ãƒˆãƒ«(w=0)ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹
+ * @return è‡ªèº«ãƒ»vectã®å€¤
  */
 float Quaternion::vectDot(const Quaternion* vect) {
     return this->x * vect->x + this->y * vect->y + this->z * vect->z;
 }
 
 /**
- * @brief ƒxƒNƒgƒ‹‚ÌƒNƒƒXÏ‚ğŒvZ‚·‚é
+ * @brief ãƒ™ã‚¯ãƒˆãƒ«ã®ã‚¯ãƒ­ã‚¹ç©ã‚’è¨ˆç®—ã™ã‚‹
  * 
- * ©g‚Ævect‚ÌƒNƒƒXÏ‚ğŒvZ‚·‚éB©gAvect‚ÍƒxƒNƒgƒ‹(w=0)‚Å‚ ‚é•K—v‚ª‚ ‚éBŒ‹‰Ê‚Í©g‚ÉŠi”[‚³‚ê‚é
- * @return ©g‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+ * è‡ªèº«ã¨vectã®ã‚¯ãƒ­ã‚¹ç©ã‚’è¨ˆç®—ã™ã‚‹ã€‚è‡ªèº«ã€vectã¯ãƒ™ã‚¯ãƒˆãƒ«(w=0)ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚çµæœã¯è‡ªèº«ã«æ ¼ç´ã•ã‚Œã‚‹
+ * @return è‡ªèº«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
  */
 Quaternion* Quaternion::vectCross(const Quaternion* vect) {
     float x, y, z;
@@ -386,16 +386,16 @@ Quaternion* Quaternion::vectCross(const Quaternion* vect) {
 }
 
 /**
- * @brief ƒNƒH[ƒ^ƒjƒIƒ“‚ğ•W€o—Í‚Éo—Í‚·‚é
+ * @brief ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’æ¨™æº–å‡ºåŠ›ã«å‡ºåŠ›ã™ã‚‹
  * 
- * Œ`®‚Íƒ^ƒu‹æØ‚è‚Åw,x,y,z‚Ì‡
+ * å½¢å¼ã¯ã‚¿ãƒ–åŒºåˆ‡ã‚Šã§w,x,y,zã®é †
  */
 void Quaternion::print() {
 	printf("%f\t%fi\t%fj\t%fk\r\n", w, x, y, z);
 }
 
 /**
- * @brief ‰ñ“]‚ğ•\‚·ƒNƒH[ƒ^ƒjƒIƒ“‚ÌƒIƒCƒ‰[Šp‚ğ•W€o—Í‚Éo—Í‚·‚é
+ * @brief å›è»¢ã‚’è¡¨ã™ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‚’æ¨™æº–å‡ºåŠ›ã«å‡ºåŠ›ã™ã‚‹
  */
 void Quaternion::printPitchRoleHeading() {
     float pitch, role, heading;

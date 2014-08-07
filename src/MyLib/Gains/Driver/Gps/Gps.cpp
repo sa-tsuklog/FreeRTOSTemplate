@@ -13,8 +13,8 @@
 #include "../../Gains.h"
 #include "MyLib/Logger/Logger.h"
 
-//TODO: ‘¬“xA‘Š‘ÎˆÊ’u‚Ìƒ`ƒFƒbƒN‚Ü‚¾B
-//TODO: getter‚ğmutexg‚Á‚ÄˆÀ‘S‚É‚·‚éB
+//TODO: é€Ÿåº¦ã€ç›¸å¯¾ä½ç½®ã®ãƒã‚§ãƒƒã‚¯ã¾ã ã€‚
+//TODO: getterã‚’mutexä½¿ã£ã¦å®‰å…¨ã«ã™ã‚‹ã€‚
 
 Gps::Gps(){
 	isRefValid = 0;
