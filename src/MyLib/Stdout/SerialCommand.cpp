@@ -92,8 +92,6 @@ void SerialCommand::setServo(){
 	unsigned char throttle = cmd->hexToUchar(args+9);
 	unsigned char flaps    = cmd->hexToUchar(args+12);
 	
-	printf("pitch,role=%x,%x\r\n",pitch,roll);
-	
 	ControlParams controlParams = ControlParams(pitch,roll,yaw,throttle,flaps);
 	
 	setControlParms(&controlParams);

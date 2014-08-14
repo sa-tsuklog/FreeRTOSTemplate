@@ -7,6 +7,8 @@
 #include "Driver/TIM3.h"
 #include "Propo.h"
 
+#include "stdio.h"
+
 Propo::Propo(){
 }
 
@@ -20,6 +22,10 @@ Propo::Propo(){
  */
 
 float Propo::getInput(int ch){
+	if(USE_PROPO == 0){
+		return 0.0;
+	}
+	
 	int usDuty;
 	PropoTim3* tim3 = PropoTim3::GetInstance();
 	
@@ -35,6 +41,8 @@ float Propo::getInput(int ch){
 		usDuty = US_DUTY_CENTER;
 	}
 	
+	printf("%d\r\n",usDuty);
+	
 	if(usDuty < US_DUTY_CENTER-US_DUTY_GAIN){
 		usDuty = US_DUTY_CENTER - US_DUTY_GAIN;
 	}else if(usDuty > US_DUTY_CENTER + US_DUTY_GAIN){
@@ -48,13 +56,17 @@ float Propo::getInput(int ch){
  * @brief プロポ信号の計測を開始する。
  */
 void Propo::start(){
-	PropoTim3::GetInstance()->timerStart();
+	if(USE_PROPO){
+		PropoTim3::GetInstance()->timerStart();
+	}
 }
 
 /**
  * @brief プロポ信号に必要な回路の初期化を行う。
  */
 void Propo::initPropo(){
-	PropoTim3::GetInstance();
-	Propo::GetInstance();
+	if(USE_PROPO){
+		PropoTim3::GetInstance();
+		Propo::GetInstance();
+	}
 }

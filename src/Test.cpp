@@ -30,6 +30,8 @@
 
 #include "MyLib/Propo/Driver/TIM3.h"
 
+#include "MyLib/Propo/Propo.h"
+
 xQueueHandle controlParamsQueue=NULL;
 
 void tank(){
@@ -87,6 +89,28 @@ void tank(){
 		vTaskDelay(20);
 	}
 }
+void gliderHardKill(){
+	Servo* servo = Servo::GetInstance();
+	
+	float pitch,roll,yaw,throttle,flap;
+	pitch = 0.8;
+	roll  = 0.1;
+	yaw   = 0.0;
+	throttle = -1.0;
+	
+	servo->setPos(0, roll);
+	servo->setPos(1, roll);
+	
+	servo->setPos(2, throttle);
+	
+	servo->setPos(4, +pitch - yaw);
+	servo->setPos(5, -pitch - yaw);
+	servo->setPos(6,-yaw);
+	servo->setPos(7, throttle);
+	
+	vTaskDelay(20);
+}
+
 void glider(){
 	//servo ch 0-3, 4-7 must be active
 	Servo* servo = Servo::GetInstance();
@@ -95,27 +119,37 @@ void glider(){
 	for(int i=0;i<8;i++){
 		servo->setPos(i,0.0);
 	}
-	servo->setPos(4,-1.0);
+	servo->setPos(2,-1.0);
+	servo->setPos(7,-1.0);
 	servo->start();
 	
 	vTaskDelay(MS_INITIAL_DELAY);
-	
+	Propo::GetInstance()->start();
 	while(1){
-		xQueueReceive(controlParamsQueue,&params,portMAX_DELAY);
-		float pitch,roll,yaw,throttle,flap;
-		pitch = (params.pitch-128.0)/128.0;
-		roll  = (params.roll -128.0)/128.0;
-		yaw   = (params.yaw  -128.0)/128.0;
-		throttle = (params.throttle-128.0)/128.0;
+		float f = Propo::GetInstance()->getInput(0);
+		printf("%f\r\n",f);
 		
-		servo->setPos(0, roll);
-		servo->setPos(1, roll);
-		servo->setPos(4,-pitch);
-		servo->setPos(5, pitch);
-		servo->setPos(6,-yaw);
-		servo->setPos(7, throttle);
-		
-		vTaskDelay(20);
+		if( xQueueReceive(controlParamsQueue,&params,200) == pdTRUE){
+			float pitch,roll,yaw,throttle,flap;
+			pitch = (params.pitch-128.0)/128.0;
+			roll  = (params.roll -128.0)/128.0;
+			yaw   = (params.yaw  -128.0)/128.0;
+			throttle = (params.throttle-128.0)/128.0;
+			
+			servo->setPos(0, roll);
+			servo->setPos(1, roll);
+			
+			servo->setPos(2, throttle);
+			
+			servo->setPos(4, +pitch);
+			servo->setPos(5, roll);
+			servo->setPos(6,-yaw);
+			servo->setPos(7, throttle);
+			
+			vTaskDelay(20);
+		}else{
+			gliderHardKill();
+		}
 	}
 }
 void gliderAuto(){
@@ -140,8 +174,6 @@ void gliderAuto(){
 	int i=0;
 	int j=0;
 	
-	CmdServo::GetInstance()->on(1);
-	CmdServo::GetInstance()->on(2);
 	
 	while(1){
 		Quaternion attitude = Gains::GetInstance()->getAttitude();
@@ -159,17 +191,13 @@ void gliderAuto(){
 		servo->setPos(6, -yawCmd);
 		servo->setPos(7,0);
 		
-		CmdServo::GetInstance()->setPos(1,j-150);
-		CmdServo::GetInstance()->setPos(2,j-150);
-		
-		j = (j+1)%300;
 		
 		if(i==0){
-//			printf("%7.3f,%7.3f,%7.3f,\tacl:%6.3f,%6.3f,%6.3f,\trate:%6.3f,%6.3f,%6.3f,\tcmps:%6.3f,%6.3f,%6.3f\r\n",
-//							pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI,
-//							imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,
-//							imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z,
-//							imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			printf("%7.3f,%7.3f,%7.3f,\tacl:%6.3f,%6.3f,%6.3f,\trate:%6.3f,%6.3f,%6.3f,\tcmps:%6.3f,%6.3f,%6.3f\r\n",
+							pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI,
+							imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,
+							imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z,
+							imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
 		}
 		i=(i+1)%5;
 		
@@ -177,25 +205,9 @@ void gliderAuto(){
 	}
 }
 
-void test(){
-	PropoTim3::GetInstance()->timerStart();
-	
-	Servo::GetInstance()->start();
-	Servo::GetInstance()->setPos(4,-1.0);
-	Servo::GetInstance()->setPos(5,-0.5);
-	Servo::GetInstance()->setPos(6,0);
-	Servo::GetInstance()->setPos(7,1.0);
-	
-	while(1){
-		//printf("%d,%d,%d,%d\r\n",TIM_GetCapture1(TIM3),TIM_GetCapture2(TIM3),TIM_GetCapture3(TIM3),TIM_GetCapture4(TIM3));
-		vTaskDelay(20);
-	}
-}
-
 void prvTestTask(void* pvParamters){
-	test();
 	//tank();
-	//glider();
+	glider();
 	//gliderAuto();
 }
 

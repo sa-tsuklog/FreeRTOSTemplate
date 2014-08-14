@@ -64,7 +64,7 @@ int main(void) {
 	Stdout::initStdout();
 	Gains::initGains();
 	Logger::initLogger();
-	CmdServo::initCmdServo();
+	//CmdServo::initCmdServo();
 	
 	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
 	
