@@ -10,19 +10,39 @@
 
 class ControlParams{
 public:
-	ControlParams(unsigned char pitch,unsigned char roll,unsigned char yaw,
-			unsigned char throttle,unsigned char flaps){
-		this->pitch    = pitch;
-		this->roll     = roll;
-		this->yaw      = yaw;
+	ControlParams(unsigned char mode,
+			unsigned char pitch,
+			unsigned char roll,
+			unsigned char yaw,
+			unsigned char rz,
+			unsigned char throttle,
+			short cameraH,
+			short cameraV,
+			unsigned char reserved,
+			unsigned char camMode){
+		this->mode = mode;
+		this->pitch = pitch;
+		this->roll = roll;
+		this->yaw = yaw;
+		this->rz  = rz;
 		this->throttle = throttle;
-		this->flaps    = flaps;
+		this->cameraH = cameraH;
+		this->cameraV = cameraV;
+		this->reserved = reserved;
+		this->camMode = camMode;
 	}
+	unsigned char mode;
 	unsigned char pitch;
 	unsigned char roll;
 	unsigned char yaw;
+	unsigned char rz;
 	unsigned char throttle;
-	unsigned char flaps;
+	short cameraH;
+	short cameraV;
+	unsigned char reserved;
+	unsigned char camMode;
+	
+	static const int BIT_CAM_MODE_STABILIZE = 0xC0;
 };
 
 #endif /* CONTROLPARAMS_H_ */

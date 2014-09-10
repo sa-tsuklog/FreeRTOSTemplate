@@ -101,10 +101,21 @@ void CmdServo::setTorqueLimit(unsigned char id,unsigned char percentTorqueLimit)
 	sendShortPacket(id,0x00,0x23,0x01,&percentTorqueLimit);
 }
 
+void CmdServo::flashFinalize(unsigned char id){
+	unsigned char checksum = id ^ 0x40 ^ 0xFF ^ 0x00 ^ 0x00;
+
+	usart->uputchar(0xFA);
+	usart->uputchar(0xAF);
+	usart->uputchar(id);
+	usart->uputchar(0x40);
+	usart->uputchar(0xFF);
+	usart->uputchar(0x00);
+	usart->uputchar(0x00);
+	usart->uputchar(checksum);
+}
+
 void CmdServo::initCmdServo(){
 	xTaskCreate(USART1Class::prvTxTask,"u1tx",512,NULL,2,NULL);
 	
 	CmdServo::GetInstance();
 }
-
-//TODO つくる。

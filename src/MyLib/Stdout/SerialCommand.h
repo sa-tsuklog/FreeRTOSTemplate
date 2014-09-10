@@ -38,9 +38,8 @@ public:
 	void handleSerialCommand(char* line);
 	char* getArgs();
 	
-	static void setServo();
+	static void usctl();
 	static void printHelp();
-	static void printTaskList();
 	static void startLogging(char* arg);
 	static void stopLogging();
 	static void resetImu();
@@ -59,6 +58,9 @@ public:
 	static void setGainsConfig();
 	static void setGainsPrintMode(char* arg);
 	static void initializeUserFlash();
+	static void setCmdServoCh();
+	static void printTaskList();
+	static void runTimeStats();
 	static void testCmd0();
 	static void testCmd1();
 	static void testCmd2();

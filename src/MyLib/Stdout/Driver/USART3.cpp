@@ -232,7 +232,7 @@ char* USART3Class::readLine()
 		
 //		end = TIM2Class::GetInstance()->getUsTime();
 //		printf("u3rx %d[us]\r\n",end-start);
-		vTaskDelay(25);
+		vTaskDelay(10);
 	}
 }
 

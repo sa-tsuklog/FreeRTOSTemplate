@@ -9,6 +9,7 @@
 #include "USART1.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "GeneralConfig.h"
 
 USART1Class::USART1Class(){
 	txQueue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
@@ -104,9 +105,7 @@ void USART1Class::Tx()
 {
 	int numTx;
 	portTickType xLastWakeTime = xTaskGetTickCount();
-	if(txQueue == NULL){
-		while(1);
-	}
+	vTaskDelay(MS_INITIAL_DELAY);
 	
 	while(1){
 		if(DMA_GetCmdStatus(DMA2_Stream7)==DISABLE && (numTx = uxQueueMessagesWaiting(txQueue)) != 0){

@@ -8,10 +8,9 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver \
 		    src/MyLib/CmdServo src/MyLibCmdServo/Driver \
 		    src/MyLib/Servo src/MyLib/Servo/Driver \
-		    src/MyLib/Propo src/MyLib/Propo/Driver \
-		    src/App
+		    src/MyLib/Propo src/MyLib/Propo/Driver 
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
-APPPATH = src/App
+APPPATH = src/App src/App/TankControl
 ###
 
 SRCPATH = src $(OSPATH) $(MYLIBPATH) $(COMPATH) $(APPPATH)
@@ -40,6 +39,7 @@ else
 endif
 
 FREERTOS_DIR = ./Libraries/FreeRTOS
+FREERTOS_PLUS_DIR = ./Libraries/FreeRTOS-Plus
 
 TARGET_ARCH   = -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
@@ -52,7 +52,9 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I $(FREERTOS_DIR)/Source/include \
 					-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
 					-I ./src/include \
-					-I ./src
+					-I ./src \
+					-I $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/Include \
+					-I $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/ConfigurationTemplate
 
 BOARD_OPTS = -DHSE_VALUE=12000000 -DSTM32F4XX -DSTM32F40_41xxx -DSTM32F429 -DUSE_32F429IDISCOVERY
 FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
@@ -86,7 +88,8 @@ LIB_SRCS = \
  $(FREERTOS_DIR)/Demo/Common/Minimal/BlockQ.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/blocktim.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/QPeek.c \
- $(FREERTOS_DIR)/Demo/Common/Minimal/PollQ.c
+ $(FREERTOS_DIR)/Demo/Common/Minimal/PollQ.c \
+ $(wildcard $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/*.c)
 LIB_OBJS = $(notdir $(LIB_SRCS:.c=.o))
 
 VPATH = $(SRCPATH) $(dir $(LIB_SRCS))

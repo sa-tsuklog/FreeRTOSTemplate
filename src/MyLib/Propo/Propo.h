@@ -28,7 +28,7 @@ public:
 
 	// Class definition
 private:
-	static const int USE_PROPO = 1;
+	static const int USE_PROPO = 0;
 	
 	static const int US_DUTY_CENTER = 1500; /**<@brief 中立位置でのパルス幅[us]*/
 	static const int US_DUTY_GAIN = 500; /**<@brief プロポ信号のパルス幅が最大/最小位置の時の中立位置からのパルス幅の差*/

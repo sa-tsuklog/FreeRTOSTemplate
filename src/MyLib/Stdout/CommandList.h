@@ -16,9 +16,8 @@
 #define COMMANDLIST_H_
 
 command_t commandList[32] = {
-		{"setservo",&SerialCommand::setServo},
+		{"$USCTL",&SerialCommand::usctl},
 		{"help",&SerialCommand::printHelp},
-		{"printTaskList",&SerialCommand::printTaskList},
 		{"startLogging",&SerialCommand::startLogging},
 		{"stopLogging",&SerialCommand::stopLogging},
 		{"resetImu",&SerialCommand::resetImu},
@@ -35,6 +34,9 @@ command_t commandList[32] = {
 		{"setGainsConfig",&SerialCommand::setGainsConfig},
 		{"setGainsPrintMode",&SerialCommand::setGainsPrintMode},
 		{"initializeUserFlash",&SerialCommand::initializeUserFlash},
+		{"setCmdServoCh",&SerialCommand::setCmdServoCh},
+		{"printTaskList",&SerialCommand::printTaskList},
+		{"runTimeStats",&SerialCommand::runTimeStats},
 		{"testCmd0",&SerialCommand::testCmd0},
 		{"testCmd1",&SerialCommand::testCmd1},
 		{"testCmd2",&SerialCommand::testCmd2},

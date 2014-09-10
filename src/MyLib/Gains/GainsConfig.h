@@ -35,6 +35,7 @@ public:
 		E_FRAME,
 		DEBUG,
 		INS,
+		QUATERNION,
 	};
 };
 

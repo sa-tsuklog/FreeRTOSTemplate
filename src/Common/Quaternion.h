@@ -38,13 +38,13 @@ public:
     Quaternion* rotate(const Quaternion* roter);
     float getRadHeading();
     float getRadPitch(float radHeading);
-    float getRadRole(float radHeading, float radPitch);
-    void getRadPitchRoleHeading(float* pitch, float* role, float* heading);
+    float getRadRoll(float radHeading, float radPitch);
+    void getRadPitchRollHeading(float* pitch, float* role, float* heading);
     float getRadSlant();
     float vectDot(const Quaternion* vect);
     Quaternion* vectCross(const Quaternion* vect);
     void print();
-    void printPitchRoleHeading();  
+    void printPitchRollHeading();  
 };
 
 

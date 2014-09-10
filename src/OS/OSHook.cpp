@@ -7,6 +7,13 @@
 
 unsigned int idle_count = 0;
 
+#ifdef __cplusplus
+ extern "C" {
+#endif 
+
+#include "MyLib/Util/Util.h"
+
+
 void vApplicationIdleHook(void){
 	idle_count++;
 }
@@ -22,3 +29,15 @@ void vApplicationStackOverflowHook(void* ptr, char* taskname){
 void vApplicationTickHook(){
 	
 }
+
+void vConfigureTimerForRumTimeStats(){
+	Util::GetInstance();
+}
+
+uint32_t vGetRunTimeCounterValue(){
+	return Util::GetInstance()->getUsTime();
+}
+
+#ifdef __cplusplus
+ }
+#endif 

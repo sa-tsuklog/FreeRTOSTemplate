@@ -25,10 +25,12 @@ public:
 
 	// Class definition
 private:
-	USART1Class* usart;
+	
 	
 	void sendShortPacket(unsigned char id,unsigned char flag,unsigned char address,unsigned char length,unsigned char* data);
 public:
+	USART1Class* usart;
+	
 	void setMargin(unsigned char id,unsigned char mdeg_x100Margin,int isCw);
 	void setSlope(unsigned char id,unsigned char degSlope,int isCw);
 	void setPunch(unsigned char id,unsigned short percentPunch);
@@ -39,7 +41,7 @@ public:
 	void setAngleLimit(unsigned char id,float degLimit);
 	void setMoveTime(unsigned char id,unsigned int ms_x10MoveTime);
 	void setTorqueLimit(unsigned char id,unsigned char percentTorqueLimit);
-	
+	void flashFinalize(unsigned char id);
 	
 	static void initCmdServo();
 };

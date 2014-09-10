@@ -54,8 +54,6 @@ void Gains::gainsTask(void *pvParameters){
 	/////////////////////////////////////
 	// declaration
 	/////////////////////////////////////
-	int i=0;
-	
 	int predictStartTime;
 	int predictEndTime;
 	int updateStartTime;
@@ -152,76 +150,89 @@ void Gains::gainsTask(void *pvParameters){
 		// print
 		/////////////////////////////////////
 		xQueueReceive(printModeQueue,&printMode,0);
-		if(i%10==0){
-			print();
-		}
-		//i=(i+1)%10;
-		i++;
+		
+		print();
 		
 		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
 	}	
 }
 
 void Gains::print(){
+	static int decimator=0;
+	
+	decimator = (decimator+1)%10;
+	
 	if(printMode == GainsPrintMode::NONE){
 		//do nothing.
 	}else if(printMode == GainsPrintMode::MARITIME){
-		float radHeading;
-		float radPitch;
-		float radRole;
-		attitude.getRadPitchRoleHeading(&radPitch,&radRole,&radHeading);
-		
-		if(gpsWatchDog == 0){
-			printf("i,?,?,");
-		}else{
-			int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(gpsData.mGpsRelativePos.x);
-			int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(gpsData.mGpsRelativePos.y);
+		if(decimator%10 == 0){
+			float radHeading;
+			float radPitch;
+			float radRole;
+			attitude.getRadPitchRollHeading(&radPitch,&radRole,&radHeading);
 			
-			printf("i,%d.%d,%d.%d,",degX1MLattitude/1000000,degX1MLattitude%1000000
-					               ,degX1MLongitude/1000000,degX1MLongitude%1000000);
+			if(gpsWatchDog == 0){
+				printf("i,?,?,");
+			}else{
+				int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(gpsData.mGpsRelativePos.x);
+				int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(gpsData.mGpsRelativePos.y);
+				
+				printf("i,%d.%d,%d.%d,",degX1MLattitude/1000000,degX1MLattitude%1000000
+									   ,degX1MLongitude/1000000,degX1MLongitude%1000000);
+			}
+			
+			printf("%.3f,%.3f,%.3f,",radPitch*180/M_PI,radRole*180/M_PI,radHeading*180/M_PI);
+			
+			if(gpsWatchDog == 0){
+				printf("?,?,");
+			}else{
+				printf("%.3f,%.3f,",gpsData.mpsGpsSpeed.x,gpsData.mpsGpsSpeed.y);
+			}
+			
+			printf("%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
+					imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,
+					imuData.rpsRate.x*180/M_PI,imuData.rpsRate.y*180/M_PI,imuData.rpsRate.z*180/M_PI,
+					imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			
 		}
-		
-		printf("%.3f,%.3f,%.3f,",radPitch*180/M_PI,radRole*180/M_PI,radHeading*180/M_PI);
-		
-		if(gpsWatchDog == 0){
-			printf("?,?,");
-		}else{
-			printf("%.3f,%.3f,",gpsData.mpsGpsSpeed.x,gpsData.mpsGpsSpeed.y);
-		}
-		
-		printf("%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
-				imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,
-				imuData.rpsRate.x*180/M_PI,imuData.rpsRate.y*180/M_PI,imuData.rpsRate.z*180/M_PI,
-				imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
-		
 	}else if(printMode == GainsPrintMode::E_FRAME){
-		Quaternion earthFrameAcl;
-		Quaternion attitudeCon;
-		attitudeCon.con(&attitude);
-		earthFrameAcl.mul(&attitude,&(imuData.mpspsAcl));
-		earthFrameAcl.mul(&attitudeCon);
+		if(decimator %10 ==0){
+			Quaternion earthFrameAcl;
+			Quaternion attitudeCon;
+			attitudeCon.con(&attitude);
+			earthFrameAcl.mul(&attitude,&(imuData.mpspsAcl));
+			earthFrameAcl.mul(&attitudeCon);
+			
+			Quaternion earthFrameCmps;
+			earthFrameCmps.mul(&attitude,&(imuData.uTCmps));
+			earthFrameCmps.mul(&attitudeCon);
+			
+			printf("acl:%6.3f,%6.3f,%6.3f,cmps:%6.3f,%6.3f,%6.3f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,earthFrameCmps.x,earthFrameCmps.y,earthFrameCmps.z);
 		
-		Quaternion earthFrameCmps;
-		earthFrameCmps.mul(&attitude,&(imuData.uTCmps));
-		earthFrameCmps.mul(&attitudeCon);
-		
-		printf("acl:%6.3f,%6.3f,%6.3f,cmps:%6.3f,%6.3f,%6.3f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,earthFrameCmps.x,earthFrameCmps.y,earthFrameCmps.z);
-		
+		}
 	}else if(printMode == GainsPrintMode::INS){
-		printf("%.3f,%.3f,%.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
-		printf("%.3f,%.3f,%.3f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
-		printf("%.3f,%.3f,%.3f\r\n",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+		if(decimator % 10 == 0){
+			printf("%.3f,%.3f,%.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
+			printf("%.3f,%.3f,%.3f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
+			printf("%.3f,%.3f,%.3f\r\n",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+		}
+	}else if(printMode == GainsPrintMode::QUATERNION){
+		if(decimator %2 == 0){
+			printf("$GIQAT,%.5f,%.5f,%.5f,%.5f\r\n",attitude.w,attitude.x,attitude.y,attitude.z);
+		}
 	}else{
-		float radHeading;
-		float radPitch;
-		float radRole;
-		attitude.getRadPitchRoleHeading(&radPitch,&radRole,&radHeading);
-		//Util::GetInstance()->myFprintf(0,stdout,"eacl:%.3f\t%.3f\t%.3f\tgyro:%.5f\t%.5f\t%.5f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
-		//Util::GetInstance()->myFprintf(0,stdout,"%d[us],%d[us]\r\n",predictEndTime-predictStartTime,updateEndTime-updateStartTime);
-		//Util::GetInstance()->myFprintf(0,stdout,"pos %.3f\t%.3f\t%.3f\tspd: %.3f\t%.3f\t%.3f\r\n",gpsPos.x,gpsPos.y,gpsPos.z,gpsVel.x,gpsVel.y,gpsVel.z);
-		printf("acl:%.3f\t%.3f\t%.3f\tgyro:%.6f\t%.6f\t%.6f\tcmps:%.3f\t%.3f\t%.3f\r\n",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z,imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
-		printf("pos:%.3f\t%.3f\t%.3f\tspd:%.3f\t%.3f\t%.3f\tpitch:%.3f\trole:%.3f\theading:%.3f\r\n",mRelativePos.x,mRelativePos.y,mRelativePos.z,mpsSpeed.x,mpsSpeed.y,mpsSpeed.z,radPitch*180/M_PI,radRole*180/M_PI,radHeading*180/M_PI);
-		//printf("i,%.3f.%.3f,%.3f.%.3f,%.3f,%.3f\r\n",mRelativePos.x,mRelativePos.y,radHeading*180/M_PI,mpsSpeed.x,mpsSpeed.y,imuData.rpsRate.z);
+		if(decimator % 10 == 0){
+			float radHeading;
+			float radPitch;
+			float radRole;
+			attitude.getRadPitchRollHeading(&radPitch,&radRole,&radHeading);
+			//Util::GetInstance()->myFprintf(0,stdout,"eacl:%.3f\t%.3f\t%.3f\tgyro:%.5f\t%.5f\t%.5f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
+			//Util::GetInstance()->myFprintf(0,stdout,"%d[us],%d[us]\r\n",predictEndTime-predictStartTime,updateEndTime-updateStartTime);
+			//Util::GetInstance()->myFprintf(0,stdout,"pos %.3f\t%.3f\t%.3f\tspd: %.3f\t%.3f\t%.3f\r\n",gpsPos.x,gpsPos.y,gpsPos.z,gpsVel.x,gpsVel.y,gpsVel.z);
+			printf("acl:%.3f\t%.3f\t%.3f\tgyro:%.6f\t%.6f\t%.6f\tcmps:%.3f\t%.3f\t%.3f\r\n",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z,imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z,imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			printf("pos:%.3f\t%.3f\t%.3f\tspd:%.3f\t%.3f\t%.3f\tpitch:%.3f\trole:%.3f\theading:%.3f\r\n",mRelativePos.x,mRelativePos.y,mRelativePos.z,mpsSpeed.x,mpsSpeed.y,mpsSpeed.z,radPitch*180/M_PI,radRole*180/M_PI,radHeading*180/M_PI);
+			//printf("i,%.3f.%.3f,%.3f.%.3f,%.3f,%.3f\r\n",mRelativePos.x,mRelativePos.y,radHeading*180/M_PI,mpsSpeed.x,mpsSpeed.y,imuData.rpsRate.z);
+		}
 	}
 }
 
@@ -253,7 +264,7 @@ void Gains::printIns(FILE* fp,KalmanFilter* kf,ImuData* imuData,GpsData* gpsData
 	Quaternion cmps = imuData->uTCmps;
 	
 	float pitch,role,heading;
-	attitude.getRadPitchRoleHeading(&pitch,&role,&heading);
+	attitude.getRadPitchRollHeading(&pitch,&role,&heading);
 	
 	int min = Gps::GetInstance()->getMin();
 	float sec = Gps::GetInstance()->getSec();

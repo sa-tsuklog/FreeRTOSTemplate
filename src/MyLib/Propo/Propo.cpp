@@ -41,7 +41,6 @@ float Propo::getInput(int ch){
 		usDuty = US_DUTY_CENTER;
 	}
 	
-	printf("%d\r\n",usDuty);
 	
 	if(usDuty < US_DUTY_CENTER-US_DUTY_GAIN){
 		usDuty = US_DUTY_CENTER - US_DUTY_GAIN;

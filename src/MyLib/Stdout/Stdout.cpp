@@ -17,7 +17,7 @@ void Stdout::initStdout(){
 	//task create.
 	xTaskCreate(&USART3Class::prvTxTask,"u3tx",512,NULL,2,NULL);
 	//xTaskCreate(&USART3Class::prvRxTask,"u3rx",1024,USART3,1,NULL);
-	xTaskCreate(&SerialCommand::prvSerialCommandTaskEntry,"u3rx",1536,NULL,3,NULL);
+	xTaskCreate(&SerialCommand::prvSerialCommandTaskEntry,"u3rx",1024,NULL,3,NULL);
 }
 
 

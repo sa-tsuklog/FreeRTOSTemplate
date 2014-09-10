@@ -35,7 +35,7 @@ public:
 	// Class definition
 private:
 	static const int USE_CH0_3 = 1;/**<@brief 1:ch0～3を使用する 0:ch0～3を使用しない*/
-	static const int USE_CH4_7 = 1;/**<@brief 1:ch4～7を使用する 0:ch4～7を使用しない*/
+	static const int USE_CH4_7 = 0;/**<@brief 1:ch4～7を使用する 0:ch4～7を使用しない*/
 	static const int USE_CH8_11 = 0;/**<@brief 1:ch8～11を使用する 0:ch8～11を使用しない。ch8～11は"Propo"とシルクされている*/
 	static const int USE_CH12 = 0;/**<@brief 1:ch0～3を使用する 0:ch0～3を使用しない。ch12は"height"とシルクされている*/
 	

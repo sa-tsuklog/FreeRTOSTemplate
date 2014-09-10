@@ -28,8 +28,8 @@ public:
 	// Class definition
 private:
 	static const int TX_BUFFERSIZE = 1024;
-	static const int RX_BUFFERSIZE = 64;
-	static const int LINE_BUF_SIZE = 64;
+	static const int RX_BUFFERSIZE = 256;
+	static const int LINE_BUF_SIZE = 256;
 	xQueueHandle m_queue3;
 	char m_txBuf[TX_BUFFERSIZE];
 	char m_rxBuf[RX_BUFFERSIZE];

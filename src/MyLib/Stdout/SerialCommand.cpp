@@ -16,8 +16,11 @@
 #include "MyLib/Gains/Driver/Gps/Gps.h"
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
 #include "MyLib/Servo/Servo.h"
+#include "MyLib/CmdServo/CmdServo.h"
 
 #include "ControlParams.h"
+
+#include "App/TankControl/TankControl.h"
 
 #include "Test.h"
 
@@ -28,10 +31,10 @@
 extern "C" {
 #endif
 
-char* vTaskListBuf;
+char* vTaskCommandBuf;
 
 SerialCommand::SerialCommand(){
-	vTaskListBuf = (char*)malloc(sizeof(char)*768);
+	vTaskCommandBuf = (char*)malloc(sizeof(char)*768);
 }
 
 void SerialCommand::prvSerialCommandTaskEntry(void* pvParameters){
@@ -83,18 +86,34 @@ char* SerialCommand::getArgs(){
  * 
  * 引数はHH,HH,HH,HH,HH,HH\nであること。Hはasciiコードの16進数の一文字を現す。
  */
-void SerialCommand::setServo(){
+void SerialCommand::usctl(){
 	SerialCommand* cmd = SerialCommand::GetInstance();
 	char* args = cmd->getArgs();
-	unsigned char pitch    = cmd->hexToUchar(args);
-	unsigned char roll     = cmd->hexToUchar(args+3);
-	unsigned char yaw      = cmd->hexToUchar(args+6);
-	unsigned char throttle = cmd->hexToUchar(args+9);
-	unsigned char flaps    = cmd->hexToUchar(args+12);
+	unsigned char mode     = cmd->hexToUchar(args);
+	unsigned char pitch    = cmd->hexToUchar(args+3);
+	unsigned char roll     = cmd->hexToUchar(args+6);
+	unsigned char yaw      = cmd->hexToUchar(args+9);
+	unsigned char rz       = cmd->hexToUchar(args+12);
+	unsigned char throttle = cmd->hexToUchar(args+15);
+	unsigned char cameraH_H= cmd->hexToUchar(args+18);
+	unsigned char cameraH_L= cmd->hexToUchar(args+21);
+	unsigned char cameraV_H= cmd->hexToUchar(args+24);
+	unsigned char cameraV_L= cmd->hexToUchar(args+27);
+	unsigned char reserved = cmd->hexToUchar(args+30);
+	unsigned char camMode  = cmd->hexToUchar(args+33);
 	
-	ControlParams controlParams = ControlParams(pitch,roll,yaw,throttle,flaps);
+	ControlParams controlParams = ControlParams(mode,
+			pitch,
+			roll,
+			yaw,
+			rz,
+			throttle,
+			cameraH_H<<8 | cameraH_L,
+			cameraV_H<<8 | cameraV_L,
+			reserved,
+			camMode);
 	
-	setControlParms(&controlParams);
+	TankControl::GetInstance()->setControlParms(&controlParams);
 }
 
 /**
@@ -134,17 +153,6 @@ void SerialCommand::printHelp(){
 		printf("%s\r\n",commandList[i].command);
 		i++;
 	}
-}
-
-/**
- * @brief 現在起動中のタスクと残りスタック量の一覧を返す。
- * 
- * 内部でvTaskListを呼び、その結果を標準出力に出力している。
- */
-void SerialCommand::printTaskList(){
-	vTaskList(vTaskListBuf);
-	printf("task name\tstat\tprirty\tstack\ttasknum\r\n");
-	printf(vTaskListBuf);
 }
 
 /**
@@ -461,8 +469,12 @@ void SerialCommand::setGainsPrintMode(char* arg){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::E_FRAME);
 	}else if(strncmp(arg,"ins",3)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::INS);
+	}else if(strncmp(arg,"quat",4)==0){
+		Gains::GetInstance()->setPrintType(GainsPrintMode::QUATERNION);
 	}else if(strncmp(arg,"debug",5)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::DEBUG);
+	}else{
+		printf("usage: setGainsPrintMode none|maritime|eframe|ins|quat|debug\r\n");
 	}
 }
 
@@ -475,6 +487,44 @@ void SerialCommand::initializeUserFlash(){
 		Util::GetInstance()->flashData.mpuCmpsBias[i]=0.0;
 	}
 	Util::GetInstance()->userflashFlush();
+}
+
+void SerialCommand::setCmdServoCh(){
+	int oldCh,newCh;
+	
+	printf("old channel:");
+	fflush(stdout);
+	char* line = USART3Class::GetInstance()->readLine();
+	oldCh = atoi(line);
+	printf("new channel:");
+	fflush(stdout);
+	line = USART3Class::GetInstance()->readLine();
+	newCh = atoi(line);
+	
+	printf("change ch %d to ch %d\r\n",oldCh,newCh);
+	CmdServo::GetInstance()->setServoId(oldCh,newCh);
+	CmdServo::GetInstance()->flashFinalize(newCh);
+}
+
+/**
+ * @brief 現在起動中のタスクと残りスタック量の一覧を返す。
+ * 
+ * 内部でvTaskListを呼び、その結果を標準出力に出力している。
+ */
+void SerialCommand::printTaskList(){
+	vTaskList(vTaskCommandBuf);
+	printf("task name\tstat\tprirty\tstack\ttasknum\r\n");
+	printf(vTaskCommandBuf);
+}
+
+/**
+ * @brief タスクのCPU使用率を表示する
+ * 
+ * 内部でvTaskGetRunTimeStatsを呼び、その結果を標準出力に出力している。
+ */
+void SerialCommand::runTimeStats(){
+	vTaskGetRunTimeStats(vTaskCommandBuf);
+	printf(vTaskCommandBuf);
 }
 
 /**

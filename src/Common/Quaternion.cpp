@@ -304,39 +304,39 @@ float Quaternion::getRadPitch(float radHeading) {
 }
 
 /**
- * @brief 回転を表すクオータニオンからオイラー角のroleを計算する
+ * @brief 回転を表すクオータニオンからオイラー角のrollを計算する
  * 
  * @param[in] クォータニオンのheading[rad]
  * @param[in] クォータニオンのpitch[rad]
- * @return roleの値[rad]
+ * @return rollの値[rad]
  */
-float Quaternion::getRadRole(float radHeading, float radPitch) {
-    float role;
+float Quaternion::getRadRoll(float radHeading, float radPitch) {
+    float roll;
     Quaternion tmpQ2 = Quaternion(cosf(-radHeading / 2), 0.0f, 0.0f, sinf(-radHeading / 2));
     Quaternion tmpQ3 = Quaternion(cosf(-radPitch / 2), 0.0f, sinf(-radPitch / 2), 0.0f);
     tmpQ2.mul(this);
     tmpQ3.mul(&tmpQ2);
-    role = atan2f(tmpQ3.x, tmpQ3.w)*2;
-    if (role<-M_PI) {
-        role += M_PI * 2;
-    } else if (M_PI < role) {
-        role -= M_PI * 2;
+    roll = atan2f(tmpQ3.x, tmpQ3.w)*2;
+    if (roll<-M_PI) {
+        roll += M_PI * 2;
+    } else if (M_PI < roll) {
+        roll -= M_PI * 2;
     }
 
-    return role;
+    return roll;
 }
 
 /**
- * @brief 回転を表すクオータニオンからオイラー角のpitch,role,headingを計算する
+ * @brief 回転を表すクオータニオンからオイラー角のpitch,roll,headingを計算する
  * 
  * @param[out] クォータニオンのpitch[rad]
- * @param[out] クォータニオンのrole[rad]
+ * @param[out] クォータニオンのroll[rad]
  * @param[out] クォータニオンのheading[rad]
  */
-void Quaternion::getRadPitchRoleHeading(float* pitch, float* role, float* heading) {
+void Quaternion::getRadPitchRollHeading(float* pitch, float* roll, float* heading) {
     *heading = getRadHeading();
     *pitch = getRadPitch(*heading);
-    *role = getRadRole(*heading, *pitch);
+    *roll = getRadRoll(*heading, *pitch);
 }
 
 
@@ -397,11 +397,11 @@ void Quaternion::print() {
 /**
  * @brief 回転を表すクォータニオンのオイラー角を標準出力に出力する
  */
-void Quaternion::printPitchRoleHeading() {
-    float pitch, role, heading;
+void Quaternion::printPitchRollHeading() {
+    float pitch, roll, heading;
     heading = getRadHeading();
     pitch = getRadPitch(heading);
-    role = getRadRole(heading, pitch);
+    roll = getRadRoll(heading, pitch);
 
-    Util::GetInstance()->myFprintf(0,stdout,"pitch:%f,\trole%f,\theading%f\r\n", pitch * 180 / M_PI, role * 180 / M_PI, heading * 180 / M_PI);
+    Util::GetInstance()->myFprintf(0,stdout,"pitch:%f,\troll%f,\theading%f\r\n", pitch * 180 / M_PI, roll * 180 / M_PI, heading * 180 / M_PI);
 }

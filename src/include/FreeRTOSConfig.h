@@ -84,6 +84,9 @@
 	#include <stdint.h>
 	extern uint32_t SystemCoreClock;
 #endif
+	
+#include "trcKernelPort.h"	
+	
 extern uint32_t SystemCoreClock;
 
 #define configUSE_PREEMPTION			1
@@ -105,7 +108,7 @@ extern uint32_t SystemCoreClock;
 #define configUSE_MALLOC_FAILED_HOOK	1
 #define configUSE_APPLICATION_TASK_TAG	0
 #define configUSE_COUNTING_SEMAPHORES	1
-#define configGENERATE_RUN_TIME_STATS	0
+#define configGENERATE_RUN_TIME_STATS	1
 #define configUSE_STATS_FORMATTING_FUNCTIONS 1
 
 /* Co-routine definitions. */
@@ -162,6 +165,11 @@ standard names. */
 //#define vPortSVCHandler SVC_Handler
 //#define xPortPendSVHandler PendSV_Handler
 //#define xPortSysTickHandler SysTick_Handler
+
+extern void vConfigureTimerForRumTimeStats();
+extern uint32_t vGetRunTimeCounterValue();
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vConfigureTimerForRumTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE() vGetRunTimeCounterValue()
 
 #endif /* FREERTOS_CONFIG_H */
 
