@@ -15,7 +15,9 @@
 #ifndef COMMANDLIST_H_
 #define COMMANDLIST_H_
 
-command_t commandList[32] = {
+#define MAX_COMMAND_NUM 32
+
+command_t commandList[MAX_COMMAND_NUM] = {
 		{"$USCTL",&SerialCommand::usctl},
 		{"help",&SerialCommand::printHelp},
 		{"startLogging",&SerialCommand::startLogging},
@@ -29,6 +31,7 @@ command_t commandList[32] = {
 		{"calibrateMpuGyro",&SerialCommand::calibrateMpuGyro},
 		{"setMpuAclBias",&SerialCommand::setMpuAclBias},
 		{"setMpuCmpsBias",&SerialCommand::setMpuCmpsBias},
+		{"setMpuTempCoeff",&SerialCommand::setMpuTempCoeff},
 		{"setAdisCmpsBias",&SerialCommand::setAdisCmpsBias},
 		{"showGainsConfig",&SerialCommand::showGainsConfig},
 		{"setGainsConfig",&SerialCommand::setGainsConfig},
@@ -37,6 +40,7 @@ command_t commandList[32] = {
 		{"setCmdServoCh",&SerialCommand::setCmdServoCh},
 		{"printTaskList",&SerialCommand::printTaskList},
 		{"runTimeStats",&SerialCommand::runTimeStats},
+		{"startTrace",&SerialCommand::startTrace},
 		{"testCmd0",&SerialCommand::testCmd0},
 		{"testCmd1",&SerialCommand::testCmd1},
 		{"testCmd2",&SerialCommand::testCmd2},

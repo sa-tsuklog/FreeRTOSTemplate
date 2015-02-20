@@ -24,7 +24,7 @@ ifeq ($(OS),Windows_NT)
 	SHELL = sh
 	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
 	TOOLDIR = ../../yagarto/bin/
-	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
+	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f429_439xx.s
 	#MKOBJDIR = $(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
 	#MKBINDIR = $(shell if not exist $(BINDIR) mkdir $(BINDIR))
 	MKOBJDIR = 
@@ -33,7 +33,7 @@ else
 	SHELL = sh
 	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
 	TOOLDIR = 
-	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f40_41xxx.s
+	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f429_439xx.s
 	MKOBJDIR = $(shell if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi;)
 	MKBINDIR = $(shell if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi;)
 endif
@@ -46,6 +46,7 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
 					-I ./Libraries/CMSIS/Include \
 					-I ./Libraries/ff \
+					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates \
 					-I $(TOOLDIR)../arm-none-eabi/include \
 					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
 					-I $(FREERTOS_DIR)/Demo/Common/include \

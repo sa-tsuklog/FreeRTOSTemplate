@@ -53,6 +53,7 @@ public:
 	static void calibrateMpuGyro();
 	static void setMpuAclBias();
 	static void setMpuCmpsBias();
+	static void SerialCommand::setMpuTempCoeff();
 	static void setAdisCmpsBias();
 	static void showGainsConfig();
 	static void setGainsConfig();
@@ -61,6 +62,7 @@ public:
 	static void setCmdServoCh();
 	static void printTaskList();
 	static void runTimeStats();
+	static void startTrace();
 	static void testCmd0();
 	static void testCmd1();
 	static void testCmd2();

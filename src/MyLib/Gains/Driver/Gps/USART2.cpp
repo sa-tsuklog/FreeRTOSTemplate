@@ -8,6 +8,7 @@
 
 USART2Class::USART2Class(){
 	m_queue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
+	vQueueAddToRegistry(m_queue,"u2tx");
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
 
 	GPIO_InitTypeDef pd5def;

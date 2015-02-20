@@ -13,6 +13,7 @@
 
 USART1Class::USART1Class(){
 	txQueue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
+	vQueueAddToRegistry(txQueue,"u1tx");
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 
 	GPIO_InitTypeDef pb6def;

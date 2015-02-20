@@ -1,4 +1,5 @@
 #include "stm32f4xx.h"
+#include "stm32f4xx_rcc.h"
 #include "stm32f4xx_conf.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -8,7 +9,9 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#include "Common/FreeRTOS_DemoFile/system_stm32f4xx.h"
+#include "../Libraries/FreeRTOS-Plus/Source/FreeRTOS-Plus-Trace/Include/trcKernelPort.h"
+
+#include "system_stm32f4xx.h"
 
 #include "MyLib/Util/Util.h"
 #include "MyLib/Stdout/Stdout.h"
@@ -36,10 +39,14 @@ void prvTaskA(void *pvParameters){
 	vTaskDelay(100);
 	unsigned int previousIdleCount = 0;
 	while(1){
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
-		Util::GetInstance()->myFprintf(0,stdout,"idle:%d\r\n",idle_count-previousIdleCount);
-		previousIdleCount = idle_count;
+		//GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
+		//GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
+		//Util::GetInstance()->myFprintf(0,stdout,"idle:%d\r\n",idle_count-previousIdleCount);
+		//previousIdleCount = idle_count;
+		//vTaskDelay(100);
+		GPIO_SetBits(GPIOB,GPIO_Pin_8);
+		vTaskDelay(100);
+		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
 		vTaskDelay(100);
 	}
 	
@@ -56,24 +63,37 @@ void LEDInit(void) {
 	gpiob8.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOB,&gpiob8);
 	
+	GPIO_SetBits(GPIOB,GPIO_Pin_8);
 }
+void vPortEnableVFP();
+
 int main(void) {
 	SystemInit();
 	LEDInit();
 	
 	Util::initUtil();
-	Stdout::initStdout();
-	Gains::initGains();
-	Logger::initLogger();
-	CmdServo::initCmdServo();
+	//Stdout::initStdout();
+	//Gains::initGains();
+	//Logger::initLogger();
+	//CmdServo::initCmdServo();
 	
 	//xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
-	xTaskCreate(&TankControl::TankControlTaskEntry,"tank",2048,NULL,2,NULL);
+	//TankControl::initTankControl();
+	if(xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL) == pdTRUE){
+		GPIO_SetBits(GPIOB,GPIO_Pin_8);
+	}else{
+		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+	}
+	if(xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL) == pdTRUE){
+		GPIO_SetBits(GPIOB,GPIO_Pin_8);
+	}else{
+		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+	}
+	//xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL);
 	
 	vTaskStartScheduler();
-
+	
 	while (1)
 	{
-
 	}
 }

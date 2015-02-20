@@ -22,6 +22,9 @@ typedef struct{
 	float pGain[3];
 	float dGain[3];
 	float iGain[3];
+	float mpuGyroTempCoefficient[3];
+	float mpuAclTempCoefficient[3];
+	float mpuCmpsTempCoefficient[3];
 }UserflashData;
 
 #endif /* USERFLASHDATA_H_ */

@@ -314,7 +314,7 @@ void SerialCommand::calibrateMpuGyro(){
 void SerialCommand::setMpuAclBias(){
 	for(int i=0;i<3;i++){
 		float f;
-		printf("%d th axis:",i);
+		printf("%d th axis:\r\n",i);
 		fflush(stdout);
 		char* biasString = USART3Class::GetInstance()->readLine();
 		if(strlen(biasString)!=0){
@@ -338,7 +338,7 @@ void SerialCommand::setMpuAclBias(){
 void SerialCommand::setMpuCmpsBias(){
 	for(int i=0;i<3;i++){
 		float f;
-		printf("%d th axis:",i);
+		printf("%d th axis:\r\n",i);
 		fflush(stdout);
 		char* biasString = USART3Class::GetInstance()->readLine();
 		if(strlen(biasString)){
@@ -347,6 +347,55 @@ void SerialCommand::setMpuCmpsBias(){
 		}
 		printf("%f\r\n",Util::GetInstance()->flashData.mpuCmpsBias[i]);
 	}
+	Util::GetInstance()->userflashFlush();
+}
+
+/**
+ * @brief MPU-9250の温度係数の設定を行う
+ * 
+ * 補正値を浮動小数点数で入力する。
+ * 
+ * 補正値の推定は手動で行う必要がある。
+ * 
+ * 補正値はフラッシュに記録され、電源を切った後も有効である。
+ */
+void SerialCommand::setMpuTempCoeff(){
+	for(int i=0;i<3;i++){
+		float f;
+		printf("acl %d th axis:\r\n",i);
+		fflush(stdout);
+		char* biasString = USART3Class::GetInstance()->readLine();
+		if(strlen(biasString)){
+			f = atof(biasString);
+			Util::GetInstance()->flashData.mpuAclTempCoefficient[i] = f;
+		}
+		printf("%f\r\n",Util::GetInstance()->flashData.mpuAclTempCoefficient[i]);
+	}
+	
+	for(int i=0;i<3;i++){
+		float f;
+		printf("gyro %d th axis:\r\n",i);
+		fflush(stdout);
+		char* biasString = USART3Class::GetInstance()->readLine();
+		if(strlen(biasString)){
+			f = atof(biasString);
+			Util::GetInstance()->flashData.mpuGyroTempCoefficient[i] = f;
+		}
+		printf("%f\r\n",Util::GetInstance()->flashData.mpuGyroTempCoefficient[i]);
+	}
+	
+	for(int i=0;i<3;i++){
+		float f;
+		printf("cmps %d th axis:\r\n",i);
+		fflush(stdout);
+		char* biasString = USART3Class::GetInstance()->readLine();
+		if(strlen(biasString)){
+			f = atof(biasString);
+			Util::GetInstance()->flashData.mpuCmpsTempCoefficient[i] = f;
+		}
+		printf("%f\r\n",Util::GetInstance()->flashData.mpuCmpsTempCoefficient[i]);
+	}
+	
 	Util::GetInstance()->userflashFlush();
 }
 
@@ -362,7 +411,7 @@ void SerialCommand::setMpuCmpsBias(){
 void SerialCommand::setAdisCmpsBias(){
 	for(int i=0;i<3;i++){
 		float f;
-		printf("%d th axis:",i);
+		printf("%d th axis:\r\n",i);
 		fflush(stdout);
 		char* biasString = USART3Class::GetInstance()->readLine();
 		if(strlen(biasString)){
@@ -373,6 +422,8 @@ void SerialCommand::setAdisCmpsBias(){
 	}
 	Util::GetInstance()->userflashFlush();
 }
+
+
 
 /**
  * @brief Gainsで使用するセンサを表示する
@@ -471,10 +522,12 @@ void SerialCommand::setGainsPrintMode(char* arg){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::INS);
 	}else if(strncmp(arg,"quat",4)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::QUATERNION);
+	}else if(strncmp(arg,"gpaio",5)==0){
+		Gains::GetInstance()->setPrintType(GainsPrintMode::GPAIO);
 	}else if(strncmp(arg,"debug",5)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::DEBUG);
 	}else{
-		printf("usage: setGainsPrintMode none|maritime|eframe|ins|quat|debug\r\n");
+		printf("usage: setGainsPrintMode none|maritime|eframe|ins|quat|gpaio|debug\r\n");
 	}
 }
 
@@ -485,6 +538,9 @@ void SerialCommand::initializeUserFlash(){
 		Util::GetInstance()->flashData.mpuAclBias[i]=0.0;
 		Util::GetInstance()->flashData.mpuGyroBias[i]=0.0;
 		Util::GetInstance()->flashData.mpuCmpsBias[i]=0.0;
+		Util::GetInstance()->flashData.mpuAclTempCoefficient[i]=0.0;
+		Util::GetInstance()->flashData.mpuGyroTempCoefficient[i]=0.0;
+		Util::GetInstance()->flashData.mpuCmpsTempCoefficient[i]=0.0;
 	}
 	Util::GetInstance()->userflashFlush();
 }
@@ -525,6 +581,10 @@ void SerialCommand::printTaskList(){
 void SerialCommand::runTimeStats(){
 	vTaskGetRunTimeStats(vTaskCommandBuf);
 	printf(vTaskCommandBuf);
+}
+
+void SerialCommand::startTrace(){
+	Util::GetInstance()->traceStart();
 }
 
 /**

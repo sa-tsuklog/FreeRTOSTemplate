@@ -39,7 +39,7 @@ public:
     float getRadHeading();
     float getRadPitch(float radHeading);
     float getRadRoll(float radHeading, float radPitch);
-    void getRadPitchRollHeading(float* pitch, float* role, float* heading);
+    void getRadPitchRollHeading(float* pitch, float* roll, float* heading);
     float getRadSlant();
     float vectDot(const Quaternion* vect);
     Quaternion* vectCross(const Quaternion* vect);

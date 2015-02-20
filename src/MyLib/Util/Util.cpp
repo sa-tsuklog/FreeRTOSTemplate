@@ -5,7 +5,9 @@
  *      Author: sa
  */
 
-
+#include "FreeRTOS.h"
+#include "../Libraries/FreeRTOS-Plus/Source/FreeRTOS-Plus-Trace/Include/trcKernelPort.h"
+#include "task.h"
 
 #include "Util.h"
 #include "Driver/ADC3.h"
@@ -95,9 +97,19 @@ void Util::myFprintf(portTickType blockTime,FILE* stream,const char* format,...)
 	}
 }
 
+void Util::traceStart(){
+	if(uiTraceStart() == 0){
+		printf("trace could not start\r\n");
+		printf(xTraceGetLastError());
+		printf("\r\n");
+	}
+	
+	printf("trace starts from %x\r\n",RecorderDataPtr);
+}
+
 /**
- * @brief Utilをの初期化を行う。Utilではタスクは使用しないため、起動されない。
+ * @brief Utilをの初期化を行う。
  */
 static void Util::initUtil(){
-	Util::GetInstance();
+	vTraceInitTraceData();
 }

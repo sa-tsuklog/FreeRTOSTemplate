@@ -105,7 +105,8 @@ void ADIS16488::prvAdis16488Task(void *pvParameters){
 						PA_PER_LSB*((short)buf[18]) + PA_PER_LSB_LOW*buf[17],
 						//isValid
 						buf[1]&0x0100,
-						buf[1]&0x0200
+						buf[1]&0x0200,
+						0.0
 				);
 		
 		Gains::GetInstance()->appendInsData(&imuData);

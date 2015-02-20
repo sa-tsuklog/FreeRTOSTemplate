@@ -9,6 +9,7 @@
 
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "task.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -34,6 +35,8 @@ public:
 	}
 	// Class definition
 private:
+	TaskHandle_t traceHandle;
+	
 	SemaphoreHandle_t printfMutex;
 	
 	void initFlashData();
@@ -44,6 +47,7 @@ public:
 	float getVoltInputVoltage();
 	void userflashFlush();
 	void myFprintf(portTickType blockTime,FILE* stream,const char* format,...);
+	static void traceStart();
 	static void initUtil();
 };
 

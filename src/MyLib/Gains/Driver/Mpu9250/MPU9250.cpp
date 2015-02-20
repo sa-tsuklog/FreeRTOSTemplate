@@ -98,19 +98,21 @@ void Mpu9250::readMpu9250(){
 	i2c2->read(AK8963_ADDR,HZL,cmpsBuf+5,1);
 	I2C2Class::getInstance()->write1(AK8963_ADDR,CNTL1,0x01<<4 | 0x06);
 	
-	degTemp = DEG_PER_LSB * ((short)(tempBuf[0]<<8|tempBuf[1]));
+	UserflashData* flash = &Util::GetInstance()->flashData;
 	
-	mpspsAcl[0]  =  MPSPS_PER_LSB * ((short)(aclBuf[2]<<8|aclBuf[3])) - Util::GetInstance()->flashData.mpuAclBias[0];
-	mpspsAcl[1]  = -MPSPS_PER_LSB * ((short)(aclBuf[0]<<8|aclBuf[1])) - Util::GetInstance()->flashData.mpuAclBias[1];
-	mpspsAcl[2]  =  MPSPS_PER_LSB * ((short)(aclBuf[4]<<8|aclBuf[5])) - Util::GetInstance()->flashData.mpuAclBias[2];
+	degTemp = DEG_PER_LSB * ((short)(tempBuf[0]<<8|tempBuf[1])) + DEG_TEMP_OFFSET;
 	
-	rpsRate[0] = ( RPS_PER_LSB * ((short)(gyroBuf[2]<<8|gyroBuf[3]))) - Util::GetInstance()->flashData.mpuGyroBias[0];
-	rpsRate[1] = (-RPS_PER_LSB * ((short)(gyroBuf[0]<<8|gyroBuf[1]))) - Util::GetInstance()->flashData.mpuGyroBias[1];
-	rpsRate[2] = ( RPS_PER_LSB * ((short)(gyroBuf[4]<<8|gyroBuf[5]))) - Util::GetInstance()->flashData.mpuGyroBias[2];
+	mpspsAcl[0]  =  MPSPS_PER_LSB * ((short)(aclBuf[2]<<8|aclBuf[3])) - flash->mpuAclBias[0] - degTemp * flash->mpuAclTempCoefficient[0];
+	mpspsAcl[1]  = -MPSPS_PER_LSB * ((short)(aclBuf[0]<<8|aclBuf[1])) - flash->mpuAclBias[1] - degTemp * flash->mpuAclTempCoefficient[1];
+	mpspsAcl[2]  =  MPSPS_PER_LSB * ((short)(aclBuf[4]<<8|aclBuf[5])) - flash->mpuAclBias[2] - degTemp * flash->mpuAclTempCoefficient[2];
 	
-	uTCmps[0] = (+UT_PER_LSB * ((short)(cmpsBuf[0]<<8|cmpsBuf[1]))) - Util::GetInstance()->flashData.mpuCmpsBias[0];
-	uTCmps[1] = (-UT_PER_LSB * ((short)(cmpsBuf[2]<<8|cmpsBuf[3]))) - Util::GetInstance()->flashData.mpuCmpsBias[1];
-	uTCmps[2] = (-UT_PER_LSB * ((short)(cmpsBuf[4]<<8|cmpsBuf[5]))) - Util::GetInstance()->flashData.mpuCmpsBias[2];
+	rpsRate[0] = ( RPS_PER_LSB * ((short)(gyroBuf[2]<<8|gyroBuf[3]))) - flash->mpuGyroBias[0] - degTemp * flash->mpuGyroTempCoefficient[0];
+	rpsRate[1] = (-RPS_PER_LSB * ((short)(gyroBuf[0]<<8|gyroBuf[1]))) - flash->mpuGyroBias[1] - degTemp * flash->mpuGyroTempCoefficient[1];
+	rpsRate[2] = ( RPS_PER_LSB * ((short)(gyroBuf[4]<<8|gyroBuf[5]))) - flash->mpuGyroBias[2] - degTemp * flash->mpuGyroTempCoefficient[2];
+	
+	uTCmps[0] = (+UT_PER_LSB * ((short)(cmpsBuf[0]<<8|cmpsBuf[1]))) - flash->mpuCmpsBias[0] - degTemp * flash->mpuCmpsTempCoefficient[0];
+	uTCmps[1] = (-UT_PER_LSB * ((short)(cmpsBuf[2]<<8|cmpsBuf[3]))) - flash->mpuCmpsBias[1] - degTemp * flash->mpuCmpsTempCoefficient[1];
+	uTCmps[2] = (-UT_PER_LSB * ((short)(cmpsBuf[4]<<8|cmpsBuf[5]))) - flash->mpuCmpsBias[2] - degTemp * flash->mpuCmpsTempCoefficient[2];
 }
 
 void Mpu9250::prvMpu9250Task(void* pvParameters){
@@ -135,7 +137,7 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 		/////////////////////////////////////
 		I2C2Class::getInstance()->waitNewData();
 		readMpu9250();
-		ImuData imuData = ImuData(rpsRate[0],rpsRate[1],rpsRate[2],mpspsAcl[0],mpspsAcl[1],mpspsAcl[2],uTCmps[0],uTCmps[1],uTCmps[2],0.0,1,0);
+		ImuData imuData = ImuData(rpsRate[0],rpsRate[1],rpsRate[2],mpspsAcl[0],mpspsAcl[1],mpspsAcl[2],uTCmps[0],uTCmps[1],uTCmps[2],0.0,1,0,degTemp);
 		Gains::GetInstance()->appendInsData(&imuData);
 		
 		/////////////////////////////////////

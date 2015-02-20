@@ -84,8 +84,8 @@
 	#include <stdint.h>
 	extern uint32_t SystemCoreClock;
 #endif
-	
-#include "trcKernelPort.h"	
+		
+#include "stdint.h"
 	
 extern uint32_t SystemCoreClock;
 
@@ -102,7 +102,7 @@ extern uint32_t SystemCoreClock;
 #define configUSE_16_BIT_TICKS			0
 #define configIDLE_SHOULD_YIELD			1
 #define configUSE_MUTEXES				1
-#define configQUEUE_REGISTRY_SIZE		8
+#define configQUEUE_REGISTRY_SIZE		20
 #define configCHECK_FOR_STACK_OVERFLOW	2
 #define configUSE_RECURSIVE_MUTEXES		1
 #define configUSE_MALLOC_FAILED_HOOK	1
@@ -170,6 +170,8 @@ extern void vConfigureTimerForRumTimeStats();
 extern uint32_t vGetRunTimeCounterValue();
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vConfigureTimerForRumTimeStats()
 #define portGET_RUN_TIME_COUNTER_VALUE() vGetRunTimeCounterValue()
+
+#include "trcKernelPort.h"
 
 #endif /* FREERTOS_CONFIG_H */
 

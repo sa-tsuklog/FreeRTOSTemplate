@@ -8,6 +8,9 @@
 #ifndef GAINS_H_
 #define GAINS_H_
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include "Common/Quaternion.h"
 #include "GainsConfig.h"
 #include "ImuData.h"
@@ -52,6 +55,11 @@ public:
 	
 	// Class definition
 private:
+	TaskHandle_t insHandle;
+	TaskHandle_t gpsHandleTx;
+	TaskHandle_t gpsHandleRx;
+	TaskHandle_t gainsHandle;
+	
 	xQueueHandle imuQueue;
 	xQueueHandle gpsQueue;
 	xQueueHandle printModeQueue;
@@ -69,11 +77,11 @@ private:
 	static const int GPS_WATCHDOG_MAX = 1000; //ins predict 1000 times = about 10 sec 
 	int gpsWatchDog;
 	
-	GainsPrintMode::Mode printMode;
-	
 	void print();
 	void gainsTask(void *pvParameters);
 public:
+	GainsPrintMode::Mode printMode;
+	
 	void appendInsData(ImuData *imuData);
 	void appendGpsData(GpsData *gpsData);
 	

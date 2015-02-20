@@ -294,9 +294,9 @@ void KalmanFilter::initializeQ(){
     this->ctrlErrorCovQ->nums[0][0] = powf(0.01,2);      //accel x error
     this->ctrlErrorCovQ->nums[1][1] = powf(0.01,2);      //accel y error
     this->ctrlErrorCovQ->nums[2][2] = powf(0.01,2);      //accel z error
-    this->ctrlErrorCovQ->nums[3][3] = powf(0.002,2);    //gyro x error
-    this->ctrlErrorCovQ->nums[4][4] = powf(0.002,2);    //gyro y error
-    this->ctrlErrorCovQ->nums[5][5] = powf(0.002,2);    //gyro z error
+    this->ctrlErrorCovQ->nums[3][3] = powf(0.003,2);    //gyro x error
+    this->ctrlErrorCovQ->nums[4][4] = powf(0.003,2);    //gyro y error
+    this->ctrlErrorCovQ->nums[5][5] = powf(0.003,2);    //gyro z error
 }
 void KalmanFilter::initializeR(){
     this->gpsErrorCovR = new Matrix(9,9,0);

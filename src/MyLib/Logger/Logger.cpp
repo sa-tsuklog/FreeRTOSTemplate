@@ -30,8 +30,13 @@ Logger::Logger(){
 	buf[1] = xQueueCreate(BUF1_LENGTH,sizeof(char));
 	buf[2] = xQueueCreate(BUF2_LENGTH,sizeof(char));
 	buf[3] = xQueueCreate(BUF3_LENGTH,sizeof(char));
+	vQueueAddToRegistry(buf[0],"log0");
+	vQueueAddToRegistry(buf[1],"log1");
+	vQueueAddToRegistry(buf[2],"log2");
+	vQueueAddToRegistry(buf[3],"log3");
 	
 	filenameQueue = xQueueCreate(MAX_FILENAME_LENGTH,sizeof(char));
+	vQueueAddToRegistry(filenameQueue,"logFile");
 }
 
 void Logger::startLogging(char* filename){
@@ -168,5 +173,5 @@ void Logger::prvLoggerTask(void* pvParamters){
 
 void Logger::initLogger(){
 	//task create
-	xTaskCreate(prvLoggerTask,"log",1024,NULL,1,NULL);
+	xTaskCreate(prvLoggerTask,"log",1024,NULL,1,&(Logger::GetInstance()->logHandle));
 }

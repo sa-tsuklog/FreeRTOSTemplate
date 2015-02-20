@@ -17,6 +17,8 @@
 
 USART3Class::USART3Class(){
 	m_queue3 = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
+	vQueueAddToRegistry(m_queue3,"u3tx");
+	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
 
 	GPIO_InitTypeDef pd8def;
@@ -102,14 +104,13 @@ USART3Class::USART3Class(){
 		m_rxBuf[i] = 0;
 	}
 	
-	echo = 1;
+	echo = 0;
 	rxBufIndex=0;
 }
 
 void USART3Class::Tx()
 {
 	portTickType xLastWakeTime = xTaskGetTickCount();
-	vTaskDelayUntil(&xLastWakeTime,MS_INITIAL_DELAY);
 	while(1){
 		int numTx=0;
 		if(DMA_GetCmdStatus(DMA1_Stream4)==DISABLE && (numTx = uxQueueMessagesWaiting(m_queue3)) != 0){
@@ -195,7 +196,10 @@ char* USART3Class::readLine()
 			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
 			
 			if(echo){
-				if(c=='\n'){
+				if(c=='\r'){
+					//do nothing
+				}else if(c=='\n'){
+					
 				}else if(c=='\b'){
 					putchar('\b');
 					putchar(' ');
@@ -210,8 +214,12 @@ char* USART3Class::readLine()
 			
 			if(c=='\r'){
 			}else if(c=='\n'){
-				putchar('\r');
-				putchar('\n');
+				if(lineBufIndex==0 || echo){
+					putchar('\r');
+					putchar('\n');
+					fflush(stdout);
+				}
+				
 				m_lineBuf[lineBufIndex]=0;
 	
 				//SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);

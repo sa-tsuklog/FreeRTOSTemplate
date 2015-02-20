@@ -9,6 +9,7 @@
 #define LOGGER_H_
 
 #include "FreeRTOS.h"
+#include "task.h"
 #include "queue.h"
 #include "semphr.h"
 #include "ff.h"
@@ -35,6 +36,8 @@ public:
 	
 	
 private:
+	TaskHandle_t logHandle;
+	
 	FIL fp;
 	LogState logState;
 	

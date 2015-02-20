@@ -31,9 +31,12 @@
 
 Gains::Gains(){
 	gpsQueue = xQueueCreate(1,sizeof(GpsData));
+	vQueueAddToRegistry(gpsQueue,"gps");
 	imuQueue = xQueueCreate(2,sizeof(ImuData));
+	vQueueAddToRegistry(imuQueue,"imu");
 	printModeQueue = xQueueCreate(1,sizeof(int));
-	imuData = ImuData(0,0,0,0,0,0,0,0,0,0,0,0);
+	vQueueAddToRegistry(printModeQueue,"printMode");
+	imuData = ImuData(0,0,0,0,0,0,0,0,0,0,0,0,0);
 	gpsData = GpsData(0,0,0,0,0,0);
 	attitude = Quaternion(1,0,0,0);
 	mpsSpeed = Quaternion(0,0,0,0);
@@ -43,7 +46,7 @@ Gains::Gains(){
 	
 	gpsWatchDog = 0;
 	
-	printMode = GainsPrintMode::NONE;
+	printMode = GainsPrintMode::QUATERNION;
 }
 
 void Gains::prvGainsTask(void *pvParameters){
@@ -59,7 +62,7 @@ void Gains::gainsTask(void *pvParameters){
 	int updateStartTime;
 	int updateEndTime;
 	
-	ImuData tmpImuData = ImuData(0,0,0,0,0,0,0,0,0,0,0,0);
+	ImuData tmpImuData = ImuData(0,0,0,0,0,0,0,0,0,0,0,0,0);
 	GpsData tmpGpsData = GpsData(0,0,0,0,0,0);
 	
 	Quaternion gpsVel;
@@ -214,12 +217,20 @@ void Gains::print(){
 		if(decimator % 10 == 0){
 			printf("%.3f,%.3f,%.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
 			printf("%.3f,%.3f,%.3f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
-			printf("%.3f,%.3f,%.3f\r\n",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			printf("%.3f,%.3f,%.3f\t",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			printf("%.3f\r\n",imuData.degTemp);
 		}
 	}else if(printMode == GainsPrintMode::QUATERNION){
 		if(decimator %2 == 0){
 			printf("$GIQAT,%.5f,%.5f,%.5f,%.5f\r\n",attitude.w,attitude.x,attitude.y,attitude.z);
 		}
+	}else if(printMode == GainsPrintMode::GPAIO){
+//		if(decimator % 10 == 0){
+//			float pitch,roll,heading;
+//			attitude.getRadPitchRollHeading(&pitch,&roll,&heading);
+//			//$GPAIO,Latitude,N/S,Longitude,E/W,height,HDOP,pitch,roll,yaw,SpeedX,SpeedY,SpeedZ,checksum
+//			printf("$GPAIO,000000.000,N,000000.000,E,0.0,1.0,%.2f,%.2f,%.2f,0.0,0.0,0.0,00\r\n",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);
+//		}
 	}else{
 		if(decimator % 10 == 0){
 			float radHeading;
@@ -462,19 +473,19 @@ void Gains::initGains(){
 	}
 	
 	//task
-	xTaskCreate(&Gains::prvGainsTask,"gains",2048,NULL,3,NULL);
+	xTaskCreate(&Gains::prvGainsTask,"gains",2048,NULL,3,&(Gains::GetInstance()->gainsHandle));
 	
 	if(IMU_TYPE == ImuType::ADIS16488){
-		xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,4,NULL);
+		xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,4,&(Gains::GetInstance()->insHandle));
 	}else if(IMU_TYPE == ImuType::MPU9250){
-		xTaskCreate(prvMpu9250TaskEntry,"mpu",1024,NULL,4,NULL);
+		xTaskCreate(prvMpu9250TaskEntry,"mpu",1024,NULL,4,&(Gains::GetInstance()->insHandle));
 	}else if(IMU_TYPE == ImuType::MPU9250_BMP850){
-		xTaskCreate(prvMpu9250TaskEntry,"mpubmp",1024,NULL,4,NULL);
+		xTaskCreate(prvMpu9250TaskEntry,"mpubmp",1024,NULL,4,&(Gains::GetInstance()->insHandle));
 	}
 	if(GPS_TYPE == GpsType::USART_GPS){
-		xTaskCreate(&USART2Class::prvTxTask,"gpstx",512,USART2,3,NULL);
-		xTaskCreate(&USART2Class::prvRxTask,"gpsrx",1024,USART2,3,NULL);
+		xTaskCreate(&USART2Class::prvTxTask,"gpstx",512,USART2,3,&(Gains::GetInstance()->gpsHandleTx));
+		xTaskCreate(&USART2Class::prvRxTask,"gpsrx",1024,USART2,3,&(Gains::GetInstance()->gpsHandleRx));
 	}else if(GPS_TYPE == GpsType::DUMMY_GPS){
-		xTaskCreate(&DummyGps::prvDummyGpsTask,"dmygps",512,NULL,3,NULL);
+		xTaskCreate(&DummyGps::prvDummyGpsTask,"dmygps",512,NULL,3,&(Gains::GetInstance()->gpsHandleRx));
 	}
 }

@@ -8,7 +8,11 @@
 #ifndef CMDSERVO_H_
 #define CMDSERVO_H_
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include "Driver/USART1.h"
+
 
 class CmdServo {
 	// Singleton pattern definition
@@ -25,7 +29,7 @@ public:
 
 	// Class definition
 private:
-	
+	TaskHandle_t u1txHandle;
 	
 	void sendShortPacket(unsigned char id,unsigned char flag,unsigned char address,unsigned char length,unsigned char* data);
 public:

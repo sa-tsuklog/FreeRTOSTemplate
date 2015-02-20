@@ -29,7 +29,8 @@ private:
 	static const float MPSPS_PER_LSB	=9.8*16.0/(65536/2);
 	static const float RPS_PER_LSB		=500*3.1415/180/(65536/2);
 	static const float UT_PER_LSB		=4800.0/(65536/2);
-	static const float DEG_PER_LSB      =1.0;
+	static const float DEG_PER_LSB      =1.0/333.87;
+	static const float DEG_TEMP_OFFSET      =21.0;
 	float cmpsGain[3];
 	
 	static const int SAMPLES_FOR_CALIBRATION = 500;

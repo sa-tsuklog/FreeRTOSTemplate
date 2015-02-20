@@ -270,7 +270,7 @@ void gliderAuto(){
 	
 	float pitch,roll,heading;
 	float rollCmd,pitchCmd,yawCmd;
-	ImuData imuData=ImuData(0,0,0,0,0,0,0,0,0,0,0,0);
+	ImuData imuData=ImuData(0,0,0,0,0,0,0,0,0,0,0,0,0);
 	
 	float pGain[3];
 	float dGain[3];

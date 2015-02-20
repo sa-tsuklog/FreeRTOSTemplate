@@ -115,7 +115,5 @@ void CmdServo::flashFinalize(unsigned char id){
 }
 
 void CmdServo::initCmdServo(){
-	xTaskCreate(USART1Class::prvTxTask,"u1tx",512,NULL,2,NULL);
-	
-	CmdServo::GetInstance();
+	xTaskCreate(USART1Class::prvTxTask,"u1tx",512,NULL,2,&(CmdServo::GetInstance()->u1txHandle));
 }

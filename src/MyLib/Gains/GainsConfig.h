@@ -36,6 +36,7 @@ public:
 		DEBUG,
 		INS,
 		QUATERNION,
+		GPAIO,
 	};
 };
 

@@ -14,6 +14,7 @@ Seeker::Seeker() :
 m_intensity(0),
 m_filter(1.591/(15.625/2),100){
 	m_adDataQueue = xQueueCreate(256,sizeof(AdData));
+	vQueueAddToRegistry(m_adDataQueue,"seekerAd");
 	m_seekerDataMutex = xSemaphoreCreateMutex();
 
 	if(m_adDataQueue == NULL || m_seekerDataMutex == NULL){
