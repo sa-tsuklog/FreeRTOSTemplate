@@ -192,7 +192,7 @@ void SPI2Class::init(){
 	dma_nvicdef.NVIC_IRQChannelSubPriority = 0x00;
 	dma_nvicdef.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&dma_nvicdef);
-	NVIC_SetPriority(DMA2_Stream6_IRQn,0x08);
+	//NVIC_SetPriority(DMA2_Stream6_IRQn,0x08);
 	
 	//TIM
 	NVIC_InitTypeDef timitdef;
@@ -378,7 +378,6 @@ unsigned short SPI2Class::read16(unsigned char address){
 
 void SPI2Class::myEXTI6_IRQHandler(void)
 {
-	EXTI_ClearITPendingBit(EXTI_Line6);
 	SPI2Class::GetInstance()->timerStart();
 }
 

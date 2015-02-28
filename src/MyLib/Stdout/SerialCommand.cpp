@@ -151,6 +151,7 @@ void SerialCommand::printHelp(){
 	int i=0;
 	while(commandList[i].command != NULL){
 		printf("%s\r\n",commandList[i].command);
+		vTaskDelay(1);
 		i++;
 	}
 }

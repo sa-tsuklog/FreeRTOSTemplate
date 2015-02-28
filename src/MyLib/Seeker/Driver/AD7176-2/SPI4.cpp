@@ -12,7 +12,7 @@
 #include "SPI4.h"
 #include "task.h"
 #include "queue.h"
-
+#include "MyLib/Util/Util.h"
 //not checked
 
 SPI4Class::SPI4Class(){
@@ -23,11 +23,19 @@ SPI4Class::SPI4Class(){
 		while(1){}
 	}
 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
 
+	GPIO_InitTypeDef pe2def;
+	GPIO_StructInit(&pe2def);
+	pe2def.GPIO_Pin = GPIO_Pin_2;
+	pe2def.GPIO_Mode = GPIO_Mode_AF;
+	pe2def.GPIO_OType = GPIO_OType_PP;
+	pe2def.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	pe2def.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOE,&pe2def);
+	
 	GPIO_InitTypeDef pe4def;
-
 	GPIO_StructInit(&pe4def);
 	pe4def.GPIO_Pin = GPIO_Pin_4;
 	pe4def.GPIO_Mode = GPIO_Mode_OUT;
@@ -37,7 +45,6 @@ SPI4Class::SPI4Class(){
 	GPIO_Init(GPIOE,&pe4def);
 
 	GPIO_InitTypeDef pe5def;
-
 	GPIO_StructInit(&pe5def);
 	pe5def.GPIO_Pin = GPIO_Pin_5;
 	pe5def.GPIO_Mode = GPIO_Mode_AF;
@@ -47,52 +54,43 @@ SPI4Class::SPI4Class(){
 	GPIO_Init(GPIOE,&pe5def);
 
 	GPIO_InitTypeDef pe6def;
-
 	GPIO_StructInit(&pe6def);
 	pe6def.GPIO_Pin = GPIO_Pin_6;
 	pe6def.GPIO_Mode = GPIO_Mode_AF;
 	pe6def.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	pe6def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOE,&pe6def);
+	GPIO_Init(GPIOE,&pe6def);	
 
-	GPIO_InitTypeDef pe2def;
-
-	GPIO_StructInit(&pe2def);
-	pe2def.GPIO_Pin = GPIO_Pin_2;
-	pe2def.GPIO_Mode = GPIO_Mode_AF;
-	pe2def.GPIO_OType = GPIO_OType_PP;
-	pe2def.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	pe2def.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOE,&pe2def);
-
-	GPIO_WriteBit(GPIOE,GPIO_Pin_4,Bit_SET);
+	GPIO_SetBits(GPIOE,GPIO_Pin_4);
 	GPIO_PinAFConfig(GPIOE,GPIO_PinSource2,GPIO_AF_SPI4);
 	GPIO_PinAFConfig(GPIOE,GPIO_PinSource5,GPIO_AF_SPI4);
 	GPIO_PinAFConfig(GPIOE,GPIO_PinSource6,GPIO_AF_SPI4);
 	
+	
 
-
+	///////////////////////////
+	//SPI Setting
+	///////////////////////////
 	SPI_InitTypeDef spi4;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI4,ENABLE);
-	spi4.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
+	spi4.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
 	spi4.SPI_CPHA = SPI_CPHA_2Edge;
 	spi4.SPI_CPOL = SPI_CPOL_High;
 	spi4.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
 	spi4.SPI_DataSize = SPI_DataSize_8b;
 	spi4.SPI_FirstBit = SPI_FirstBit_MSB;
 	spi4.SPI_Mode = SPI_Mode_Master;
-	spi4.SPI_NSS = SPI_NSS_Soft;
+	spi4.SPI_NSS = SPI_NSS_Hard;
 
 	SPI_Init(SPI4,&spi4);
 
 	SPI_SSOutputCmd(SPI4,ENABLE);
-	SPI_NSSInternalSoftwareConfig(SPI4,SPI_NSSInternalSoft_Reset);
-	SPI_I2S_DMACmd(SPI4,SPI_DMAReq_Rx|SPI_DMAReq_Tx,ENABLE);
+	SPI_NSSInternalSoftwareConfig(SPI4,SPI_NSSInternalSoft_Set);
+	SPI_I2S_DMACmd(SPI4,SPI_DMAReq_Tx|SPI_DMAReq_Rx,ENABLE);
 	SPI_Cmd(SPI4,ENABLE);
 
-
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
+	
 
 	DMA_InitTypeDef dma2_0;
 	DMA_StructInit(&dma2_0);
@@ -106,12 +104,9 @@ SPI4Class::SPI4Class(){
 	dma2_0.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
 	dma2_0.DMA_Mode = DMA_Mode_Normal;
 	dma2_0.DMA_Priority = DMA_Priority_Medium;
-
 	dma2_0.DMA_Channel = DMA_Channel_4;
 	DMA_Init(DMA2_Stream0,&dma2_0);
-
-	DMA_ITConfig(DMA1_Stream3,DMA_IT_TC,ENABLE);
-
+	DMA_Cmd(DMA2_Stream0,ENABLE);
 
 	DMA_InitTypeDef dma2_1;
 	DMA_StructInit(&dma2_1);
@@ -128,6 +123,10 @@ SPI4Class::SPI4Class(){
 
 	dma2_1.DMA_Channel = DMA_Channel_4;
 	DMA_Init(DMA2_Stream1,&dma2_1);
+	DMA_Cmd(DMA2_Stream1,DISABLE);
+	
+	
+	DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,ENABLE);
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOE,EXTI_PinSource5);
@@ -140,26 +139,28 @@ SPI4Class::SPI4Class(){
 	exti5def.EXTI_Trigger = EXTI_Trigger_Falling;
 	exti5def.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&exti5def);
-
+	disableEXTI5();
+	
 	NVIC_InitTypeDef exti_nvicdef;
 	exti_nvicdef.NVIC_IRQChannel  = EXTI9_5_IRQn;
 	exti_nvicdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
 	exti_nvicdef.NVIC_IRQChannelSubPriority = 0xFF;
 	exti_nvicdef.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&exti_nvicdef);
-
-	NVIC_DisableIRQ(EXTI9_5_IRQn);
+	NVIC_SetPriority(EXTI9_5_IRQn,0xFF);
 
 	NVIC_InitTypeDef dma_nvicdef;
-	dma_nvicdef.NVIC_IRQChannel  = DMA2_Stream0_IRQn;
+	dma_nvicdef.NVIC_IRQChannel  = DMA2_Stream1_IRQn;
 	dma_nvicdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
 	dma_nvicdef.NVIC_IRQChannelSubPriority = 0xFF;
 	dma_nvicdef.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&dma_nvicdef);
+	
+	NVIC_SetPriority(DMA2_Stream1_IRQn,0xFF);
 }
 
 int SPI4Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength){
-	GPIO_WriteBit(GPIOE,GPIO_Pin_4,Bit_RESET);
+	GPIO_ResetBits(GPIOE,GPIO_Pin_4);
 
 	DMA_Cmd(DMA2_Stream0,DISABLE);
 	DMA_Cmd(DMA2_Stream1,DISABLE);
@@ -169,21 +170,20 @@ int SPI4Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int
 	}
 	DMA_SetCurrDataCounter(DMA2_Stream0,byteRwLength);
 	DMA_SetCurrDataCounter(DMA2_Stream1,byteRwLength);
+	DMA_ClearITPendingBit(DMA2_Stream0,DMA_IT_TCIF0);
 	DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
-
 
 	DMA_Cmd(DMA2_Stream0,ENABLE);
 	DMA_Cmd(DMA2_Stream1,ENABLE);
+	
 
 	xSemaphoreTake(m_rwSem,portMAX_DELAY);
 
-	GPIO_WriteBit(GPIOE,GPIO_Pin_4,Bit_SET);
+	GPIO_SetBits(GPIOE,GPIO_Pin_4);
 
 	for(int i=0;i<byteRwLength && i < SPI_BUFFERSIZE;i++){
 		outReadData[i] = m_rxBuf[i];
 	}
-
-	GPIO_WriteBit(GPIOE,GPIO_Pin_4,Bit_RESET);
 
 	if(byteRwLength < SPI_BUFFERSIZE){
 		return byteRwLength;
@@ -192,26 +192,38 @@ int SPI4Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int
 	}
 }
 
-void SPI4Class::WaitForDataReady(){
+void SPI4Class::enableEXTI5(){
+	EXTI->IMR |= EXTI_Line5;
+}
+
+void SPI4Class::disableEXTI5(){
+	EXTI->IMR &= ~EXTI_Line5;
+}
+
+void SPI4Class::waitForDataReady(){
 	EXTI_ClearITPendingBit(EXTI_Line5);
-	NVIC_EnableIRQ(EXTI9_5_IRQn);
+	enableEXTI5();
+	GPIO_ResetBits(GPIOE,GPIO_Pin_4);
 	if(m_dataReadySem!=NULL){
 		xSemaphoreTake(m_dataReadySem,portMAX_DELAY);
 	}
+	disableEXTI5();
 }
 
 void SPI4Class::myEXTI5_IRQHandler(){
 	if(m_dataReadySem!=NULL){
-		xSemaphoreGiveFromISR(m_dataReadySem,(BaseType_t *)pdTRUE);
+		BaseType_t isHigherPriorityWoken;
+		xSemaphoreGiveFromISR(m_dataReadySem,&isHigherPriorityWoken);
+		portEND_SWITCHING_ISR(isHigherPriorityWoken);
 	}
-	NVIC_DisableIRQ(EXTI9_5_IRQn);
-	portEND_SWITCHING_ISR(pdTRUE);
+	
 }
 
-void SPI4Class::myDMA2_Stream0_IRQHandler(){
-	if(DMA_GetITStatus(DMA2_Stream0,DMA_IT_TCIF0)!=RESET){
-		DMA_ClearITPendingBit(DMA2_Stream0,DMA_IT_TCIF0);
-		xSemaphoreGiveFromISR(m_rwSem,(BaseType_t *)pdTRUE);
-		portEND_SWITCHING_ISR(pdTRUE);
+void SPI4Class::myDMA2_Stream1_IRQHandler(){
+	if(DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF1)!=RESET){
+		BaseType_t isHigherPriorityWoken;
+		DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
+		xSemaphoreGiveFromISR(m_rwSem,&isHigherPriorityWoken);
+		portEND_SWITCHING_ISR(isHigherPriorityWoken);
 	}
 }

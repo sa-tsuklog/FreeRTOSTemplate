@@ -8,7 +8,9 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver \
 		    src/MyLib/CmdServo src/MyLibCmdServo/Driver \
 		    src/MyLib/Servo src/MyLib/Servo/Driver \
-		    src/MyLib/Propo src/MyLib/Propo/Driver 
+		    src/MyLib/Propo src/MyLib/Propo/Driver \
+		    src/MyLib/Seeker src/MyLib/Seeker/Driver/AD7176-2 \
+		    src/MyLib/SignalGenerator src/MyLib/SignalGenerator/Driver
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App src/App/TankControl
 ###
@@ -46,7 +48,6 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Include \
 					-I ./Libraries/CMSIS/Include \
 					-I ./Libraries/ff \
-					-I ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates \
 					-I $(TOOLDIR)../arm-none-eabi/include \
 					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
 					-I $(FREERTOS_DIR)/Demo/Common/include \

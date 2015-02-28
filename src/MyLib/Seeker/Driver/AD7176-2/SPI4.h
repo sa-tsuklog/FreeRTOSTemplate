@@ -24,11 +24,13 @@ private:
 	char m_rxBuf[SPI_BUFFERSIZE];
 	xSemaphoreHandle m_rwSem;
 	xSemaphoreHandle m_dataReadySem;
+	void enableEXTI5();
+	void disableEXTI5();
 public:
 	int ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength);
-	void WaitForDataReady();
+	void waitForDataReady();
 	void myEXTI5_IRQHandler();
-	void myDMA2_Stream0_IRQHandler();
+	void myDMA2_Stream1_IRQHandler();
 };
 
 #endif /* HALSPI4_H_ */

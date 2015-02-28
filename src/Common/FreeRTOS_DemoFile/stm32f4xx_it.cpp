@@ -28,6 +28,7 @@
 #include "semphr.h"
 #include "MyLib/Gains/Driver/Mpu9250/I2C2.h"
 #include "MyLib/Gains/Driver/Adis16488/SPI2_TIM8.h"
+#include "MyLib/Seeker/Driver/AD7176-2/SPI4.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -156,7 +157,11 @@ void SysTick_Handler(void)
 void EXTI9_5_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line6)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line6);
 		SPI2Class::myEXTI6_IRQHandler();
+	}else if(EXTI_GetITStatus(EXTI_Line5)!=RESET){
+		EXTI_ClearITPendingBit(EXTI_Line5);
+		SPI4Class::GetInstance()->myEXTI5_IRQHandler();
 	}
 }
 
@@ -213,6 +218,10 @@ void DMA1_Stream7_IRQHandler()
 //{
 //	
 //}
+void DMA2_Stream1_IRQHandler()
+{
+	SPI4Class::GetInstance()->myDMA2_Stream1_IRQHandler();
+}
 void DMA2_Stream7_IRQHandler()
 {
 }
@@ -233,6 +242,10 @@ void TIM5_IRQHandler(){
 	if(TIM_GetITStatus(TIM5,TIM_IT_CC2)!=RESET){
 		TIM_ClearITPendingBit(TIM5,TIM_IT_CC2);
 	}
+}
+
+void TIM6_DAC_IRQHandler(){
+	TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
 }
 
 #ifdef __cplusplus

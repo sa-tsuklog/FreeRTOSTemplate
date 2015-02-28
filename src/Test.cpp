@@ -32,6 +32,9 @@
 
 #include "MyLib/Propo/Propo.h"
 
+#include "MyLib/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
+#include "MyLib/SignalGenerator/Driver/DAC_TIM8.h"
+
 xQueueHandle controlParamsQueue=NULL;
 
 float radPitchCommand=0;
@@ -81,122 +84,7 @@ Quaternion calcCameraCommand(ControlParams* params){
 	return quatCommand;
 }
 
-void tank(){
-	radPitchCommand=0;
-	radHeadingCommand=0;
-	
-	//moter driver ch0, 1 must be active
-	
-	controlParamsQueue = xQueueCreate(1,sizeof(ControlParams));
-	ControlParams params = ControlParams(0,0,0,0,0,0,0,0,0,0);
-	MoterDriver::GetInstance();
-	MoterDriver::GetInstance()->setPower(0,0,1,0);
-	MoterDriver::GetInstance()->setPower(1,0,1,0);
-	Servo::GetInstance()->start();
-	vTaskDelay(MS_INITIAL_DELAY);
-	vTaskDelay(MS_INITIAL_DELAY);
-	
-	Servo::GetInstance()->setPos(0,1.0);
-	CmdServo::GetInstance()->setSlope(1,24,0);
-	CmdServo::GetInstance()->setSlope(1,24,1);
-	CmdServo::GetInstance()->setPunch(1,50);
-	
-	CmdServo::GetInstance()->on(1);
-	CmdServo::GetInstance()->on(2);
-	
-	
-	
-	float leftThrottle;
-	int leftDirection;
-	float rightThrottle;
-	int rightDirection;
-	int brake;
-	
-	int count =0;
-	
-	while(1){
-		xQueueReceive(controlParamsQueue,&params,portMAX_DELAY);
-		
-		
-		/////////////////////////////////////
-		// Throttle control
-		/////////////////////////////////////
-		leftThrottle = (128.0 - params.pitch)/128.0 + (params.roll-128.0)/256.0;
-		rightThrottle = (128.0 - params.pitch)/128.0 - (params.roll-128.0)/256.0;
-		
-		if(leftThrottle > 0.0){
-			leftDirection = 1;
-		}else{
-			leftDirection = 0;
-			leftThrottle = -leftThrottle;
-		}
-		
-		if(rightThrottle > 0.0){
-			rightDirection = 1;
-		}else{
-			rightDirection = 0;
-			rightThrottle = - rightThrottle;
-		}
-		
-		brake = 0;
-//		if(leftThrottle < 0.1 && rightThrottle < 0.1){
-//			brake = 1;
-//			leftThrottle = 1.0;
-//			rightThrottle = 1.0;
-//		}else{
-//			brake = 0;
-//		}
-		
-		MoterDriver::GetInstance()->setPower(0,leftThrottle,leftDirection,brake);
-		MoterDriver::GetInstance()->setPower(1,rightThrottle,rightDirection,brake);
-		
-		/////////////////////////////////////
-		// camera control
-		/////////////////////////////////////
-		int cameraStablize = (params.camMode&params.BIT_CAM_MODE_STABILIZE);
-		
-		float degCameraV;
-		float degCameraH;
-		
-		if(cameraStablize == 0){
-			degCameraH = params.cameraH/10.0;
-			degCameraV = params.cameraV/10.0;
-			
-			
-		}else{
-			float radCameraPitch,radCameraRoll,radCameraHeading;
-			
-			Quaternion cameraCommand = calcCameraCommand(&params);
-			
-			Quaternion attitude = Gains::GetInstance()->getAttitude();
-			//Quaternion attitude = Quaternion(1,0,0,0);
-			attitude.con()->mul(&cameraCommand);
-			
-			attitude.getRadPitchRollHeading(&radCameraPitch,&radCameraRoll,&radCameraHeading);
-			
-			degCameraV = radCameraPitch*180/M_PI;
-			degCameraH = radCameraHeading*180/M_PI;
-			
-		}
-		
-		//limit
-		if(degCameraV < -45.0){
-			degCameraV = -45.0;
-		}
-		
-		CmdServo::GetInstance()->on(1);
-		CmdServo::GetInstance()->on(2);
-		CmdServo::GetInstance()->setPos(1,degCameraH);
-		CmdServo::GetInstance()->setPos(2,degCameraV);
-		
-		count++;
-		if((count % 50) == 0){
-			printf("%d:alive\r\n",count);
-		}
-		
-		vTaskDelay(20);
-	}
-}
+
 void gliderHardKill(){
 	Servo* servo = Servo::GetInstance();
 	
@@ -316,8 +204,15 @@ void gliderAuto(){
 	}
 }
 
+void seeker(){
+	int i=0;
+	while(1){
+		vTaskDelay(1);
+	}
+}
+
 void prvTestTask(void* pvParamters){
-	tank();
+	seeker();
 	//glider();
 	//gliderAuto();
 }

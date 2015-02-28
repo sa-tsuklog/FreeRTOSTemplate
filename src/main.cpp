@@ -21,7 +21,8 @@
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
 #include "MyLib/CmdServo/CmdServo.h"
 #include "App/TankControl/TankControl.h"
-
+#include "MyLib/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
+#include "MyLib/SignalGenerator/Driver/DAC_TIM8.h"
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)と
  *  stm32F429           (Xtal = 12MHz)での要変更箇所
@@ -39,14 +40,10 @@ void prvTaskA(void *pvParameters){
 	vTaskDelay(100);
 	unsigned int previousIdleCount = 0;
 	while(1){
-		//GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-		//GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
+		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
 		//Util::GetInstance()->myFprintf(0,stdout,"idle:%d\r\n",idle_count-previousIdleCount);
-		//previousIdleCount = idle_count;
-		//vTaskDelay(100);
-		GPIO_SetBits(GPIOB,GPIO_Pin_8);
-		vTaskDelay(100);
-		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+		previousIdleCount = idle_count;
 		vTaskDelay(100);
 	}
 	
@@ -65,31 +62,22 @@ void LEDInit(void) {
 	
 	GPIO_SetBits(GPIOB,GPIO_Pin_8);
 }
-void vPortEnableVFP();
 
 int main(void) {
 	SystemInit();
 	LEDInit();
 	
+	
 	Util::initUtil();
-	//Stdout::initStdout();
+	Stdout::initStdout();
 	//Gains::initGains();
 	//Logger::initLogger();
 	//CmdServo::initCmdServo();
 	
-	//xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
+	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
 	//TankControl::initTankControl();
-	if(xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL) == pdTRUE){
-		GPIO_SetBits(GPIOB,GPIO_Pin_8);
-	}else{
-		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
-	}
-	if(xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL) == pdTRUE){
-		GPIO_SetBits(GPIOB,GPIO_Pin_8);
-	}else{
-		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
-	}
-	//xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL);
+	xTaskCreate(prvTaskA,"taskA",2048,NULL,2,NULL);
+	xTaskCreate(&Ad7176_2Seeker::prvAd7176_2TaskEntry,"seeker",2048,NULL,2,NULL);
 	
 	vTaskStartScheduler();
 	
