@@ -10,9 +10,12 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/Servo src/MyLib/Servo/Driver \
 		    src/MyLib/Propo src/MyLib/Propo/Driver \
 		    src/MyLib/Seeker src/MyLib/Seeker/Driver/AD7176-2 \
-		    src/MyLib/SignalGenerator src/MyLib/SignalGenerator/Driver
+		    src/MyLib/SignalGenerator src/MyLib/SignalGenerator/Driver \
+		    src/MyLib/CAN src/MyLib/CAN/Driver
+		    
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
-APPPATH = src/App src/App/TankControl
+APPPATH = src/App src/App/TankControl \
+			src/App/GliderControl src/App/GliderControl/ControlState
 ###
 
 SRCPATH = src $(OSPATH) $(MYLIBPATH) $(COMPATH) $(APPPATH)

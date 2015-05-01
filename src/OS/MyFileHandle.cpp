@@ -132,12 +132,22 @@ int myRead (struct _reent *r, int file, char * ptr, int len)
 
 int myLseek (struct _reent *r, int file, int ptr, int dir)
 {
-//	r = r;
-//	file = file;
-//	ptr = ptr;
-//	dir = dir;
-
-	return 0;
+	int offset;
+	if(dir == 0){
+		offset = ptr;
+	}else if(dir == 1){
+		offset = f_tell(&fileHandles[file-FILEHANDLE_OFFSET]);
+	}else if(dir == 2){
+		offset = f_size(&fileHandles[file-FILEHANDLE_OFFSET]);
+	}else{
+		return -1;
+	}
+	
+	if(f_lseek(&fileHandles[file-FILEHANDLE_OFFSET],offset) == FR_OK){
+		return offset;
+	}else{
+		return -1;
+	}
 }
 
 /***************************************************************************/

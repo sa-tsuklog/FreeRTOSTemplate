@@ -23,6 +23,8 @@
 #include "App/TankControl/TankControl.h"
 #include "MyLib/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
 #include "MyLib/SignalGenerator/Driver/DAC_TIM8.h"
+#include "MyLib/CAN/Driver/CAN1.h"
+#include "MyLib/CAN/CanBusMonitor.h"
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)と
  *  stm32F429           (Xtal = 12MHz)での要変更箇所
@@ -44,6 +46,9 @@ void prvTaskA(void *pvParameters){
 		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
 		//Util::GetInstance()->myFprintf(0,stdout,"idle:%d\r\n",idle_count-previousIdleCount);
 		previousIdleCount = idle_count;
+		
+		//CAN1Class::GetInstance()->send();
+		
 		vTaskDelay(100);
 	}
 	
@@ -67,17 +72,20 @@ int main(void) {
 	SystemInit();
 	LEDInit();
 	
+	//CAN1Class::GetInstance();
 	
+	Servo::GetInstance()->start();
 	Util::initUtil();
 	Stdout::initStdout();
-	//Gains::initGains();
+	Gains::initGains();
 	//Logger::initLogger();
 	//CmdServo::initCmdServo();
+	//CanBusMonitor::initCanBusMonitor();
 	
 	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
 	//TankControl::initTankControl();
 	xTaskCreate(prvTaskA,"taskA",2048,NULL,2,NULL);
-	xTaskCreate(&Ad7176_2Seeker::prvAd7176_2TaskEntry,"seeker",2048,NULL,2,NULL);
+	//xTaskCreate(&Ad7176_2Seeker::prvAd7176_2TaskEntry,"seeker",2048,NULL,2,NULL);
 	
 	vTaskStartScheduler();
 	

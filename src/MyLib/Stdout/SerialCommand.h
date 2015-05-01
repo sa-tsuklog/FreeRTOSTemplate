@@ -46,6 +46,9 @@ public:
 	static void resetGpsRef();
 	static void gpsInvalidate();
 	static void gpsValidate();
+	static void setWaypoint(char* arg);
+	static void clearWaypoints();
+	static void printWaypoints();
 	static void echoOn();
 	static void echoOff();
 	static void setServosTrim();

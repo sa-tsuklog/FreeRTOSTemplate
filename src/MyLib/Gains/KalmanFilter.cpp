@@ -301,12 +301,12 @@ void KalmanFilter::initializeQ(){
 void KalmanFilter::initializeR(){
     this->gpsErrorCovR = new Matrix(9,9,0);
     
-    gpsErrorCovR->nums[0][0] = powf(1.0,2);       //velocity x error
-	gpsErrorCovR->nums[1][1] = powf(1.0,2);       //velocity y error
-	gpsErrorCovR->nums[2][2] = powf(1.0,2);      //velocity z error
-	gpsErrorCovR->nums[3][3] = powf(10,2);      //position x error
-	gpsErrorCovR->nums[4][4] = powf(10,2);      //position y error
-	gpsErrorCovR->nums[5][5] = powf(10,2);      //position z error
+    gpsErrorCovR->nums[0][0] = powf(0.1,2);       //velocity x error
+	gpsErrorCovR->nums[1][1] = powf(0.1,2);       //velocity y error
+	gpsErrorCovR->nums[2][2] = powf(0.1,2);      //velocity z error
+	gpsErrorCovR->nums[3][3] = powf(2.0,2);      //position x error
+	gpsErrorCovR->nums[4][4] = powf(2.0,2);      //position y error
+	gpsErrorCovR->nums[5][5] = powf(2.0,2);      //position z error
 	gpsErrorCovR->nums[6][6] = powf(0.1,2);     //compass x error(when normalized)
 	gpsErrorCovR->nums[7][7] = powf(0.1,2);     //compass y error(when normalized)
 	gpsErrorCovR->nums[8][8] = powf(0.1,2);     //compass z error(when normalized)

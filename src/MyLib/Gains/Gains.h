@@ -73,7 +73,7 @@ private:
 	Quaternion mpsSpeed;
 	Quaternion mRelativePos;
 	
-	static const int MS_GPS_INITIAL_WAIT_TIME = 5000; //5sec
+	static const int MS_GPS_INITIAL_WAIT_TIME = portMAX_DELAY; //does not start until fix
 	static const int GPS_WATCHDOG_MAX = 1000; //ins predict 1000 times = about 10 sec 
 	int gpsWatchDog;
 	

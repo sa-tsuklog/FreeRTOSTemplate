@@ -141,7 +141,7 @@ void Ad7176_2Seeker::initAd7176(){
 	vTaskDelay(1);
 	write16(FILTCON3,0x0007);	//10ksps
 	vTaskDelay(1);
-	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4
+	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4 
 	vTaskDelay(1);
 //	write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
 //	vTaskDelay(1);
@@ -164,10 +164,10 @@ void Ad7176_2Seeker::ad7176_2Task(){
 		}
 		for(int i=0;i<TMP_BUFFER_SIZE;i++){
 			printf("%d\t%d\r\n",i,irBuf[i]);
-			vTaskDelay(10);
+			vTaskDelay(5);
 		}
 		
-		vTaskDelay(2000);
+		vTaskDelay(1000);
 	}
 
 }

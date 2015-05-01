@@ -70,32 +70,15 @@ void Mpu9250::startAclCalibration(){
 	xSemaphoreGive(aclCalibrationSem);
 }
 void Mpu9250::readMpu9250(){
-	unsigned char aclBuf[6];
-	unsigned char gyroBuf[6];
+	unsigned char buf[14];
+	unsigned char* aclBuf = buf + 0;
+	unsigned char* gyroBuf = buf + 8;
 	unsigned char cmpsBuf[6];
-	unsigned char tempBuf[2];
+	unsigned char* tempBuf = buf + 6;
 
 	I2C2Class* i2c2 = I2C2Class::getInstance();
-	i2c2->read(MPU9250ADDR,ACCEL_XOUT_H,aclBuf,1);
-	i2c2->read(MPU9250ADDR,ACCEL_XOUT_L,aclBuf+1,1);
-	i2c2->read(MPU9250ADDR,ACCEL_YOUT_H,aclBuf+2,1);
-	i2c2->read(MPU9250ADDR,ACCEL_YOUT_L,aclBuf+3,1);
-	i2c2->read(MPU9250ADDR,ACCEL_ZOUT_H,aclBuf+4,1);
-	i2c2->read(MPU9250ADDR,ACCEL_ZOUT_L,aclBuf+5,1);
-	i2c2->read(MPU9250ADDR,GYRO_XOUT_H,gyroBuf,1);
-	i2c2->read(MPU9250ADDR,GYRO_XOUT_L,gyroBuf+1,1);
-	i2c2->read(MPU9250ADDR,GYRO_YOUT_H,gyroBuf+2,1);
-	i2c2->read(MPU9250ADDR,GYRO_YOUT_L,gyroBuf+3,1);
-	i2c2->read(MPU9250ADDR,GYRO_ZOUT_H,gyroBuf+4,1);
-	i2c2->read(MPU9250ADDR,GYRO_ZOUT_L,gyroBuf+5,1);
-	i2c2->read(MPU9250ADDR,TEMP_OUT_H,tempBuf,1);
-	i2c2->read(MPU9250ADDR,TEMP_OUT_L,tempBuf+1,1);
-	i2c2->read(AK8963_ADDR,HXH,cmpsBuf,1);
-	i2c2->read(AK8963_ADDR,HXL,cmpsBuf+1,1);
-	i2c2->read(AK8963_ADDR,HYH,cmpsBuf+2,1);
-	i2c2->read(AK8963_ADDR,HYL,cmpsBuf+3,1);
-	i2c2->read(AK8963_ADDR,HZH,cmpsBuf+4,1);
-	i2c2->read(AK8963_ADDR,HZL,cmpsBuf+5,1);
+	i2c2->read(MPU9250ADDR,ACCEL_XOUT_H,buf,14);
+	i2c2->read(AK8963_ADDR,HXL,cmpsBuf,6);
 	I2C2Class::getInstance()->write1(AK8963_ADDR,CNTL1,0x01<<4 | 0x06);
 	
 	UserflashData* flash = &Util::GetInstance()->flashData;
@@ -110,9 +93,9 @@ void Mpu9250::readMpu9250(){
 	rpsRate[1] = (-RPS_PER_LSB * ((short)(gyroBuf[0]<<8|gyroBuf[1]))) - flash->mpuGyroBias[1] - degTemp * flash->mpuGyroTempCoefficient[1];
 	rpsRate[2] = ( RPS_PER_LSB * ((short)(gyroBuf[4]<<8|gyroBuf[5]))) - flash->mpuGyroBias[2] - degTemp * flash->mpuGyroTempCoefficient[2];
 	
-	uTCmps[0] = (+UT_PER_LSB * ((short)(cmpsBuf[0]<<8|cmpsBuf[1]))) - flash->mpuCmpsBias[0] - degTemp * flash->mpuCmpsTempCoefficient[0];
-	uTCmps[1] = (-UT_PER_LSB * ((short)(cmpsBuf[2]<<8|cmpsBuf[3]))) - flash->mpuCmpsBias[1] - degTemp * flash->mpuCmpsTempCoefficient[1];
-	uTCmps[2] = (-UT_PER_LSB * ((short)(cmpsBuf[4]<<8|cmpsBuf[5]))) - flash->mpuCmpsBias[2] - degTemp * flash->mpuCmpsTempCoefficient[2];
+	uTCmps[0] = (+UT_PER_LSB * ((short)(cmpsBuf[1]<<8|cmpsBuf[0]))) - flash->mpuCmpsBias[0] - degTemp * flash->mpuCmpsTempCoefficient[0];
+	uTCmps[1] = (-UT_PER_LSB * ((short)(cmpsBuf[3]<<8|cmpsBuf[2]))) - flash->mpuCmpsBias[1] - degTemp * flash->mpuCmpsTempCoefficient[1];
+	uTCmps[2] = (-UT_PER_LSB * ((short)(cmpsBuf[5]<<8|cmpsBuf[4]))) - flash->mpuCmpsBias[2] - degTemp * flash->mpuCmpsTempCoefficient[2];
 }
 
 void Mpu9250::prvMpu9250Task(void* pvParameters){

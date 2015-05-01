@@ -30,10 +30,10 @@ public:
 private:
 	TaskHandle_t tankControlHandle;
 	
-	const int DEAD_ZONE = 16;
-	const float FEED_FORWARD_COEF = 10.0;
-	const float DEG_CANNON_VERTICAL_OFFSET = 12.0;
-	const float DEG_CANNON_HORIZONTAL_OFFSET = 2.7;
+	static const int DEAD_ZONE = 16;
+	static const float FEED_FORWARD_COEF = 10.0;
+	static const float DEG_CANNON_VERTICAL_OFFSET = 12.0;
+	static const float DEG_CANNON_HORIZONTAL_OFFSET = 2.7;
 	
 	float radPitchCommand;
 	float radHeadingCommand;

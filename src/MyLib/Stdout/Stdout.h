@@ -26,8 +26,8 @@ public:
 
 	// Class definition
 private:
-	TaskHandle_t u3txHandle;
-	TaskHandle_t u3rxHandle;
+	TaskHandle_t u2txHandle;
+	TaskHandle_t u2rxHandle;
 public:
 	static void initStdout();	
 };

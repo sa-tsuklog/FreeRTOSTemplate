@@ -46,7 +46,7 @@ Gains::Gains(){
 	
 	gpsWatchDog = 0;
 	
-	printMode = GainsPrintMode::QUATERNION;
+	printMode = GainsPrintMode::GPAIO;
 }
 
 void Gains::prvGainsTask(void *pvParameters){
@@ -78,6 +78,7 @@ void Gains::gainsTask(void *pvParameters){
 	//  wait for initial data
 	/////////////////////////////////////
 	//gps initial data
+	printf("wait for gps data\r\n");
 	if(xQueueReceive(gpsQueue,&tmpGpsData,MS_GPS_INITIAL_WAIT_TIME) == pdTRUE){
 		gpsVel = tmpGpsData.mpsGpsSpeed;
 		gpsPos = tmpGpsData.mGpsRelativePos;
@@ -85,13 +86,17 @@ void Gains::gainsTask(void *pvParameters){
 		gpsVel = Quaternion(0,0,0,0);
 		gpsPos = Quaternion(0,0,0,0);
 	}
+	printf("gps data received\r\n");
 	
+	printf("wait for imu data\r\n");
 	//ins initial data
 	xQueueReceive(imuQueue,&tmpImuData,portMAX_DELAY);
 	xQueueReceive(imuQueue,&tmpImuData,portMAX_DELAY);
 	while(!tmpImuData.isCmpsValid){
 		xQueueReceive(imuQueue,&tmpImuData,portMAX_DELAY);
 	}
+	printf("imu data received\r\n");
+	
 	attitude = KalmanFilter::insToAttitude(&tmpImuData.mpspsAcl,&tmpImuData.uTCmps);
 	paRefPressure = tmpImuData.paPressure;
 	
@@ -225,13 +230,33 @@ void Gains::print(){
 			printf("$GIQAT,%.5f,%.5f,%.5f,%.5f\r\n",attitude.w,attitude.x,attitude.y,attitude.z);
 		}
 	}else if(printMode == GainsPrintMode::GPAIO){
-//		if(decimator % 10 == 0){
-//			float pitch,roll,heading;
-//			attitude.getRadPitchRollHeading(&pitch,&roll,&heading);
-//			//$GPAIO,Latitude,N/S,Longitude,E/W,height,HDOP,pitch,roll,yaw,SpeedX,SpeedY,SpeedZ,checksum
-//			printf("$GPAIO,000000.000,N,000000.000,E,0.0,1.0,%.2f,%.2f,%.2f,0.0,0.0,0.0,00\r\n",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);
-//		}
-	}else{
+		if(decimator % 10 == 0){
+			//$GPAIO,Latitude,N/S,Longitude,E/W,height,HDOP,pitch,roll,yaw,SpeedX,SpeedY,SpeedZ,GpsValid,checksum
+			float pitch,roll,heading;
+			attitude.getRadPitchRollHeading(&pitch,&roll,&heading);
+			
+			if(Util::GetInstance()->flashData.gpsType == GpsType::USART_GPS){
+				int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
+				int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);				
+				
+				float height =  mRelativePos.z;
+				int gpsValid;
+				if(gpsWatchDog > GPS_WATCHDOG_MAX - 12){//10Hz = 10times of imu update + margin.
+					gpsValid = 1;
+				}else{
+					gpsValid = 0;
+				}
+				
+				printf("$GPAIO,%d%.6f,N,%d%.6f,E,%.2f,1,",degX1MLattitude/1000000,60.0*(degX1MLattitude%1000000)/1000000,degX1MLongitude/1000000,60.0*(degX1MLongitude%1000000)/1000000,height);//lattitude,longitude,height,HDOP
+				printf("%.3f,%.3f,%.3f,",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);//pitch,roll,heading
+				printf("%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);//SpeedX,Y,Z
+				printf("%d,",gpsValid);//GpsValid
+				printf("00\r\n");//checksum
+			}else{
+				printf("$GPAIO,000000.000,N,000000.000,E,0.0,1.0,%.2f,%.2f,%.2f,0.0,0.0,0.0,0,00\r\n",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);
+			}
+		}
+	}else{//debug
 		if(decimator % 10 == 0){
 			float radHeading;
 			float radPitch;

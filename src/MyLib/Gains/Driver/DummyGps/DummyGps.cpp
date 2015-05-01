@@ -15,6 +15,7 @@
 #include "GeneralConfig.h"
 
 DummyGps::DummyGps(){
+	available = 1;
 }
 
 void DummyGps::dummyGpsTask(){
@@ -22,8 +23,10 @@ void DummyGps::dummyGpsTask(){
 	TickType_t lastWakeTime = xTaskGetTickCount();
 	GpsData gpsData = GpsData(0,0,0,0,0,0);
 	while(1){
-		gpsData = GpsData(0,0,0,0,0,0);
-		Gains::GetInstance()->appendGpsData(&gpsData);
+		if(available){
+			gpsData = GpsData(0,0,0,0,0,0);
+			Gains::GetInstance()->appendGpsData(&gpsData);
+		}
 		vTaskDelayUntil(&lastWakeTime,100);
 	}
 }

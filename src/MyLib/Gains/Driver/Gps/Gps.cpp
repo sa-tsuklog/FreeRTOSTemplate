@@ -17,7 +17,7 @@
 //TODO: getterをmutex使って安全にする。
 
 Gps::Gps(){
-	isRefValid = 0;
+	refValid = 0;
 	degX1MLattitudeRef = 0;
 	degX1MLongitudeRef = 0;
 	valid = 0;
@@ -42,12 +42,12 @@ void Gps::decodeNMEA(char* line){
 		decodeGPGGA(line);
 	}else if(strncmp(line,"$GPRMC,",7)==0){
 		decodeGPRMC(line);
-		if(!isRefValid && valid){
+		if(!refValid && valid){
 			setRefPosition();
 		}
 		
 		if(valid){
-			GpsData gpsData = GpsData(getM_RelativePosX(),getM_RelativePosY(),getRelativeHeight(),
+			GpsData gpsData = GpsData(degX1MtoM_RelativePosX(getDegX1mLattitude()),degX1MtoM_RelativePosY(getDegX1MLongitude()),getRelativeHeight(),
 					getMpsSpeedX(),getMpsSpeedY(),0);
 			Gains::GetInstance()->appendGpsData(&gpsData);
 		}
@@ -75,7 +75,7 @@ float Gps::getSec(){
 int Gps::getDate(){
 	return date;
 }
-int Gps::getDegX1MLatitude(){
+int Gps::getDegX1mLattitude(){
 	return degX1MLatitude;
 }
 int Gps::getDegX1MLongitude(){
@@ -97,14 +97,14 @@ void Gps::setRefPosition(){
 	degX1MLattitudeRef = degX1MLatitude;
 	degX1MLongitudeRef = degX1MLongitude;
 	heightRef = height;
-	isRefValid = 1;
+	refValid = 1;
 }
 
 void Gps::resetRefPosition(){
-	isRefValid = 0;
+	refValid = 0;
 }
 
-float Gps::getM_RelativePosX(){ //north/south
+float Gps::degX1MtoM_RelativePosX(float degX1MLatitude){ //north/south
 	int degX1MRelative = degX1MLatitude-degX1MLattitudeRef;
 
 	float degRelative = degX1MRelative*0.000001;
@@ -112,13 +112,14 @@ float Gps::getM_RelativePosX(){ //north/south
 	return degRelative * M_EARTH_RADIUS * M_PI /180.0;
 }
 
-float Gps::getM_RelativePosY(){ //west/east
+float Gps::degX1MtoM_RelativePosY(float degX1MLongitude){ //west/east
 	int degX1MRelative = degX1MLongitude-degX1MLongitudeRef;
 
 	float degRelative = degX1MRelative*0.000001;
 
 	return degRelative * M_EARTH_RADIUS * cosf(degX1MLattitudeRef*0.000001/180*M_PI) * M_PI /180.0;
 }
+
 float Gps::getRelativeHeight(){
 	return height-heightRef;
 }
@@ -327,4 +328,8 @@ float Gps::speedToDegDirection(float speedX,float speedY){
 	}
 	
 	return degDirection;
+}
+
+int Gps::isRefValid(){
+	return refValid;
 }

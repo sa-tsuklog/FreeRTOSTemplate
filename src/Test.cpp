@@ -204,7 +204,7 @@ void gliderAuto(){
 	}
 }
 
-void seeker(){
+void test(){
 	int i=0;
 	while(1){
 		vTaskDelay(1);
@@ -212,7 +212,7 @@ void seeker(){
 }
 
 void prvTestTask(void* pvParamters){
-	seeker();
+	test();
 	//glider();
 	//gliderAuto();
 }

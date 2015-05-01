@@ -272,8 +272,9 @@ void I2C2Class::myEV_IRQ_Write(){
 }
 
 void I2C2Class::myEV_IRQ_ReadN(){
-	//Util::GetInstance()->myFprintf(0,stdout,"readN\r\n");
+	
 	if(I2C_GetITStatus(I2C2,I2C_IT_SB)!=RESET){
+		//Util::GetInstance()->myFprintf(0,stdout,"readN_SB\r\n");
 		I2C_ClearITPendingBit(I2C2,I2C_IT_SB);
 		if(m_state == STATE_TRANSMIT_DEVADDRESS){
 			I2C_Send7bitAddress(I2C2,m_address,I2C_Direction_Transmitter);
@@ -284,10 +285,13 @@ void I2C2Class::myEV_IRQ_ReadN(){
 	}
 	if(I2C_GetITStatus(I2C2,I2C_IT_ADDR)!=RESET){
 		if(m_state == STATE_RECEIVE_DATA){
+			//Util::GetInstance()->myFprintf(0,stdout,"readN_ADDR_RECEIVE\r\n");
+			I2C_AcknowledgeConfig(I2C2,ENABLE);
 			I2C_DMALastTransferCmd(I2C2,ENABLE);
 			I2C_ReadRegister(I2C2,I2C_Register_SR1);
 			I2C_ReadRegister(I2C2,I2C_Register_SR2);
 		}else{
+			//Util::GetInstance()->myFprintf(0,stdout,"readN_ADDR_NOT_RECIVE\r\n");
 			I2C_DMALastTransferCmd(I2C2,DISABLE);
 			I2C_ReadRegister(I2C2,I2C_Register_SR1);
 			I2C_ReadRegister(I2C2,I2C_Register_SR2);
@@ -295,6 +299,7 @@ void I2C2Class::myEV_IRQ_ReadN(){
 
 	}
 	if(I2C_GetITStatus(I2C2,I2C_IT_BTF)!=RESET){
+		//Util::GetInstance()->myFprintf(0,stdout,"readN_BTF\r\n");
 		I2C_ReadRegister(I2C2,I2C_Register_DR);
 		m_state = STATE_RECEIVE_DATA;
 		I2C_GenerateSTART(I2C2,ENABLE);
@@ -401,6 +406,7 @@ void I2C2Class::myDMA1_Stream7_IRQHandler(){
 	if(DMA_GetITStatus(DMA1_Stream7,DMA_IT_TCIF7)!=RESET){
 		DMA_ClearITPendingBit(DMA1_Stream7,DMA_IT_TCIF7);
 	}
+	//Util::GetInstance()->myFprintf(0,stdout,"IRQ\r\n");
 }
 
 void I2C2Class::waitNewData(){

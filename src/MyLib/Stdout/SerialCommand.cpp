@@ -17,6 +17,10 @@
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
 #include "MyLib/Servo/Servo.h"
 #include "MyLib/CmdServo/CmdServo.h"
+#include "MyLib/Gains/Driver/DummyGps/DummyGps.h"
+
+#include "App/GliderControl/GliderControl.h"
+#include "App/GliderControl/GpsGuidance.h"
 
 #include "ControlParams.h"
 
@@ -190,6 +194,19 @@ void SerialCommand::resetImu(){
 void SerialCommand::resetGpsRef(){
 	Gps::GetInstance()->resetRefPosition();
 }
+
+void SerialCommand::setWaypoint(char* arg){
+	GliderControl::GetInstance()->getGpsGuidance()->appendWaypoint(arg+1);
+}
+
+void SerialCommand::clearWaypoints(){
+	GliderControl::GetInstance()->getGpsGuidance()->clearWaypoints();
+}
+
+void SerialCommand::printWaypoints(){
+	GliderControl::GetInstance()->getGpsGuidance()->printWaypoints();
+}
+
 /**
  * @brief コンソール入力時、入力した文字を標準出力に表示する
  */
@@ -594,11 +611,7 @@ void SerialCommand::startTrace(){
  * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd0(){
-	while(1){
-		char c = USART3Class::GetInstance()->getChar();
-		printf("getchar = %c\r\n",c);
-		vTaskDelay(1);
-	}
+	DummyGps::GetInstance()->available^=1;
 }
 /**
  * @brief デバッグ用コマンド1

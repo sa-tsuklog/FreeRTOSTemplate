@@ -16,6 +16,7 @@ public:
 private:
 	void dummyGpsTask();
 public:
+	int available;
 	static void prvDummyGpsTask(void* pvParameters);
 	
 };

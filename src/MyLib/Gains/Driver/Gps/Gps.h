@@ -29,7 +29,7 @@ private:
 	
 	static const float M_EARTH_RADIUS = 6371000;
 	
-	int isRefValid;
+	int refValid;
 	int degX1MLattitudeRef;
 	int degX1MLongitudeRef;
 	float heightRef;
@@ -63,7 +63,7 @@ public:
 	int getMin();
 	float getSec();
 	int getDate();
-	int getDegX1MLatitude();
+	int getDegX1mLattitude();
 	int getDegX1MLongitude();
 	float getMpsSpeed();
 	float getDegCourse();
@@ -71,8 +71,8 @@ public:
 	float getMpsSpeedY();
 	float getRelativeHeight();
 	
-	float getM_RelativePosX();
-	float getM_RelativePosY();
+	float degX1MtoM_RelativePosX(float degX1MLatitude);
+	float degX1MtoM_RelativePosY(float degX1MLongitude);
 	
 	int mPosXToDegX1M_Latitude(float mPosX);
 	int mPosYToDegX1M_Longitude(float mPosY);
@@ -82,6 +82,7 @@ public:
 	static float speedToDegDirection(float speedX,float speedY);
 	
 	void resetRefPosition();
+	int isRefValid();
 };
 
 
