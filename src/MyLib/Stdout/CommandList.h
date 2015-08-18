@@ -15,7 +15,7 @@
 #ifndef COMMANDLIST_H_
 #define COMMANDLIST_H_
 
-#define MAX_COMMAND_NUM 32
+#define MAX_COMMAND_NUM 64
 
 command_t commandList[MAX_COMMAND_NUM] = {
 		{"$USCTL",&SerialCommand::usctl},
@@ -26,11 +26,13 @@ command_t commandList[MAX_COMMAND_NUM] = {
 		{"resetGpsRef",&SerialCommand::resetGpsRef},
 		{"setWaypoint",&SerialCommand::setWaypoint},
 		{"clearWaypoints",&SerialCommand::clearWaypoints},
-		{"printWaypoints",&SerialCommand::printWaypoints},
+		{"confirmWaypoints",&SerialCommand::confirmWaypoints},
 		{"echoOn",&SerialCommand::echoOn},
 		{"echoOff",&SerialCommand::echoOff},
 		{"setServosTrim",&SerialCommand::setServosTrim},
 		{"setPidGain",&SerialCommand::setPidGain},
+		{"setFlightParameters",&SerialCommand::setFlightParameters},
+		{"showFlightParameters",&SerialCommand::showFlightParameters},
 		{"calibrateMpuGyro",&SerialCommand::calibrateMpuGyro},
 		{"setMpuAclBias",&SerialCommand::setMpuAclBias},
 		{"setMpuCmpsBias",&SerialCommand::setMpuCmpsBias},
@@ -38,8 +40,9 @@ command_t commandList[MAX_COMMAND_NUM] = {
 		{"setAdisCmpsBias",&SerialCommand::setAdisCmpsBias},
 		{"showGainsConfig",&SerialCommand::showGainsConfig},
 		{"setGainsConfig",&SerialCommand::setGainsConfig},
-		{"setGainsPrintMode",&SerialCommand::setGainsPrintMode},
+		{"setPrintMode",&SerialCommand::setPrintMode},
 		{"initializeUserFlash",&SerialCommand::initializeUserFlash},
+		{"showVoltage",&SerialCommand::showInputVoltage},
 		{"setCmdServoCh",&SerialCommand::setCmdServoCh},
 		{"printTaskList",&SerialCommand::printTaskList},
 		{"runTimeStats",&SerialCommand::runTimeStats},

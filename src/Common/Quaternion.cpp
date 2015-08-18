@@ -190,6 +190,10 @@ Quaternion* Quaternion::con() {
     return this;
 }
 
+float Quaternion::abs(){
+	return sqrt(this->w*this->w + this->x*this->x + this->y*this->y + this->z*this->z);
+}
+
 /**
  * @brief クォータニオンのノルム
  * 

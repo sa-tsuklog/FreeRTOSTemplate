@@ -29,6 +29,8 @@
 #include "MyLib/Gains/Driver/Mpu9250/I2C2.h"
 #include "MyLib/Gains/Driver/Adis16488/SPI2_TIM8.h"
 #include "MyLib/Seeker/Driver/AD7176-2/SPI4.h"
+#include "MyLib/Stdout/Stdout.h"
+#include "MyLib/SBusPropo/Driver/USART1Propo.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -194,6 +196,15 @@ void I2C2_ER_IRQHandler()
 	I2C2Class::getInstance()->myER_IRQHandler();
 }
 
+void USART1_IRQHandler()
+{
+	USART1ClassPropo::GetInstance()->myUSART1IRQHandler();
+}
+
+void USART3_IRQHandler(){
+	Stdout::GetInstance()->myUSART3IRQHandler();
+}
+
 void DMA1_Stream1_IRQHandler()
 {
 }
@@ -208,6 +219,7 @@ void DMA1_Stream3_IRQHandler()
 }
 void DMA1_Stream4_IRQHandler()
 {
+	Stdout::GetInstance()->myDma1_Stream4IRQHandler();
 }
 void DMA1_Stream7_IRQHandler()
 {

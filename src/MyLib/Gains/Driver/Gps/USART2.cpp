@@ -47,11 +47,6 @@ USART2Class::USART2Class(){
 
 	USART_Init(USART2,&usart2);
 
-	USART_DMACmd(USART2,USART_DMAReq_Tx|USART_DMAReq_Rx, ENABLE);
-
-	USART_Cmd(USART2, ENABLE);
-
-
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1,ENABLE);
 
 
@@ -93,6 +88,9 @@ USART2Class::USART2Class(){
 	for(int i=0;i<RX_BUFFERSIZE;i++){
 		m_rxBuf[i] = 0;
 	}
+	
+	USART_DMACmd(USART2,USART_DMAReq_Tx|USART_DMAReq_Rx, ENABLE);
+	USART_Cmd(USART2, ENABLE);
 }
 
 void USART2Class::Tx()

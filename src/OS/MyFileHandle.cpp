@@ -16,7 +16,7 @@
 #include "stm32f4xx.h"
 #include "ff.h"
 
-#include "MyLib/Stdout/Driver/USART3.h"
+#include "MyLib/Stdout/Stdout.h"
 #include "MyLib/Gains/Driver/Gps/USART2.h"
 #include "MyLib/CmdServo/Driver/USART1.h"
 #include "MyLib/Logger/Logger.h"
@@ -157,9 +157,9 @@ int myWrite (struct _reent *r, int file, char * ptr, int len)
 	unsigned int ret=0;
 	if(file == 1){//stdout
 		ret = len;
-		if(USART3Class::GetInstance()->GetQueue() != NULL){
+		if(Stdout::GetInstance()->getTxQueue() != NULL){
 			for(int i=0;i<len;i++){
-				if(xQueueSendToBackFromISR(USART3Class::GetInstance()->GetQueue(),&ptr[i],(BaseType_t *)pdFALSE)!=pdPASS){
+				if(xQueueSendToBackFromISR(Stdout::GetInstance()->getTxQueue(),&ptr[i],(BaseType_t *)pdFALSE)!=pdPASS){
 					ret--;
 				}else{
 					

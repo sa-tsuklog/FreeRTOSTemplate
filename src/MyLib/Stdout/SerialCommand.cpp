@@ -11,7 +11,7 @@
 #include "GeneralConfig.h"
 
 #include "MyLib/Logger/Logger.h"
-#include "MyLib/Stdout/Driver/USART3.h"
+#include "MyLib/Stdout/Stdout.h"
 #include "MyLib/Gains/Gains.h"
 #include "MyLib/Gains/Driver/Gps/Gps.h"
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
@@ -21,6 +21,7 @@
 
 #include "App/GliderControl/GliderControl.h"
 #include "App/GliderControl/GpsGuidance.h"
+#include "App/GliderControl/FlightParameters.h"
 
 #include "ControlParams.h"
 
@@ -49,7 +50,7 @@ void SerialCommand::serialCommandTask(void* pvParameters){
 	vTaskDelay(MS_INITIAL_DELAY);
 	char* line;
 	while(1){
-		line = USART3Class::GetInstance()->readLine();
+		line = Stdout::GetInstance()->readLine();
 		handleSerialCommand(line);
 	}
 }
@@ -117,7 +118,8 @@ void SerialCommand::usctl(){
 			reserved,
 			camMode);
 	
-	TankControl::GetInstance()->setControlParms(&controlParams);
+	//TankControl::GetInstance()->setControlParms(&controlParams);
+	GliderControl::GetInstance()->setControlParams(&controlParams);
 }
 
 /**
@@ -155,7 +157,6 @@ void SerialCommand::printHelp(){
 	int i=0;
 	while(commandList[i].command != NULL){
 		printf("%s\r\n",commandList[i].command);
-		vTaskDelay(1);
 		i++;
 	}
 }
@@ -203,21 +204,86 @@ void SerialCommand::clearWaypoints(){
 	GliderControl::GetInstance()->getGpsGuidance()->clearWaypoints();
 }
 
-void SerialCommand::printWaypoints(){
-	GliderControl::GetInstance()->getGpsGuidance()->printWaypoints();
+void SerialCommand::confirmWaypoints(){
+	GliderControl::GetInstance()->getGpsGuidance()->confirmWaypoints();
 }
+
+void SerialCommand::readFloatParam(const char* message,float* ptr){
+	char* buf;
+	printf("%s, %.3f\t:",message,*ptr);
+	fflush(stdout);
+	buf = Stdout::GetInstance()->readLine();
+	printf("\r\n");
+	if(strlen(buf) != 0){
+		*ptr = atof(buf); 
+	}
+	printf("new value = %.3f\r\n",*ptr);
+}
+
+void SerialCommand::setFlightParameters(){
+	FlightParameters* params = &(Util::GetInstance()->flashData.flightParameters);
+	
+	readFloatParam("boost d gain, roll             \t",&(params->boostDGain[0]));
+	readFloatParam("boost d gain, pitch            \t",&(params->boostDGain[1]));
+	readFloatParam("boost d gain, yaw              \t",&(params->boostDGain[2]));
+	readFloatParam("glide angle[deg]               \t",&(params->degGlideAngle));
+	readFloatParam("glide p gain, roll             \t",&(params->glidePGain[0]));
+	readFloatParam("glide p gain, pitch            \t",&(params->glidePGain[1]));
+	readFloatParam("glide p gain, yaw              \t",&(params->glidePGain[2]));
+	readFloatParam("glide d gain, roll             \t",&(params->glideDGain[0]));
+	readFloatParam("glide d gain, roll             \t",&(params->glideDGain[1]));
+	readFloatParam("glide d gain, roll             \t",&(params->glideDGain[2]));
+	readFloatParam("distance to heading gain[deg/m]\t",&(params->degPerMHeadingGain));
+	readFloatParam("heading to roll gain[deg/deg]  \t",&(params->degPerDegHeadingToRollGain));
+	readFloatParam("roll command limit[deg]        \t",&(params->degRollCommandLimit));
+	
+	Util::GetInstance()->userflashFlush();
+}
+
+void SerialCommand::showFlightParameters(){
+	FlightParameters* params = &(Util::GetInstance()->flashData.flightParameters);
+	
+	printf("boost d gain, roll           \t:%.3f\r\n",(params->boostDGain[0]));
+	vTaskDelay(1);
+	printf("boost d gain, pitch          \t:%.3f\r\n",(params->boostDGain[1]));
+	vTaskDelay(1);
+	printf("boost d gain, yaw            \t:%.3f\r\n",(params->boostDGain[2]));
+	vTaskDelay(1);
+	printf("glide angle[deg]             \t:%.3f\r\n",(params->degGlideAngle));
+	vTaskDelay(1);
+	printf("glide p gain, roll           \t:%.3f\r\n",(params->glidePGain[0]));
+	vTaskDelay(1);
+	printf("glide p gain, pitch          \t:%.3f\r\n",(params->glidePGain[1]));
+	vTaskDelay(1);
+	printf("glide p gain, yaw            \t:%.3f\r\n",(params->glidePGain[2]));
+	vTaskDelay(1);
+	printf("glide d gain, roll           \t:%.3f\r\n",(params->glideDGain[0]));
+	vTaskDelay(1);
+	printf("glide d gain, roll           \t:%.3f\r\n",(params->glideDGain[1]));
+	vTaskDelay(1);
+	printf("glide d gain, roll           \t:%.3f\r\n",(params->glideDGain[2]));
+	vTaskDelay(1);
+	printf("heading gain[rad/m]          \t:%.3f\r\n",(params->degPerMHeadingGain));
+	vTaskDelay(1);
+	printf("heading to roll gain[rad/rad]\t:%.3f\r\n",(params->degPerDegHeadingToRollGain));
+	vTaskDelay(1);
+	printf("roll command limit[deg]      \t:%.3f\r\n",(params->degRollCommandLimit));
+	fflush(stdout);
+	vTaskDelay(1);
+}
+
 
 /**
  * @brief コンソール入力時、入力した文字を標準出力に表示する
  */
 void SerialCommand::echoOn(){
-	USART3Class::GetInstance()->setEcho(1);
+	Stdout::GetInstance()->setEcho(1);
 }
 /**
  * @brief コンソール入力時、入力した文字を標準出力に表示しない
  */
 void SerialCommand::echoOff(){
-	USART3Class::GetInstance()->setEcho(0);
+	Stdout::GetInstance()->setEcho(0);
 }
 /**
  * @brief サーボのトリム調整を行う
@@ -236,7 +302,7 @@ void SerialCommand::setServosTrim(){
 	for(int i=0;i<Servo::CH_NUM;i++){
 		printf("ch %d,%d\r\n",i,Util::GetInstance()->flashData.servoTrim[i]);
 		while(1){
-			char c = USART3Class::GetInstance()->getChar();
+			char c = Stdout::GetInstance()->getChar();
 			
 			if(c == 'u'){
 				Util::GetInstance()->flashData.servoTrim[i] += 20;
@@ -275,7 +341,7 @@ void SerialCommand::setPidGain(){
 		float f;
 		printf("p gain %d:",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString) != 0){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.pGain[i] = f;
@@ -286,7 +352,7 @@ void SerialCommand::setPidGain(){
 		float f;
 		printf("i gain %d:",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString) != 0){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.iGain[i] = f;
@@ -297,7 +363,7 @@ void SerialCommand::setPidGain(){
 		float f;
 		printf("d gain %d:",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString) != 0){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.dGain[i] = f;
@@ -334,7 +400,7 @@ void SerialCommand::setMpuAclBias(){
 		float f;
 		printf("%d th axis:\r\n",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString)!=0){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.mpuAclBias[i] = f;
@@ -358,7 +424,7 @@ void SerialCommand::setMpuCmpsBias(){
 		float f;
 		printf("%d th axis:\r\n",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString)){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.mpuCmpsBias[i] = f;
@@ -382,7 +448,7 @@ void SerialCommand::setMpuTempCoeff(){
 		float f;
 		printf("acl %d th axis:\r\n",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString)){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.mpuAclTempCoefficient[i] = f;
@@ -394,7 +460,7 @@ void SerialCommand::setMpuTempCoeff(){
 		float f;
 		printf("gyro %d th axis:\r\n",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString)){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.mpuGyroTempCoefficient[i] = f;
@@ -406,7 +472,7 @@ void SerialCommand::setMpuTempCoeff(){
 		float f;
 		printf("cmps %d th axis:\r\n",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString)){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.mpuCmpsTempCoefficient[i] = f;
@@ -431,7 +497,7 @@ void SerialCommand::setAdisCmpsBias(){
 		float f;
 		printf("%d th axis:\r\n",i);
 		fflush(stdout);
-		char* biasString = USART3Class::GetInstance()->readLine();
+		char* biasString = Stdout::GetInstance()->readLine();
 		if(strlen(biasString)){
 			f = atof(biasString);
 			Util::GetInstance()->flashData.adisCmpsBias[i] = f;
@@ -452,7 +518,7 @@ void SerialCommand::showGainsConfig(){
 		printf("    ADIS16488\r\n");
 	}else if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250){
 		printf("    MPU-9250\r\n");
-	}else if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250){
+	}else if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250_BMP850){
 		printf("    MPU-9250 + BMP085\r\n");
 	}else{
 		printf("    invalid value\r\n");
@@ -483,7 +549,7 @@ void SerialCommand::setGainsConfig(){
 	printf("    %d:MPU-9250 + BMP085\r\n",ImuType::MPU9250_BMP850);
 	printf(">>");
 	fflush(stdout);
-	line = USART3Class::GetInstance()->readLine();
+	line = Stdout::GetInstance()->readLine();
 	
 	if(line[0]-'0' == ImuType::ADIS16488){
 		//printf("ADIS16488 selected\r\n");
@@ -491,7 +557,7 @@ void SerialCommand::setGainsConfig(){
 	}else if(line[0]-'0' == ImuType::MPU9250){
 		//printf("MPU-9250 selected\r\n");
 		Util::GetInstance()->flashData.imuType = ImuType::MPU9250;
-	}else if(line[0]-'0' == ImuType::MPU9250){
+	}else if(line[0]-'0' == ImuType::MPU9250_BMP850){
 		//printf("MPU-9250 + BMP085 selected\r\n");
 		Util::GetInstance()->flashData.imuType = ImuType::MPU9250_BMP850;
 	}else if(line[0] == 0){
@@ -505,7 +571,7 @@ void SerialCommand::setGainsConfig(){
 	printf("    %d:DUMMY GPS\r\n",GpsType::DUMMY_GPS);
 	printf(">>");
 	fflush(stdout);
-	line = USART3Class::GetInstance()->readLine();
+	line = Stdout::GetInstance()->readLine();
 	
 	if(line[0]-'0' == GpsType::USART_GPS){
 		//printf("USART GPS selected\r\n");
@@ -524,7 +590,7 @@ void SerialCommand::setGainsConfig(){
 	
 }
 
-void SerialCommand::setGainsPrintMode(char* arg){
+void SerialCommand::setPrintMode(char* arg){
 	if(arg[0] == 0){
 		return;
 	}
@@ -532,22 +598,35 @@ void SerialCommand::setGainsPrintMode(char* arg){
 	
 	if(strncmp(arg,"none",4)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::NONE);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 	}else if(strncmp(arg,"maritime",8)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::MARITIME);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 	}else if(strncmp(arg,"eframe",6)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::E_FRAME);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 	}else if(strncmp(arg,"ins",3)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::INS);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 	}else if(strncmp(arg,"quat",4)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::QUATERNION);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 	}else if(strncmp(arg,"gpaio",5)==0){
-		Gains::GetInstance()->setPrintType(GainsPrintMode::GPAIO);
+		Gains::GetInstance()->setPrintType(GainsPrintMode::NONE);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::GPAIO);
 	}else if(strncmp(arg,"debug",5)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::DEBUG);
+		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 	}else{
-		printf("usage: setGainsPrintMode none|maritime|eframe|ins|quat|gpaio|debug\r\n");
+		printf("usage: setPrintMode none|maritime|eframe|ins|quat|gpaio|debug\r\n");
 	}
 }
+
+void SerialCommand::showInputVoltage(){
+	float voltage = Util::GetInstance()->getVoltInputVoltage();
+	printf("%f [V]\r\n",voltage);
+}
+
 
 void SerialCommand::initializeUserFlash(){
 	Util::GetInstance()->flashData.imuType = ImuType::MPU9250;
@@ -568,11 +647,11 @@ void SerialCommand::setCmdServoCh(){
 	
 	printf("old channel:");
 	fflush(stdout);
-	char* line = USART3Class::GetInstance()->readLine();
+	char* line = Stdout::GetInstance()->readLine();
 	oldCh = atoi(line);
 	printf("new channel:");
 	fflush(stdout);
-	line = USART3Class::GetInstance()->readLine();
+	line = Stdout::GetInstance()->readLine();
 	newCh = atoi(line);
 	
 	printf("change ch %d to ch %d\r\n",oldCh,newCh);
@@ -611,7 +690,9 @@ void SerialCommand::startTrace(){
  * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd0(){
-	DummyGps::GetInstance()->available^=1;
+	int testNumber = atoi(SerialCommand::GetInstance()->getArgs());
+	printf("testNumber set to %d\r\n",testNumber);
+	GliderControl::GetInstance()->setTestNumer(testNumber);
 }
 /**
  * @brief デバッグ用コマンド1
@@ -619,7 +700,6 @@ void SerialCommand::testCmd0(){
  * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd1(){
-	
 }
 /**
  * @brief デバッグ用コマンド2
@@ -627,7 +707,6 @@ void SerialCommand::testCmd1(){
  * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd2(){
-	
 }
 #ifdef __cplusplus
 }

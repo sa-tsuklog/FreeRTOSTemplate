@@ -10,6 +10,9 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
+
+#include "IoBaseType.h"
 
 class Stdout {
 	// Singleton pattern definition
@@ -26,10 +29,21 @@ public:
 
 	// Class definition
 private:
-	TaskHandle_t u2txHandle;
-	TaskHandle_t u2rxHandle;
+	IoBaseType* io;
+	
+	TaskHandle_t u3txHandle;
+	TaskHandle_t u3rxHandle;
+	TaskHandle_t cmdHandle;
 public:
+	
+	char* readLine();
+	char getChar();
+	xQueueHandle getTxQueue();
+	void setEcho(int newValue);
 	static void initStdout();	
+	
+	void myUSART3IRQHandler();
+	void myDma1_Stream4IRQHandler();
 };
 
 

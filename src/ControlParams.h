@@ -42,7 +42,15 @@ public:
 	unsigned char reserved;
 	unsigned char camMode;
 	
+	static const int BIT_CONTROL_MODE = 0x30;
+	static const int BIT_EMERGENCY = 0x80;
+	static const int CONTROL_STATE_RESET = 0x08;
+	
 	static const int BIT_CAM_MODE_STABILIZE = 0xC0;
+	
+	static const int CONTROL_MODE_NORMAL = 0x00 & BIT_CONTROL_MODE;
+	static const int CONTROL_MODE_MANUAL = 0x10 & BIT_CONTROL_MODE;
+	static const int CONTROL_MODE_PITCH_HEADING_HOLD = 0x20 & BIT_CONTROL_MODE;
 };
 
 #endif /* CONTROLPARAMS_H_ */

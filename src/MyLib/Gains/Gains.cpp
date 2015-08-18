@@ -13,8 +13,8 @@
 #include "GainsConfig.h"
 #include "Gains.h"
 #include "KalmanFilter.h"
-#include "stdio.h"
-#include "math.h"
+#include <stdio.h>
+#include <math.h>
 
 #include "Driver/Gps/Gps.h"
 #include "Driver/Adis16488/Adis16488.hpp"
@@ -22,6 +22,8 @@
 #include "Driver/Mpu9250/MPU9250.h"
 #include "Driver/DummyGps/DummyGps.h"
 
+#include "App/GliderControl/GliderControl.h"
+#include "App/GliderControl/GpsGuidance.h"
 
 #include "MyLib/Util/Util.h"
 
@@ -44,9 +46,10 @@ Gains::Gains(){
 	
 	dataUpdateMutex = xSemaphoreCreateMutex();
 	
+	gpsValid = 0;
 	gpsWatchDog = 0;
 	
-	printMode = GainsPrintMode::GPAIO;
+	printMode = GainsPrintMode::NONE;
 }
 
 void Gains::prvGainsTask(void *pvParameters){
@@ -61,6 +64,7 @@ void Gains::gainsTask(void *pvParameters){
 	int predictEndTime;
 	int updateStartTime;
 	int updateEndTime;
+	int highGCounter = 0;
 	
 	ImuData tmpImuData = ImuData(0,0,0,0,0,0,0,0,0,0,0,0,0);
 	GpsData tmpGpsData = GpsData(0,0,0,0,0,0);
@@ -71,6 +75,7 @@ void Gains::gainsTask(void *pvParameters){
 	float paRefPressure;
 	float mHeight;
 	float mPreviousHeight;
+	float mpsZSpeedFromPressure=0;
 	
 	vTaskDelay(MS_INITIAL_DELAY);
 	
@@ -99,12 +104,15 @@ void Gains::gainsTask(void *pvParameters){
 	
 	attitude = KalmanFilter::insToAttitude(&tmpImuData.mpspsAcl,&tmpImuData.uTCmps);
 	paRefPressure = tmpImuData.paPressure;
+	mHeight = 0;
 	
 	//initialize kalman filter
 	float secTimeStep;
 	if(IMU_TYPE == ImuType::ADIS16488){
 		secTimeStep = 1.0f/102.5f;
 	}else if(IMU_TYPE == ImuType::MPU9250 || IMU_TYPE == ImuType::MPU9250_BMP850){
+		secTimeStep = 1.0f/100.0f;
+	}else{
 		secTimeStep = 1.0f/100.0f;
 	}
 	kf = new KalmanFilter(secTimeStep,&gpsVel,&gpsPos,&attitude);
@@ -122,7 +130,24 @@ void Gains::gainsTask(void *pvParameters){
 		kf->predict(&tmpImuData.mpspsAcl,&tmpImuData.rpsRate);
 		
 		mPreviousHeight = mHeight;
-		mHeight = tmpImuData.paToRelativeHeight(paRefPressure,paRefPressure);
+		mHeight = tmpImuData.paToRelativeHeight(tmpImuData.paPressure,paRefPressure);
+		mpsZSpeedFromPressure = 0.95*mpsZSpeedFromPressure + 0.05*((mHeight-mPreviousHeight)/kf->secTimeStep); 
+		
+		
+		
+		/////////////////////////////////////
+		// GPS HIGH G COMPENSATION
+		/////////////////////////////////////
+		if(tmpImuData.mpspsAcl.abs() > MPSPS_GPS_G_LIMIT){
+			highGCounter = SEC_GPS_HIGH_G_RECOVERY_TIME/secTimeStep;
+			kf->setRLowAccuracy();
+		}
+		if(highGCounter == 1){
+			kf->setRHighAccuracy();
+		}
+		if(highGCounter != 0){
+			highGCounter--;
+		}
 		
 		/////////////////////////////////////
 		// update
@@ -136,13 +161,13 @@ void Gains::gainsTask(void *pvParameters){
 			gpsPos = tmpGpsData.mGpsRelativePos;
 			
 			if(IMU_TYPE == ImuType::ADIS16488 || IMU_TYPE == ImuType::MPU9250_BMP850){
-				gpsVel.z = (mHeight-mPreviousHeight)/kf->secTimeStep;
+				gpsVel.z = mpsZSpeedFromPressure;
 				gpsPos.z = mHeight;
 			}
 			
 			kf->update(&gpsVel,&gpsPos,&tmpImuData.uTCmps);
 			
-			gpsWatchDog = GPS_WATCHDOG_MAX;
+			gpsWatchDog = 0;
 		}
 		
 		xSemaphoreTake(dataUpdateMutex,portMAX_DELAY);
@@ -151,9 +176,14 @@ void Gains::gainsTask(void *pvParameters){
 		mRelativePos = kf->getMPos();
 		xSemaphoreGive(dataUpdateMutex);
 		
-		if(gpsWatchDog > 0){
-			gpsWatchDog--;
+		if(gpsWatchDog > GPS_WATCHDOG_MAX){
+			gpsValid = 0;
+		}else{
+			gpsWatchDog++;
+			gpsValid = 1;
 		}
+		
+		
 		/////////////////////////////////////
 		// print
 		/////////////////////////////////////
@@ -215,14 +245,22 @@ void Gains::print(){
 			earthFrameCmps.mul(&attitude,&(imuData.uTCmps));
 			earthFrameCmps.mul(&attitudeCon);
 			
-			printf("acl:%6.3f,%6.3f,%6.3f,cmps:%6.3f,%6.3f,%6.3f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,earthFrameCmps.x,earthFrameCmps.y,earthFrameCmps.z);
+			printf("acl:%6.3f,%6.3f,%6.3f,abs:%6.3f,cmps:%6.3f,%6.3f,%6.3f,abs:%6.3f\r\n",earthFrameAcl.x,earthFrameAcl.y,earthFrameAcl.z,earthFrameAcl.abs(),earthFrameCmps.x,earthFrameCmps.y,earthFrameCmps.z,earthFrameCmps.abs());
 		
 		}
 	}else if(printMode == GainsPrintMode::INS){
 		if(decimator % 10 == 0){
+			float paPressure;
+			if(imuData.isPressureValid){
+				paPressure = imuData.paPressure;
+			}else{
+				paPressure = 0;
+			}
+			
 			printf("%.3f,%.3f,%.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
 			printf("%.3f,%.3f,%.3f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
 			printf("%.3f,%.3f,%.3f\t",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			printf("%.3f\t",paPressure);
 			printf("%.3f\r\n",imuData.degTemp);
 		}
 	}else if(printMode == GainsPrintMode::QUATERNION){
@@ -230,32 +268,37 @@ void Gains::print(){
 			printf("$GIQAT,%.5f,%.5f,%.5f,%.5f\r\n",attitude.w,attitude.x,attitude.y,attitude.z);
 		}
 	}else if(printMode == GainsPrintMode::GPAIO){
-		if(decimator % 10 == 0){
-			//$GPAIO,Latitude,N/S,Longitude,E/W,height,HDOP,pitch,roll,yaw,SpeedX,SpeedY,SpeedZ,GpsValid,checksum
-			float pitch,roll,heading;
-			attitude.getRadPitchRollHeading(&pitch,&roll,&heading);
-			
-			if(Util::GetInstance()->flashData.gpsType == GpsType::USART_GPS){
-				int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
-				int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);				
-				
-				float height =  mRelativePos.z;
-				int gpsValid;
-				if(gpsWatchDog > GPS_WATCHDOG_MAX - 12){//10Hz = 10times of imu update + margin.
-					gpsValid = 1;
-				}else{
-					gpsValid = 0;
-				}
-				
-				printf("$GPAIO,%d%.6f,N,%d%.6f,E,%.2f,1,",degX1MLattitude/1000000,60.0*(degX1MLattitude%1000000)/1000000,degX1MLongitude/1000000,60.0*(degX1MLongitude%1000000)/1000000,height);//lattitude,longitude,height,HDOP
-				printf("%.3f,%.3f,%.3f,",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);//pitch,roll,heading
-				printf("%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);//SpeedX,Y,Z
-				printf("%d,",gpsValid);//GpsValid
-				printf("00\r\n");//checksum
-			}else{
-				printf("$GPAIO,000000.000,N,000000.000,E,0.0,1.0,%.2f,%.2f,%.2f,0.0,0.0,0.0,0,00\r\n",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);
-			}
-		}
+//		if(decimator % 10 == 0){
+//			//$GPAIO,Latitude,N/S,Longitude,E/W,height,HDOP,pitch,roll,yaw,SpeedX,SpeedY,SpeedZ,GpsValid,waypointId,controlState,checksum
+//			float pitch,roll,heading;
+//			attitude.getRadPitchRollHeading(&pitch,&roll,&heading);
+//			
+//			if(Util::GetInstance()->flashData.gpsType == GpsType::USART_GPS){
+//				int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
+//				int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);				
+////				int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(gpsData.mGpsRelativePos.x);
+////				int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(gpsData.mGpsRelativePos.y);
+//				
+//				
+//				float height =  mRelativePos.z;
+//				int gpsValid;
+//				if(gpsWatchDog > (GPS_WATCHDOG_MAX - 12)){//10Hz = 10times of imu update + margin.
+//					gpsValid = 1;
+//				}else{
+//					gpsValid = 0;
+//				}
+//				
+//				printf("$GPAIO,%d%.6f,N,%d%.6f,E,%.2f,1,",degX1MLattitude/1000000,60.0*(degX1MLattitude%1000000)/1000000,degX1MLongitude/1000000,60.0*(degX1MLongitude%1000000)/1000000,height);//lattitude,longitude,height,HDOP
+//				printf("%.3f,%.3f,%.3f,",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);//pitch,roll,heading
+//				printf("%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);//SpeedX,Y,Z
+//				printf("%d,",gpsValid);//GpsValid
+//				printf("%d,",GliderControl::GetInstance()->getGpsGuidance()->getNextWaypointId());
+//				printf("%d,",0);
+//				printf("00\r\n");//checksum
+//			}else{
+//				printf("$GPAIO,000000.000,N,000000.000,E,0.0,1.0,%.2f,%.2f,%.2f,0.0,0.0,0.0,0,0,0,00\r\n",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);
+//			}
+//		}
 	}else{//debug
 		if(decimator % 10 == 0){
 			float radHeading;
@@ -383,6 +426,30 @@ Quaternion Gains::getRpsRate(){
 	return rt;
 }
 
+Quaternion Gains::getUtCmps(){
+	Quaternion rt;
+	xSemaphoreTake(dataUpdateMutex,portMAX_DELAY);
+	rt = imuData.uTCmps;
+	xSemaphoreGive(dataUpdateMutex);
+	return rt;
+}
+
+float Gains::getPaPressure(){
+	float rt;
+	xSemaphoreTake(dataUpdateMutex,portMAX_DELAY);
+	if(imuData.isPressureValid){
+		rt = imuData.paPressure;
+	}else{
+		rt = 0;
+	}
+	xSemaphoreGive(dataUpdateMutex);
+	return rt;
+}
+
+int Gains::isPressureValid(){
+	return imuData.isPressureValid;
+}
+
 /**
  * @brief EKFによって推定した現在の速度を返す
  * 
@@ -456,6 +523,11 @@ int Gains::getLattitudeRef(){
 int Gains::getLongitudeRef(){
 	return Gps::GetInstance()->mPosYToDegX1M_Longitude(0.0);
 }
+
+int Gains::isGpsValid(){
+	return gpsValid;
+}
+
 /**
  * @brief 慣性センサからのデータを返す
  * 
@@ -509,7 +581,7 @@ void Gains::initGains(){
 	}
 	if(GPS_TYPE == GpsType::USART_GPS){
 		xTaskCreate(&USART2Class::prvTxTask,"gpstx",512,USART2,3,&(Gains::GetInstance()->gpsHandleTx));
-		xTaskCreate(&USART2Class::prvRxTask,"gpsrx",1024,USART2,3,&(Gains::GetInstance()->gpsHandleRx));
+		xTaskCreate(&USART2Class::prvRxTask,"gpsrx",1580,USART2,3,&(Gains::GetInstance()->gpsHandleRx));
 	}else if(GPS_TYPE == GpsType::DUMMY_GPS){
 		xTaskCreate(&DummyGps::prvDummyGpsTask,"dmygps",512,NULL,3,&(Gains::GetInstance()->gpsHandleRx));
 	}

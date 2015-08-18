@@ -43,9 +43,9 @@ private:
 	char m_txBuf[I2C2_BUFSIZE];
 	char m_rxBuf[I2C2_BUFSIZE];
 	
-	int m_rw;
+	int rw;
 	int m_address;
-	int m_state;
+	int state;
 
 	xSemaphoreHandle rwCompleteSem;
 	xSemaphoreHandle dataReadySem;

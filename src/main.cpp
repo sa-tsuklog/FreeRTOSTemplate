@@ -17,14 +17,15 @@
 #include "MyLib/Stdout/Stdout.h"
 #include "MyLib/Gains/Gains.h"
 #include "MyLib/Logger/Logger.h"
-#include "Test.h"
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
 #include "MyLib/CmdServo/CmdServo.h"
-#include "App/TankControl/TankControl.h"
 #include "MyLib/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
 #include "MyLib/SignalGenerator/Driver/DAC_TIM8.h"
 #include "MyLib/CAN/Driver/CAN1.h"
 #include "MyLib/CAN/CanBusMonitor.h"
+#include "MyLib/SBusPropo/SBusPropo.h"
+#include "App/GliderControl/GliderControl.h"
+#include "MyLib/Stdout/SerialCommand.h"
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)と
  *  stm32F429           (Xtal = 12MHz)での要変更箇所
@@ -41,15 +42,15 @@ extern unsigned int idle_count;
 void prvTaskA(void *pvParameters){
 	vTaskDelay(100);
 	unsigned int previousIdleCount = 0;
+	int i=0;
 	while(1){
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)|GPIO_Pin_12);
-		GPIO_Write(GPIOD, GPIO_ReadOutputData(GPIOD)&(~GPIO_Pin_12));
+		
 		//Util::GetInstance()->myFprintf(0,stdout,"idle:%d\r\n",idle_count-previousIdleCount);
-		previousIdleCount = idle_count;
-		
+		//fflush(stdout);
 		//CAN1Class::GetInstance()->send();
-		
+		printf("%s\r\n",TEST_MESSAGE);
 		vTaskDelay(100);
+		i++;
 	}
 	
 }
@@ -78,14 +79,13 @@ int main(void) {
 	Util::initUtil();
 	Stdout::initStdout();
 	Gains::initGains();
-	//Logger::initLogger();
+	Logger::initLogger();
 	//CmdServo::initCmdServo();
 	//CanBusMonitor::initCanBusMonitor();
 	
-	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
-	//TankControl::initTankControl();
-	xTaskCreate(prvTaskA,"taskA",2048,NULL,2,NULL);
-	//xTaskCreate(&Ad7176_2Seeker::prvAd7176_2TaskEntry,"seeker",2048,NULL,2,NULL);
+	//SBusPropo::initSBusPropo();
+	xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL);
+	GliderControl::initGliderControl();
 	
 	vTaskStartScheduler();
 	

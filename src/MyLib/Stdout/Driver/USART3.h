@@ -11,8 +11,11 @@
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "semphr.h"
 
-class USART3Class {
+#include "../IoBaseType.h"
+
+class USART3Class :public IoBaseType{
 	// Singleton pattern definition
 private:
 	USART3Class();
@@ -27,9 +30,11 @@ public:
 
 	// Class definition
 private:
-	static const int TX_BUFFERSIZE = 1024;
-	static const int RX_BUFFERSIZE = 256;
-	static const int LINE_BUF_SIZE = 256;
+	static const int TX_BUFFERSIZE = 768;
+	static const int RX_BUFFERSIZE = 768;
+	static const int LINE_BUF_SIZE = 768;
+	
+	SemaphoreHandle_t txCompleteSem;
 	xQueueHandle m_queue3;
 	char m_txBuf[TX_BUFFERSIZE];
 	char m_rxBuf[RX_BUFFERSIZE];
@@ -38,17 +43,20 @@ private:
 	
 	int echo;
 public:
-	virtual void Tx();
+	virtual void Tx();	//length must be shorter than TX_BUFFERSIZE
 	//virtual void Rx();
 	virtual char* readLine();
 	virtual char getChar();
 	virtual void setEcho(int newValue){echo = newValue;};
-	xQueueHandle GetQueue(){ return m_queue3; }
+	xQueueHandle getTxQueue(){ return m_queue3; }
 
 	// Task definition
 public:
 	static void prvTxTask(void *pvParameters);
 	static void prvRxTask(void *pvParameters);
+	
+	void myUSART3_IRQHandler();
+	void myDMA1_Stream4IRQHandler();
 };
 
 

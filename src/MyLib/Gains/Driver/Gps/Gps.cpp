@@ -38,9 +38,9 @@ Gps::Gps(){
 // public methods
 /////////////////////////////////////
 void Gps::decodeNMEA(char* line){
-	if(strncmp(line,"$GPGGA,",7)==0){
+	if(strncmp(line,"$GPGGA,",7)==0 || strncmp(line,"$GNGGA,",7)==0){
 		decodeGPGGA(line);
-	}else if(strncmp(line,"$GPRMC,",7)==0){
+	}else if(strncmp(line,"$GPRMC,",7)==0 || strncmp(line,"$GNRMC,",7)==0){
 		decodeGPRMC(line);
 		if(!refValid && valid){
 			setRefPosition();
@@ -55,8 +55,8 @@ void Gps::decodeNMEA(char* line){
 		//do nothing.
 	}
 
-	//Util::GetInstance()->myFprintf(0,fp,"%s\r\n",line);
-	//Util::GetInstance()->myFprintf(0,stdout,"%s\r\n",line);
+	fprintf(fp,"%s\r\n",line);
+	//printf("%s\r\n",line);
 
 }
 
@@ -211,6 +211,10 @@ int Gps::decodeCourse(char* message){
 	float digit = 0.1;
 	int sign = 1;
 
+	if(message[0]==','){
+		return 1;
+	}
+	
 	if(message[0]=='-'){
 		sign = -1;
 		index++;

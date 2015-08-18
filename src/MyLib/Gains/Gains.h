@@ -74,8 +74,12 @@ private:
 	Quaternion mRelativePos;
 	
 	static const int MS_GPS_INITIAL_WAIT_TIME = portMAX_DELAY; //does not start until fix
-	static const int GPS_WATCHDOG_MAX = 1000; //ins predict 1000 times = about 10 sec 
+	static const int GPS_WATCHDOG_MAX = 14; //ins predict 10 times = about 0.1 sec + margin
+	static const float MPSPS_GPS_G_LIMIT = 9.8*2;
+	static const float SEC_GPS_HIGH_G_RECOVERY_TIME = 5.0;
+	
 	int gpsWatchDog;
+	int gpsValid;
 	
 	void print();
 	void gainsTask(void *pvParameters);
@@ -89,9 +93,13 @@ public:
 	Quaternion getMpsSpeed();
 	Quaternion getMRelativePos();
 	Quaternion getRpsRate();
+	Quaternion getUtCmps();
+	float getPaPressure();
+	int isPressureValid();
 	Quaternion getAttitude();
 	int getLattitudeRef();
 	int getLongitudeRef();
+	int isGpsValid();
 	ImuData getImuData();
 	GpsData getGpsData();
 	void setPrintType(GainsPrintMode::Mode mode);

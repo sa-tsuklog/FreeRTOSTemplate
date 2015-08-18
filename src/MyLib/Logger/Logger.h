@@ -49,7 +49,7 @@ private:
 	
 	static const int BUF0_LENGTH = 512;
 	static const int BUF1_LENGTH = 512;
-	static const int BUF2_LENGTH = 1;
+	static const int BUF2_LENGTH = 512;
 	static const int BUF3_LENGTH = 1;	
 	QueueHandle_t buf[4];
 	

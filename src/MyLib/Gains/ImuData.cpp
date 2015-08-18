@@ -6,7 +6,7 @@
  */
 
 #include "ImuData.h"
-#include "math.h"
+#include <math.h>
 
 /**
  * @brief 気圧差から相対高度を求める

@@ -31,6 +31,7 @@ public:
     Quaternion* mul(float f);
     Quaternion* con(const Quaternion* q);
     Quaternion* con();
+    float abs();
     float normalize();
     float normalize(const Quaternion* q);
     float norm() const;

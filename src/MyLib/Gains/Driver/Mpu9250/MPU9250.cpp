@@ -15,6 +15,8 @@
 #include "semphr.h"
 #include "MPU9250.h"
 #include "Mpu9250RegisterDefs.h"
+#include "Bmp085.h"
+#include "Bmp085RegisterDefs.h"
 #include "I2C2.h"
 #include "../../ImuData.h"
 #include "../../Gains.h"
@@ -61,6 +63,11 @@ void Mpu9250::init(){
 	
 	
 	I2C2Class::getInstance()->write1(AK8963_ADDR,CNTL1,0x01<<4 | 0x06);
+	
+	if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250_BMP850){
+		Bmp085::GetInstance()->init();
+		paPressure = Bmp085::GetInstance()->getPaPressure();
+	}
 }
 
 void Mpu9250::startGyroCalibration(){
@@ -70,6 +77,8 @@ void Mpu9250::startAclCalibration(){
 	xSemaphoreGive(aclCalibrationSem);
 }
 void Mpu9250::readMpu9250(){
+	static int count=0;
+	
 	unsigned char buf[14];
 	unsigned char* aclBuf = buf + 0;
 	unsigned char* gyroBuf = buf + 8;
@@ -96,6 +105,18 @@ void Mpu9250::readMpu9250(){
 	uTCmps[0] = (+UT_PER_LSB * ((short)(cmpsBuf[1]<<8|cmpsBuf[0]))) - flash->mpuCmpsBias[0] - degTemp * flash->mpuCmpsTempCoefficient[0];
 	uTCmps[1] = (-UT_PER_LSB * ((short)(cmpsBuf[3]<<8|cmpsBuf[2]))) - flash->mpuCmpsBias[1] - degTemp * flash->mpuCmpsTempCoefficient[1];
 	uTCmps[2] = (-UT_PER_LSB * ((short)(cmpsBuf[5]<<8|cmpsBuf[4]))) - flash->mpuCmpsBias[2] - degTemp * flash->mpuCmpsTempCoefficient[2];
+	
+	if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250_BMP850){
+		if(count % 2 == 0){
+			Bmp085::GetInstance()->updateTemp();
+			Bmp085::GetInstance()->startMeasureingPressure();
+		}else{
+			Bmp085::GetInstance()->updatePressure();
+			Bmp085::GetInstance()->startMeasureingTemp();
+			paPressure = Bmp085::GetInstance()->getPaPressure();
+		}
+	}
+	count ++;
 }
 
 void Mpu9250::prvMpu9250Task(void* pvParameters){
@@ -108,6 +129,7 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 	I2C2Class::getInstance()->read(AK8963_ADDR,WIA,&tmp2,1);
 	
 	Util::GetInstance()->myFprintf(0,stdout,"%x,%x\r\n",tmp,tmp2);
+	//FILE* fp = fopen("/log2","w");
 	
 	int j=0;
 	int gyroCalibrationCount = 0;
@@ -120,8 +142,16 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 		/////////////////////////////////////
 		I2C2Class::getInstance()->waitNewData();
 		readMpu9250();
-		ImuData imuData = ImuData(rpsRate[0],rpsRate[1],rpsRate[2],mpspsAcl[0],mpspsAcl[1],mpspsAcl[2],uTCmps[0],uTCmps[1],uTCmps[2],0.0,1,0,degTemp);
+		
+		ImuData imuData;
+		if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250_BMP850){
+			imuData = ImuData(rpsRate[0],rpsRate[1],rpsRate[2],mpspsAcl[0],mpspsAcl[1],mpspsAcl[2],uTCmps[0],uTCmps[1],uTCmps[2],paPressure,1,1,degTemp);
+		}else{
+			imuData = ImuData(rpsRate[0],rpsRate[1],rpsRate[2],mpspsAcl[0],mpspsAcl[1],mpspsAcl[2],uTCmps[0],uTCmps[1],uTCmps[2],0,1,0,degTemp);
+		}
 		Gains::GetInstance()->appendInsData(&imuData);
+		
+		//fprintf(fp,"$INS,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f",rpsRate[0],rpsRate[1],rpsRate[2],mpspsAcl[0],mpspsAcl[1],mpspsAcl[2],uTCmps[0],uTCmps[1],uTCmps[2],0.0,1,0,degTemp);
 		
 		/////////////////////////////////////
 		// calibration

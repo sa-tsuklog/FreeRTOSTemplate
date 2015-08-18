@@ -25,6 +25,8 @@ public:
     Quaternion getAttitude();
     
     void reset();
+    void setRHighAccuracy();
+    void setRLowAccuracy();
     
     float secTimeStep;
     static Quaternion insToAttitude(Quaternion* mpspsAccel, Quaternion* uTCompass);

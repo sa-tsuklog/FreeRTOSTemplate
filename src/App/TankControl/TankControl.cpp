@@ -8,8 +8,8 @@
 #include "task.h"
 #include "queue.h"
 
-#include "Math.h"
-#include "stdio.h"
+#include <Math.h>
+#include <stdio.h>
 
 #include "TankControl.h"
 #include "GeneralConfig.h"
@@ -161,7 +161,7 @@ void TankControl::TankControlTask(){
 		/////////////////////////////////////
 		// camera control
 		/////////////////////////////////////
-		int cameraStablize = (params.camMode&params.BIT_CAM_MODE_STABILIZE);
+		int cameraStablize = (params.camMode&params.BIT_CONTROL_MODE);
 		
 		float degCameraV;
 		float degCameraH;

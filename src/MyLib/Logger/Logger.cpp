@@ -125,6 +125,7 @@ int Logger::flushBuffers(int bufNumber){
 		UINT bw;
 		f_write(&fp,lineBuf,charCount,&bw);
 	}
+	f_sync(&fp);
 	return 1;
 }
 
@@ -132,6 +133,7 @@ void Logger::loggerTask(){
 	Logger::GetInstance();
 	vTaskDelay(MS_INITIAL_DELAY);
 	uint32_t t1,t2;
+	
 	while(1){
 		
 		if(logState == logIdle){//when not logging
@@ -153,6 +155,7 @@ void Logger::loggerTask(){
 			for(int i=0;i<4;i++){
 				flushBuffers(i);
 			}
+			
 			
 			if(xSemaphoreTake(stopLoggingSem,0)==pdTRUE){
 				logState = logIdle;

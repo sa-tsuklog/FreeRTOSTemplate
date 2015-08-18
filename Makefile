@@ -3,10 +3,11 @@ OSPATH = src/OS
 MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/Gains src/MyLib/Gains/Driver/Adis16488 src/MyLib/Gains/Driver/Gps src/MyLib/Gains/Driver/Mpu9250 src/MyLib/Gains/Driver/SupersonicHeight src/MyLib/Gains/Driver/DummyGps \
 		    src/MyLib/Logger \
-		    src/MyLib/Stdout src/MyLib/Stdout/Driver \
+		    src/MyLib/Stdout src/MyLib/Stdout/Driver src/MyLib/Stdout/DriverCmm920 \
 		    src/MyLib/Util src/MyLib/Util/Driver \
 		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver \
-		    src/MyLib/CmdServo src/MyLibCmdServo/Driver \
+		    src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
+		    src/MyLib/SBusPropo src/MyLib/SBusPropo/Driver \
 		    src/MyLib/Servo src/MyLib/Servo/Driver \
 		    src/MyLib/Propo src/MyLib/Propo/Driver \
 		    src/MyLib/Seeker src/MyLib/Seeker/Driver/AD7176-2 \
@@ -81,6 +82,8 @@ SRCS = $(wildcard $(addsuffix /*.c, $(SRCPATH)))
 CPPSRCS = $(wildcard $(addsuffix /*.cpp, $(SRCPATH)))
 OBJS = $(notdir $(patsubst %.c,%.o,$(SRCS)))
 OBJS += $(notdir $(patsubst %.cpp,%.o,$(CPPSRCS)))
+DEPS = $(notdir $(patsubst %.c,%.d,$(SRCS)))
+DEPS += $(notdir $(patsubst %.cpp,%.d,$(CPPSRCS)))
 
 LIB_SRCS = \
  $(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c) \
@@ -109,11 +112,26 @@ main: $(addprefix $(OBJDIR)/,$(OBJS)) $(OBJDIR)/libstm32f4xx.a $(OBJDIR)/startup
 
 $(OBJDIR)/%.o : %.c
 	$(MKOBJDIR)
-	$(CC) $(CFLAGS) $(TARGET_ARCH) -c -o $@ $<
+	$(CC) $(CFLAGS) $(TARGET_ARCH) -c -MMD -MP -o $@ $<
 
 $(OBJDIR)/%.o : %.cpp
 	$(MKOBJDIR)
-	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -MMD -MP -o $@ $<
+
+-include $(addprefix $(OBJDIR)/,$(DEPS))
+
+
+#$(OBJDIR)/%.o : %.c
+#	$(MKOBJDIR)
+#	$(CC) $(CFLAGS) $(TARGET_ARCH) -c -o $@ $<
+#
+#$(OBJDIR)/%.o : %.cpp
+#	$(MKOBJDIR)
+#	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
+#
+#$(OBJDIR)/%.o : %.h
+#	$(MKOBJDIR)
+#	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
 $(OBJDIR)/libstm32f4xx.a: $(addprefix $(OBJDIR)/,$(LIB_OBJS))
 	$(AR) cr $(OBJDIR)/libstm32f4xx.a $^

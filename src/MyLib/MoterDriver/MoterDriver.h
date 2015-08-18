@@ -23,8 +23,8 @@ public:
 	
 	// Class definition
 private:
-	static const int USE_CH0 = 1;//marked as "servo 4-7"
-	static const int USE_CH1 = 1;//marked as "propo"
+	static const int USE_CH0 = 0;//marked as "servo 4-7"
+	static const int USE_CH1 = 0;//marked as "propo"
 	
 	static const int MAX_DUTY = (int)(65535*0.90);
 public:

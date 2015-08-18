@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+#define TEST_MESSAGE "TTTTT"
+
 /**
  * @class SerialCommand
  * 
@@ -15,6 +17,7 @@ extern "C" {
  * このクラスの関数は基本的に外部からは呼ばれず、
  * handleSerialCommandからコマンド入力によって呼ばれる。
  */
+
 
 class SerialCommand{
 private:
@@ -32,9 +35,10 @@ public:
 private:
 	char* args;
 	static unsigned char hexToUchar(char* hexString);
+	static void readFloatParam(const char* message,float* ptr);
 public:
-	static void SerialCommand::prvSerialCommandTaskEntry(void* pvParameters);
-	void SerialCommand::serialCommandTask(void* pvParameters);
+	static void prvSerialCommandTaskEntry(void* pvParameters);
+	void serialCommandTask(void* pvParameters);
 	void handleSerialCommand(char* line);
 	char* getArgs();
 	
@@ -48,7 +52,9 @@ public:
 	static void gpsValidate();
 	static void setWaypoint(char* arg);
 	static void clearWaypoints();
-	static void printWaypoints();
+	static void confirmWaypoints();
+	static void setFlightParameters();
+	static void showFlightParameters();
 	static void echoOn();
 	static void echoOff();
 	static void setServosTrim();
@@ -60,7 +66,8 @@ public:
 	static void setAdisCmpsBias();
 	static void showGainsConfig();
 	static void setGainsConfig();
-	static void setGainsPrintMode(char* arg);
+	static void setPrintMode(char* arg);
+	static void showInputVoltage();
 	static void initializeUserFlash();
 	static void setCmdServoCh();
 	static void printTaskList();

@@ -40,6 +40,7 @@ private:
 	float rpsRate[3];
 	float uTCmps[3];
 	float degTemp;
+	float paPressure;
 	
 	SemaphoreHandle_t gyroCalibrationSem;
 	SemaphoreHandle_t aclCalibrationSem;

@@ -18,6 +18,7 @@
 USART3Class::USART3Class(){
 	m_queue3 = xQueueCreate(TX_BUFFERSIZE,sizeof(char));
 	vQueueAddToRegistry(m_queue3,"u3tx");
+	txCompleteSem = xSemaphoreCreateBinary();
 	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
 
@@ -99,6 +100,15 @@ USART3Class::USART3Class(){
 	
 	DMA_Cmd(DMA1_Stream1,ENABLE);
 
+	DMA_ITConfig(DMA1_Stream4,DMA_IT_TC,ENABLE);
+	
+	NVIC_InitTypeDef dma1_4_nvicdef;
+	dma1_4_nvicdef.NVIC_IRQChannel = DMA1_Stream4_IRQn;
+	dma1_4_nvicdef.NVIC_IRQChannelCmd = ENABLE;
+	dma1_4_nvicdef.NVIC_IRQChannelSubPriority = 0xFF;
+	dma1_4_nvicdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
+	NVIC_Init(&dma1_4_nvicdef);
+	NVIC_SetPriority(DMA1_Stream4_IRQn,0xFF);
 
 	for(int i=0;i<RX_BUFFERSIZE;i++){
 		m_rxBuf[i] = 0;
@@ -111,6 +121,7 @@ USART3Class::USART3Class(){
 void USART3Class::Tx()
 {
 	portTickType xLastWakeTime = xTaskGetTickCount();
+	xSemaphoreTake(txCompleteSem,0);
 	while(1){
 		int numTx=0;
 		if(DMA_GetCmdStatus(DMA1_Stream4)==DISABLE && (numTx = uxQueueMessagesWaiting(m_queue3)) != 0){
@@ -124,65 +135,13 @@ void USART3Class::Tx()
 			USART_ClearFlag(USART3,USART_SR_TC);
 			DMA_ClearFlag(DMA1_Stream4,DMA_FLAG_TCIF4);
 			DMA_Cmd(DMA1_Stream4,ENABLE);
+			
+			xSemaphoreTake(txCompleteSem,portMAX_DELAY);
 		}
 		
 		vTaskDelayUntil(&xLastWakeTime,1);
 	}
 }
-
-//void USART3Class::Rx()
-//{
-//	int rxBufIndex = 0;
-//	int lineBufIndex = 0;
-//
-//	char c;
-//	
-//	vTaskDelay(MS_INITIAL_DELAY);
-//	
-//	while(1){
-//		while( (c = m_rxBuf[rxBufIndex]) != 0 ){
-//			m_rxBuf[rxBufIndex]=0;
-//			
-//			if(echo){
-//				if(c=='\n'){
-//				}else if(c=='\b'){
-//					putchar('\b');
-//					putchar(' ');
-//					putchar('\b');
-//					fflush(stdout);
-//				}else{
-//					putchar(c);
-//					fflush(stdout);
-//				}
-//			}
-//			
-//			
-//			if(c=='\n'){
-//			}else if(c=='\r'){
-//				m_lineBuf[lineBufIndex]=0;
-//	
-//				SerialCommand::GetInstance()->handleSerialCommand(m_lineBuf);
-//				lineBufIndex=0;
-//			}else if(c=='\b'){
-//				if(lineBufIndex > 0){
-//					lineBufIndex--;
-//				}
-//			}else{
-//				
-//				m_lineBuf[lineBufIndex]=c;
-//				if(lineBufIndex<LINE_BUF_SIZE-1){
-//					lineBufIndex++;
-//				}
-//			}
-//	
-//			rxBufIndex=(rxBufIndex+1)%RX_BUFFERSIZE;
-//		}
-//		
-////		end = TIM2Class::GetInstance()->getUsTime();
-////		printf("u3rx %d[us]\r\n",end-start);
-//		vTaskDelay(25);
-//	}
-//}
 
 char* USART3Class::readLine()
 {
@@ -262,7 +221,15 @@ void USART3Class::prvTxTask(void *pvParameters)
 	USART3Class::GetInstance()->Tx();
 }
 
-//void USART3Class::prvRxTask(void *pvParameters)
-//{
-//	USART3Class::GetInstance()->Rx();
-//}
+void USART3Class::myUSART3_IRQHandler(){
+}
+
+void USART3Class::myDMA1_Stream4IRQHandler(){
+	if(DMA_GetITStatus(DMA1_Stream4,DMA_IT_TCIF4) != RESET){
+		DMA_ClearITPendingBit(DMA1_Stream4,DMA_IT_TCIF4);
+	
+		portBASE_TYPE switchRequired;
+		xSemaphoreGiveFromISR(txCompleteSem,&switchRequired);
+		portEND_SWITCHING_ISR(switchRequired);
+	}
+}

@@ -10,6 +10,7 @@
 
 #include "MyLib/Gains/GainsConfig.h"
 #include "MyLib/Servo/Servo.h"
+#include "App/GliderControl/FlightParameters.h"
 
 typedef struct{
 	ImuType::Type imuType;
@@ -25,6 +26,7 @@ typedef struct{
 	float mpuGyroTempCoefficient[3];
 	float mpuAclTempCoefficient[3];
 	float mpuCmpsTempCoefficient[3];
+	FlightParameters flightParameters;
 }UserflashData;
 
 #endif /* USERFLASHDATA_H_ */

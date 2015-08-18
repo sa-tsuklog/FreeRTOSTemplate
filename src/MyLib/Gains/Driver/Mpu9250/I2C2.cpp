@@ -14,9 +14,9 @@
 #include "MyLib/Util/Util.h"
 
 I2C2Class::I2C2Class():
-m_rw(-1),
+rw(-1),
 m_address(-1),
-m_state(-1)
+state(-1)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
 
@@ -184,7 +184,7 @@ int I2C2Class::write(char i2cAddress, char regAddress, unsigned char* writeData,
 		m_txBuf[i+1] = writeData[i];
 	}
 
-	m_rw = RW_WRITE;
+	rw = RW_WRITE;
 	m_address = i2cAddress;
 
 	DMA_ClearITPendingBit(DMA1_Stream7,DMA_IT_TCIF7);
@@ -216,11 +216,11 @@ int I2C2Class::read(char i2cAddress,char regAddress, unsigned char* readBuf, int
 	m_txBuf[0] = regAddress;
 
 	if(readLength == 1){
-		m_rw = RW_READ1;
+		rw = RW_READ1;
 	}else{
-		m_rw = RW_READN;
+		rw = RW_READN;
 	}
-	m_state = STATE_TRANSMIT_DEVADDRESS;
+	state = STATE_TRANSMIT_DEVADDRESS;
 	m_address = i2cAddress;
 
 	DMA_Cmd(DMA1_Stream7,DISABLE);
@@ -276,7 +276,7 @@ void I2C2Class::myEV_IRQ_ReadN(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_SB)!=RESET){
 		//Util::GetInstance()->myFprintf(0,stdout,"readN_SB\r\n");
 		I2C_ClearITPendingBit(I2C2,I2C_IT_SB);
-		if(m_state == STATE_TRANSMIT_DEVADDRESS){
+		if(state == STATE_TRANSMIT_DEVADDRESS){
 			I2C_Send7bitAddress(I2C2,m_address,I2C_Direction_Transmitter);
 		}else{
 			I2C_Send7bitAddress(I2C2,m_address,I2C_Direction_Receiver);
@@ -284,7 +284,7 @@ void I2C2Class::myEV_IRQ_ReadN(){
 
 	}
 	if(I2C_GetITStatus(I2C2,I2C_IT_ADDR)!=RESET){
-		if(m_state == STATE_RECEIVE_DATA){
+		if(state == STATE_RECEIVE_DATA){
 			//Util::GetInstance()->myFprintf(0,stdout,"readN_ADDR_RECEIVE\r\n");
 			I2C_AcknowledgeConfig(I2C2,ENABLE);
 			I2C_DMALastTransferCmd(I2C2,ENABLE);
@@ -301,7 +301,7 @@ void I2C2Class::myEV_IRQ_ReadN(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_BTF)!=RESET){
 		//Util::GetInstance()->myFprintf(0,stdout,"readN_BTF\r\n");
 		I2C_ReadRegister(I2C2,I2C_Register_DR);
-		m_state = STATE_RECEIVE_DATA;
+		state = STATE_RECEIVE_DATA;
 		I2C_GenerateSTART(I2C2,ENABLE);
 	}
 }
@@ -310,7 +310,7 @@ void I2C2Class::myEV_IRQ_Read1(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_SB)!=RESET){
 		//Util::GetInstance()->myFprintf(0,stdout,"SB\r\n");
 		I2C_ClearITPendingBit(I2C2,I2C_IT_SB);
-		if(m_state == STATE_TRANSMIT_DEVADDRESS){
+		if(state == STATE_TRANSMIT_DEVADDRESS){
 			I2C_Send7bitAddress(I2C2,m_address,I2C_Direction_Transmitter);
 		}else{
 			I2C_Send7bitAddress(I2C2,m_address,I2C_Direction_Receiver);
@@ -318,7 +318,7 @@ void I2C2Class::myEV_IRQ_Read1(){
 	}
 	if(I2C_GetITStatus(I2C2,I2C_IT_ADDR)!=RESET){
 		//Util::GetInstance()->myFprintf(0,stdout,"ADDR\r\n");
-		if(m_state == STATE_RECEIVE_DATA){
+		if(state == STATE_RECEIVE_DATA){
 			I2C_AcknowledgeConfig(I2C2,DISABLE);
 			I2C_ReadRegister(I2C2,I2C_Register_SR1);
 			I2C_ReadRegister(I2C2,I2C_Register_SR2);
@@ -330,17 +330,17 @@ void I2C2Class::myEV_IRQ_Read1(){
 	if(I2C_GetITStatus(I2C2,I2C_IT_BTF)!=RESET){
 		//Util::GetInstance()->myFprintf(0,stdout,"BTF\r\n");
 		I2C_ReadRegister(I2C2,I2C_Register_DR);
-		m_state = STATE_RECEIVE_DATA;
+		state = STATE_RECEIVE_DATA;
 		I2C_GenerateSTART(I2C2,ENABLE);
 	}
 }
 
 void I2C2Class::myEV_IRQHandler(){
-	if(m_rw == RW_WRITE){
+	if(rw == RW_WRITE){
 		myEV_IRQ_Write();
-	}else if(m_rw == RW_READN){
+	}else if(rw == RW_READN){
 		myEV_IRQ_ReadN();
-	}else if(m_rw == RW_READ1){
+	}else if(rw == RW_READ1){
 		myEV_IRQ_Read1();
 	}
 
