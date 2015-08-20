@@ -4,7 +4,7 @@
  *  Created on: 2015/04/27
  *      Author: sa
  */
-
+#include <pch.h>
 #include "GlidePhaseControl.h"
 #include "Common/Quaternion.h"
 #include "../GliderServoControl.h"

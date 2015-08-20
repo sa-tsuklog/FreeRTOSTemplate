@@ -18,7 +18,7 @@ COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App src/App/TankControl \
 			src/App/GliderControl src/App/GliderControl/ControlState
 
-TOOLDIR = ../../launchpad/bin/
+TOOLDIR = ../../../../eclipse_stm32/launchpad/bin/
 G++VER = 4.9.3
 USE_SH = 1
 ##########
@@ -119,7 +119,7 @@ $(OBJDIR)/pch.h.gch: src/pch/pch.h
 
 %.o : %.c $(OBJDIR)/pch.h.gch
 	$(MKOBJDIR)
-	$(CC) $(CFLAGS) -MMD $(TARGET_ARCH) -c -o $@ $<
+	$(CC) $(CFLAGS) -Wno-unused-but-set-variable -Wno-unused-variable -MMD $(TARGET_ARCH) -c -o $@ $<
 
 %.o : %.cpp $(OBJDIR)/pch.h.gch
 	$(MKOBJDIR)
