@@ -4,15 +4,7 @@
  *  Created on: 2014/03/05
  *      Author: sa
  */
-
-#include <stdlib.h>
-#include <stdio.h>
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
+#include <pch.h>
 #include "SPI4.h"
 #include "Ad7176-2Seeker.h"
 #include "Ad7176-2RegisterDef.h"

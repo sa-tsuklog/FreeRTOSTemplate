@@ -1,10 +1,5 @@
+#include <pch.h>
 #include "ADC1.h"
-#include "../../GeneralConfig.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "Common/FreeRTOS_DemoFile/stm32f4xx_it.h"
-
-#include <stdio.h>
 
 ADC1Class::ADC1Class(){
 //	ADC_InitTypeDef       ADC_InitStructure;

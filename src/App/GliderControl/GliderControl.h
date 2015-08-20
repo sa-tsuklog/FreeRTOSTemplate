@@ -8,6 +8,7 @@
 #ifndef GLIDERCONTROL_H_
 #define GLIDERCONTROL_H_
 
+#include <stdio.h>
 #include "FreeRTOS.h"
 #include "queue.h"
 
@@ -15,6 +16,7 @@
 #include "GpsGuidance.h"
 #include "ControlParams.h"
 #include "GliderControlTestBench.h"
+
 
 class GliderPrintMode{
 public:

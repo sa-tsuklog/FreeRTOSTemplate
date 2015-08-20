@@ -4,12 +4,9 @@
  *  Created on: 2015/04/05
  *      Author: sa
  */
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "GpsGuidance.h"
-#include <math.h>
-#include <stdio.h>
 
 #include "MyLib/Gains/Driver/Gps/Gps.h"
 

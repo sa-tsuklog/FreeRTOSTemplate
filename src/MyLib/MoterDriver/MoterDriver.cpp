@@ -4,11 +4,10 @@
  *  Created on: 2014/06/08
  *      Author: sa
  */
-
+#include <pch.h>
 #include "MoterDriver.h"
 #include "Driver/BridgeTim3.h"
 #include "Driver/BridgeTim1.h"
-#include <stdio.h>
 
 MoterDriver::MoterDriver(){
 	if(USE_CH0){

@@ -5,16 +5,11 @@
  *  Created on: 2014/04/13
  *      Author: sa
  */
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "../../GeneralConfig.h"
+#include <pch.h>
 
 #include "GainsConfig.h"
 #include "Gains.h"
 #include "KalmanFilter.h"
-#include <stdio.h>
-#include <math.h>
 
 #include "Driver/Gps/Gps.h"
 #include "Driver/Adis16488/Adis16488.hpp"
@@ -26,10 +21,6 @@
 #include "App/GliderControl/GpsGuidance.h"
 
 #include "MyLib/Util/Util.h"
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
-
 
 Gains::Gains(){
 	gpsQueue = xQueueCreate(1,sizeof(GpsData));

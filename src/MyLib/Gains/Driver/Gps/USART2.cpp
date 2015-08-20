@@ -1,9 +1,6 @@
-#include "GeneralConfig.h"
+#include <pch.h>
 #include "Gps.h"
 #include "USART2.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "stdio.h"
 
 
 USART2Class::USART2Class(){

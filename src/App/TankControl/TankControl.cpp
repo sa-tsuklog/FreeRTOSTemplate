@@ -4,12 +4,7 @@
  *  Created on: 2014/09/07
  *      Author: sa
  */
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-
-#include <Math.h>
-#include <stdio.h>
+#include <pch.h>
 
 #include "TankControl.h"
 #include "GeneralConfig.h"

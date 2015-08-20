@@ -5,11 +5,8 @@
  *      Author: sa
  */
 
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 #include "ServoTim4.h"
-#include "stdio.h"
 
 ServoTim4::ServoTim4(){
 	/////////////////////////////////////

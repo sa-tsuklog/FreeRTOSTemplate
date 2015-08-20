@@ -5,9 +5,7 @@
  *      Author: sa
  */
 
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 #include "ServoTim5.h"
 
 ServoTim5::ServoTim5(){

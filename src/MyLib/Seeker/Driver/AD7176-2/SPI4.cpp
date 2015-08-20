@@ -5,13 +5,8 @@
  *      Author: lark-mp
  */
 
-
-#include "stdio.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 #include "SPI4.h"
-#include "task.h"
-#include "queue.h"
 #include "MyLib/Util/Util.h"
 //not checked
 

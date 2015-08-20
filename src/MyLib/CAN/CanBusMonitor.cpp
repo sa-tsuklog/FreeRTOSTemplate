@@ -4,13 +4,10 @@
  *  Created on: 2015/03/14
  *      Author: sa
  */
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "CanBusMonitor.h"
 #include "Driver/CAN1.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 CanBusMonitor::CanBusMonitor(){
 }

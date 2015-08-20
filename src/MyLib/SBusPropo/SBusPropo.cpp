@@ -4,13 +4,10 @@
  *  Created on: 2015/08/12
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "SBusPropo.h"
 #include "Driver/USART1Propo.h"
-#include "GeneralConfig.h"
 
 SBusPropo::SBusPropo(){
 	rxQueue = xQueueCreate(RX_BUFFERSIZE,sizeof(uint8_t));

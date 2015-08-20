@@ -1,4 +1,4 @@
-### You only have to modify here when you add a new file.
+########## You only have to modify here when you add a new file.
 OSPATH = src/OS
 MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/Gains src/MyLib/Gains/Driver/Adis16488 src/MyLib/Gains/Driver/Gps src/MyLib/Gains/Driver/Mpu9250 src/MyLib/Gains/Driver/SupersonicHeight src/MyLib/Gains/Driver/DummyGps \
@@ -17,32 +17,30 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App src/App/TankControl \
 			src/App/GliderControl src/App/GliderControl/ControlState
-###
+
+TOOLDIR = ../../launchpad/bin/
+G++VER = 4.9.3
+USE_SH = 1
+##########
 
 SRCPATH = src $(OSPATH) $(MYLIBPATH) $(COMPATH) $(APPPATH)
 
 OBJDIR = objs
 BINDIR = bin
 
-ifeq ($(OS),Windows_NT)
-#	SHELL = cmd.exe
-#	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
+ifeq ($(USE_SH), 1)
 	SHELL = sh
 	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
-	TOOLDIR = ../../yagarto/bin/
-	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f429_439xx.s
-	#MKOBJDIR = $(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
-	#MKBINDIR = $(shell if not exist $(BINDIR) mkdir $(BINDIR))
-	MKOBJDIR = 
-	MKBINDIR = 
-else
-	SHELL = sh
-	REMOVE = rm -f $(BINDIR)/* $(OBJDIR)/*
-	TOOLDIR = 
-	STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f429_439xx.s
 	MKOBJDIR = $(shell if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi;)
 	MKBINDIR = $(shell if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi;)
+else
+	SHELL = cmd.exe
+	REMOVE = del /f /q $(BINDIR)\* $(OBJDIR)\*
+	MKOBJDIR = $(shell if not exist $(OBJDIR) mkdir $(OBJDIR))
+	MKBINDIR = $(shell if not exist $(BINDIR) mkdir $(BINDIR))
 endif
+
+STARTUP_ASM = ./Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f429_439xx.s
 
 FREERTOS_DIR = ./Libraries/FreeRTOS
 FREERTOS_PLUS_DIR = ./Libraries/FreeRTOS-Plus
@@ -53,14 +51,15 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 					-I ./Libraries/CMSIS/Include \
 					-I ./Libraries/ff \
 					-I $(TOOLDIR)../arm-none-eabi/include \
-					-I $(TOOLDIR)../arm-none-eabi/include/c++/4.6.2 \
+					-I $(TOOLDIR)../arm-none-eabi/include/c++/$(G++VER) \
 					-I $(FREERTOS_DIR)/Demo/Common/include \
-					-I $(FREERTOS_DIR)/Source/include \
 					-I $(FREERTOS_DIR)/Source/portable/GCC/ARM_CM4F \
 					-I ./src/include \
 					-I ./src \
+					-I ./src/pch \
 					-I $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/Include \
-					-I $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/ConfigurationTemplate
+					-I $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/ConfigurationTemplate \
+					-I $(FREERTOS_DIR)/Source/include
 
 BOARD_OPTS = -DHSE_VALUE=12000000 -DSTM32F4XX -DSTM32F40_41xxx -DSTM32F429 -DUSE_32F429IDISCOVERY
 FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
@@ -80,10 +79,9 @@ LDFLAGS = -Wl,--gc-sections,-Map=$(BINDIR)/main.map,-cref -T stm32_flash.ld -lst
 
 SRCS = $(wildcard $(addsuffix /*.c, $(SRCPATH)))
 CPPSRCS = $(wildcard $(addsuffix /*.cpp, $(SRCPATH)))
-OBJS = $(notdir $(patsubst %.c,%.o,$(SRCS)))
-OBJS += $(notdir $(patsubst %.cpp,%.o,$(CPPSRCS)))
-DEPS = $(notdir $(patsubst %.c,%.d,$(SRCS)))
-DEPS += $(notdir $(patsubst %.cpp,%.d,$(CPPSRCS)))
+OBJS = $(patsubst %.c,%.o,$(SRCS))
+OBJS += $(patsubst %.cpp,%.o,$(CPPSRCS))
+DEPS = $(OBJS:.o=.d)
 
 LIB_SRCS = \
  $(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c) \
@@ -98,63 +96,40 @@ LIB_SRCS = \
  $(FREERTOS_DIR)/Demo/Common/Minimal/QPeek.c \
  $(FREERTOS_DIR)/Demo/Common/Minimal/PollQ.c \
  $(wildcard $(FREERTOS_PLUS_DIR)/Source/FreeRTOS-Plus-Trace/*.c)
-LIB_OBJS = $(notdir $(LIB_SRCS:.c=.o))
+LIB_OBJS = $(LIB_SRCS:.c=.o)
+LIB_DEPS = $(LIB_OBJS:.o=.d)
 
-VPATH = $(SRCPATH) $(dir $(LIB_SRCS))
+PCHS = $(OBJDIR)/pch.gch 
+
+ifneq ($(MAKECMDGOALS),clean)
+-include $(DEPS)
+-include $(PCHS:.gch=.d)
+endif
 
 all: main
 
-main: $(addprefix $(OBJDIR)/,$(OBJS)) $(OBJDIR)/libstm32f4xx.a $(OBJDIR)/startup_stm32f4xx.o
+main: $(OBJS) $(OBJDIR)/libstm32f4xx.a $(OBJDIR)/startup_stm32f4xx.o
 	$(MKBINDIR)
 	$(LD) $(LDFLAGS) $(TARGET_ARCH) $^ -o $(BINDIR)/main.elf 
 	$(OBJCOPY) -O ihex $(BINDIR)/main.elf $(BINDIR)/main.hex
 	$(OBJCOPY) -O binary $(BINDIR)/main.elf $(BINDIR)/main.bin
 
-$(OBJDIR)/%.o : %.c
+$(OBJDIR)/pch.h.gch: src/pch/pch.h
+	$(CXX) $(CXXFLAGS) -x c++-header src/pch/pch.h -o $(OBJDIR)/pch.h.gch -MMD
+
+%.o : %.c $(OBJDIR)/pch.h.gch
 	$(MKOBJDIR)
-	$(CC) $(CFLAGS) $(TARGET_ARCH) -c -MMD -MP -o $@ $<
+	$(CC) $(CFLAGS) -MMD $(TARGET_ARCH) -c -o $@ $<
 
-$(OBJDIR)/%.o : %.cpp
+%.o : %.cpp $(OBJDIR)/pch.h.gch
 	$(MKOBJDIR)
-	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -MMD -MP -o $@ $<
+	$(CXX) $(CXXFLAGS) -MMD $(TARGET_ARCH) -c -o $@ $<
 
--include $(addprefix $(OBJDIR)/,$(DEPS))
-
-
-#$(OBJDIR)/%.o : %.c
-#	$(MKOBJDIR)
-#	$(CC) $(CFLAGS) $(TARGET_ARCH) -c -o $@ $<
-#
-#$(OBJDIR)/%.o : %.cpp
-#	$(MKOBJDIR)
-#	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
-#
-#$(OBJDIR)/%.o : %.h
-#	$(MKOBJDIR)
-#	$(CXX) $(CXXFLAGS) $(TARGET_ARCH) -c -o $@ $<
-
-$(OBJDIR)/libstm32f4xx.a: $(addprefix $(OBJDIR)/,$(LIB_OBJS))
+$(OBJDIR)/libstm32f4xx.a: $(LIB_OBJS)
 	$(AR) cr $(OBJDIR)/libstm32f4xx.a $^
 
 $(OBJDIR)/startup_stm32f4xx.o:
 	$(AS) -o $(OBJDIR)/startup_stm32f4xx.o $(ASFLAGS) $(STARTUP_ASM)
 
 clean:
-	$(REMOVE)
-
-
-
-#TOOLDIR = ../../yagarto/bin/
-#CXX     = $(TOOLDIR)arm-none-eabi-g++
-#ECHO	= echo aaaa
-#
-#all:main
-#
-#main:a.out
-#
-#a.out:main.o
-#	$(CXX) -c -o a.out src/main.cpp
-#	$(ECHO)
-#
-#main.o:src/main.cpp
-#	$(CXX) -c src/main.cpp
+	$(REMOVE) $(OBJS) $(LIB_OBJS) $(DEPS) $(LIB_DEPS)

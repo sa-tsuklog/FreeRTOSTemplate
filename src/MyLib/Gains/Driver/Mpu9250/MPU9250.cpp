@@ -4,15 +4,7 @@
  *  Created on: 2014/02/23
  *      Author: sa
  */
-
-#include "stdlib.h"
-#include "stdio.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
+#include <pch.h>
 #include "MPU9250.h"
 #include "Mpu9250RegisterDefs.h"
 #include "Bmp085.h"

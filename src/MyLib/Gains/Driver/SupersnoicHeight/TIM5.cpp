@@ -11,10 +11,7 @@
  *  Created on: 2014/04/20
  *      Author: sa
  */
-#include "stdio.h"
-#include "stm32f4xx.h"
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 #include "TIM5.h"
 
 //for propo input

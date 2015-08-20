@@ -4,14 +4,13 @@
  *  Created on: 2015/04/27
  *      Author: sa
  */
+#include <pch.h>
 
 #include "ManualControl.h"
 #include "../GliderServoControl.h"
 
 #include "MyLib/Gains/Gains.h"
 #include "Common/Quaternion.h"
-
-#include "math.h"
 
 ManualControl::ManualControl(){
 }

@@ -22,10 +22,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stdio.h"
-#include "stm32f4xx_it.h"
-#include "FreeRTOS.h"
-#include "semphr.h"
+#include <pch.h>
 #include "MyLib/Gains/Driver/Mpu9250/I2C2.h"
 #include "MyLib/Gains/Driver/Adis16488/SPI2_TIM8.h"
 #include "MyLib/Seeker/Driver/AD7176-2/SPI4.h"

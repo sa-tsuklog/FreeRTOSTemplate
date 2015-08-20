@@ -4,16 +4,12 @@
  *  Created on: 2014/07/03
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "DummyGps.h"
 #include "../../Gains.h"
 #include "../../GpsData.h"
 
-#include "GeneralConfig.h"
-#include "math.h"
 
 DummyGps::DummyGps(){
 	available = 1;

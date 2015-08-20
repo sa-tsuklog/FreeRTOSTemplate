@@ -4,13 +4,8 @@
  *  Created on: 2014/03/14
  *      Author: Lark_mp
  */
-
-#include "stdio.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
-#include "FreeRTOS.h"
+#include <pch.h>
 #include "I2C2.h"
-#include "task.h"
 #include "MyLib/Util/Util.h"
 
 I2C2Class::I2C2Class():

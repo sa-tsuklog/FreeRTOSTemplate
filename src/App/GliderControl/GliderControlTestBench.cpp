@@ -4,11 +4,7 @@
  *  Created on: 2015/05/25
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
-#include "task.h"
-
-#include "math.h"
+#include <pch.h>
 
 #include "MyLib/Gains/Gains.h"
 #include "GliderControlTestBench.h"

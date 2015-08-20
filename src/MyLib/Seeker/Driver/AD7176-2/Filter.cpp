@@ -4,9 +4,8 @@
  *  Created on: 2014/03/08
  *      Author: sa
  */
-
+#include <pch.h>
 #include "Filter.hpp"
-#include "math.h"
 
 Filter::Filter(){
 	prewarpedCenter=0.5106838424691942;	//for 20kHz samplerate, 1.591kHz illuminator

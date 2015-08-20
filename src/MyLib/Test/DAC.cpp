@@ -4,8 +4,7 @@
  *  Created on: 2014/04/28
  *      Author: sa
  */
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 #include "DAC.h"
 
 DACClass::DACClass(){

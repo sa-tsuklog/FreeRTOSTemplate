@@ -1,14 +1,7 @@
-#include "FreeRTOS.h"
-#include "queue.h"
-#include "task.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <pch.h>
 
 #include "SerialCommand.h"
 #include "CommandList.h"
-#include "GeneralConfig.h"
 
 #include "MyLib/Logger/Logger.h"
 #include "MyLib/Stdout/Stdout.h"

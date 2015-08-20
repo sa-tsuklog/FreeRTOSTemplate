@@ -6,15 +6,10 @@
  */
 
 
-
-#include "GeneralConfig.h"
+#include <pch.h>
 #include "USART3_CMM920.h"
 #include "Cmm920.h"
 #include "MyLib/Stdout/SerialCommand.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "stdio.h"
-#include "stdlib.h"
 
 USART3_CMM920Class::USART3_CMM920Class(){
 	txCompleteSem = xSemaphoreCreateBinary();

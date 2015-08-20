@@ -8,9 +8,6 @@
 #ifndef CMDSERVO_H_
 #define CMDSERVO_H_
 
-#include "FreeRTOS.h"
-#include "task.h"
-
 #include "Driver/USART1.h"
 
 

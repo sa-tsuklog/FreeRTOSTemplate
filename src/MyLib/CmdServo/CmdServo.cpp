@@ -4,12 +4,9 @@
  *  Created on: 2014/06/08
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "CmdServo.h"
-#include <stdio.h>
 
 CmdServo::CmdServo(){
 	usart = USART1Class::GetInstance();

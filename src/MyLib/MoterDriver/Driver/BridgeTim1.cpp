@@ -4,10 +4,8 @@
  *  Created on: 2014/06/08
  *      Author: sa
  */
-
-#include "stm32f4xx.h"
+#include <pch.h>
 #include "BridgeTim1.h"
-#include "stdio.h"
 
 BridgeTim1::BridgeTim1(){
 	/////////////////////////////////////

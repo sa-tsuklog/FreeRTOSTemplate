@@ -4,11 +4,8 @@
  *  Created on: 2014/05/11
  *      Author: sa
  */
-
+#include <pch.h>
 #include "Gps.h"
-#include "math.h"
-#include "string.h"
-#include "stdio.h"
 #include "../../GpsData.h"
 #include "../../Gains.h"
 #include "MyLib/Logger/Logger.h"

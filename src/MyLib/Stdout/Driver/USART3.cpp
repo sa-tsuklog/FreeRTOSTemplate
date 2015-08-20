@@ -6,14 +6,9 @@
  */
 
 
-
-#include "GeneralConfig.h"
+#include <pch.h>
 #include "USART3.h"
 #include "MyLib/Stdout/SerialCommand.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "stdio.h"
-#include "stdlib.h"
 
 USART3Class::USART3Class(){
 	m_queue3 = xQueueCreate(TX_BUFFERSIZE,sizeof(char));

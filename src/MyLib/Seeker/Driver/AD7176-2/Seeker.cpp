@@ -4,11 +4,10 @@
  *  Created on: 2014/03/08
  *      Author: sa
  */
-
-#include "stdio.h"
-#include "stdlib.h"
+#include <pch.h>
 #include "Seeker.hpp"
 #include "AdData.hpp"
+#include "../../../Util/Util.h"
 
 Seeker::Seeker() :
 m_intensity(0),

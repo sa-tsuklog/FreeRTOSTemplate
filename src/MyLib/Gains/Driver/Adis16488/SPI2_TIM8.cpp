@@ -1,12 +1,6 @@
-#include "stdio.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 
 #include "SPI2_TIM8.h"
-
-#include "task.h"
-#include "queue.h"
-
 
 SemaphoreHandle_t SPI2_TIM8_dataReadySem;
 

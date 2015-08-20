@@ -4,11 +4,8 @@
  *  Created on: 2015/02/25
  *      Author: sa
  */
-
-#include "stm32f4xx.h"
+#include <pch.h>
 #include "DAC_TIM8.h"
-#include "stdlib.h"
-#include "math.h"
 
 DAC_TIM6Class::DAC_TIM6Class(){
 	waveBuffer = malloc(sizeof(uint16_t) * WAVE_MEMORY_LENGTH);

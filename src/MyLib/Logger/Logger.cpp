@@ -4,13 +4,7 @@
  *  Created on: 2014/05/29
  *      Author: sa
  */
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "GeneralConfig.h"
+#include <pch.h>
 
 #include "MyLib/Util/Util.h"
 #include "Logger.h"

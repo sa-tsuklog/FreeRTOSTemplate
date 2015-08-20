@@ -8,18 +8,18 @@
 #ifndef GAINS_H_
 #define GAINS_H_
 
+#include <stdio.h>
+
 #include "FreeRTOS.h"
+#include "queue.h"
 #include "task.h"
+#include "semphr.h"
 
 #include "Common/Quaternion.h"
 #include "GainsConfig.h"
 #include "ImuData.h"
 #include "GpsData.h"
-#include "FreeRTOS.h"
-#include "queue.h"
 #include "KalmanFilter.h"
-#include <stdio.h>
-#include "semphr.h"
 
 
 /**

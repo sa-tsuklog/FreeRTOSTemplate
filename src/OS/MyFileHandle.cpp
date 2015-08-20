@@ -4,16 +4,10 @@
  *  Created on: 2014/05/28
  *      Author: sa
  */
-#include "FreeRTOS.h"
-#include "queue.h"
-#include "task.h"
-
-#include <string.h>
-#include <stdlib.h>
+#include <pch.h>
 #include <fcntl.h>
 
 #include "MyFileHandle.h"
-#include "stm32f4xx.h"
 #include "ff.h"
 
 #include "MyLib/Stdout/Stdout.h"

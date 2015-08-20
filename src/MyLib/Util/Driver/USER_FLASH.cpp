@@ -4,11 +4,8 @@
  *  Created on: 2014/05/14
  *      Author: sa
  */
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 #include "USER_FLASH.h"
-#include "stdio.h"
 
 #include "MyLib/Util/Util.h"
 

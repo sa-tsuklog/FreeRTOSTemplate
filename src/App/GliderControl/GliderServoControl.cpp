@@ -4,10 +4,10 @@
  *  Created on: 2015/04/27
  *      Author: sa
  */
+#include <pch.h>
 
 #include "GliderServoControl.h"
 #include "MyLib/Servo/Servo.h"
-#include <stdio.h>
 
 FILE* GliderServoControl::fp = NULL;
 

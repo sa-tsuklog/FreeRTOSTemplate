@@ -4,10 +4,9 @@
  *  Created on: 2014/06/08
  *      Author: sa
  */
+#include <pch.h>
 #include "Driver/TIM3.h"
 #include "Propo.h"
-
-#include <stdio.h>
 
 Propo::Propo(){
 }

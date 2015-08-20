@@ -1,13 +1,7 @@
-#include "stm32f4xx.h"
+#include <pch.h>
 #include "stm32f4xx_rcc.h"
-#include "stm32f4xx_conf.h"
-#include "FreeRTOS.h"
-#include "task.h"
 
 #include "ff.h"
-
-#include "stdio.h"
-#include "stdlib.h"
 
 #include "../Libraries/FreeRTOS-Plus/Source/FreeRTOS-Plus-Trace/Include/trcKernelPort.h"
 

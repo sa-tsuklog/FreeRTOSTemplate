@@ -4,9 +4,7 @@
  *  Created on: 2014/04/21
  *      Author: sa
  */
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
+#include <pch.h>
 #include "ServoTim1.h"
 
 ServoTim1::ServoTim1(){

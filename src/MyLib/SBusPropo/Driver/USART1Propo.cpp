@@ -5,12 +5,9 @@
  *      Author: sa
  */
 
-
+#include <pch.h>
 #include "USART1Propo.h"
 #include "../SBusPropo.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "GeneralConfig.h"
 
 USART1ClassPropo::USART1ClassPropo(){
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);

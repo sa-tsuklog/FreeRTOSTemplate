@@ -11,7 +11,6 @@
 #include "../FlightParameters.h"
 #include "ControllerInterface.h"
 #include "../GpsGuidance.h"
-#include "math.h"
 
 class GlidePhaseControl: public ControllerInterface{
 private:

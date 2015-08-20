@@ -6,10 +6,7 @@
  */
 
 
-
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <pch.h>
 #include "KalmanFilter.h"
 
 //TODO:逆行列の計算を高速化するべきか。

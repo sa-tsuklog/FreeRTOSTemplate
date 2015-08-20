@@ -4,6 +4,7 @@
  *  Created on: 2015/07/16
  *      Author: sa
  */
+#include <pch.h>
 
 #include "PitchAndHeadingHold.h"
 #include "../GliderServoControl.h"
@@ -12,7 +13,6 @@
 #include "MyLib/Util/UserFlashData.h"
 #include "MyLib/Gains/Gains.h"
 
-#include "math.h"
 #include "Common/Quaternion.h"
 
 PitchAndHeadingHold::PitchAndHeadingHold(){

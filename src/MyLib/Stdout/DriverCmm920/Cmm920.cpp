@@ -5,14 +5,11 @@
  *      Author: sa
  */
 
-
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "Cmm920.h"
 #include "USART3_CMM920.h"
 
-#include "GeneralConfig.h"
 
 Cmm920::Cmm920(){
 	USART3_CMM920Class::GetInstance();

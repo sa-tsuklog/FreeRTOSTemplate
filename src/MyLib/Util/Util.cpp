@@ -4,17 +4,14 @@
  *  Created on: 2014/06/08
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
+#include <pch.h>
 #include "../Libraries/FreeRTOS-Plus/Source/FreeRTOS-Plus-Trace/Include/trcKernelPort.h"
-#include "task.h"
 
 #include "Util.h"
 #include "Driver/ADC3.h"
 #include "Driver/TIM2.h"
 #include "Driver/USER_FLASH.h"
 #include <stdarg.h>
-#include <stdio.h>
 
 
 Util::Util(){

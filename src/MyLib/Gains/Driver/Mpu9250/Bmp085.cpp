@@ -4,14 +4,11 @@
  *  Created on: 2015/06/17
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
-#include "task.h"
+#include <pch.h>
 
 #include "I2C2.h"
 #include "Bmp085.h"
 #include "Bmp085RegisterDefs.h"
-#include "math.h"
 
 Bmp085::Bmp085(){
 }

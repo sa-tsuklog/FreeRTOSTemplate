@@ -4,9 +4,7 @@
  *  Created on: 2015/03/13
  *      Author: sa
  */
-
-#include "stm32f4xx.h"
-#include <stdio.h>
+#include <pch.h>
 #include "CAN1.h"
 
 CAN1Class::CAN1Class(){

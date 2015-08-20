@@ -4,17 +4,9 @@
  *  Created on: 2014/06/08
  *      Author: sa
  */
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "stdio.h"
-#include "stm32f4xx.h"
+#include <pch.h>
 
 #include "Test.h"
-#include "GeneralConfig.h"
-#include <math.h>
-#include <string.h>
 //dut
 #include "MyLib/Logger/Logger.h"
 #include "MyLib/Util/Util.h"

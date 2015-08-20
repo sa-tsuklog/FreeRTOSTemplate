@@ -6,9 +6,7 @@
  * @date 2014-04-13
  * 
  */
-
-#include "stdio.h"
-#include "math.h"
+#include <pch.h>
 #include "MyLib/Util/Util.h"
 
 #include "Quaternion.h"

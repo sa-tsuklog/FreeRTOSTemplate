@@ -4,12 +4,9 @@
  *  Created on: 2014/04/25
  *      Author: sa
  */
-
+#include <pch.h>
 
 #include "USART1.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "GeneralConfig.h"
 
 USART1Class::USART1Class(){
 	txQueue = xQueueCreate(TX_BUFFERSIZE,sizeof(char));

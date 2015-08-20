@@ -34,16 +34,13 @@
  *                   newlib version 1.17.0
  ****************************************************************************/
 
-
-#include <stdlib.h>
+#include <pch.h>
 #include <errno.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include "MyFileHandle.h"
 #include "ff.h"
-#include "stm32f4xx.h"
 
 #ifdef __cplusplus
 extern "C" {
