@@ -115,6 +115,7 @@ main: $(OBJS) $(OBJDIR)/libstm32f4xx.a $(OBJDIR)/startup_stm32f4xx.o
 	$(OBJCOPY) -O binary $(BINDIR)/main.elf $(BINDIR)/main.bin
 
 $(OBJDIR)/pch.h.gch: src/pch/pch.h
+	$(MKOBJDIR)
 	$(CXX) $(CXXFLAGS) -x c++-header src/pch/pch.h -o $(OBJDIR)/pch.h.gch -MMD
 
 %.o : %.c $(OBJDIR)/pch.h.gch
