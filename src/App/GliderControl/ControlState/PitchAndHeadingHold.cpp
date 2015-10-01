@@ -45,6 +45,7 @@ void PitchAndHeadingHold::control(){
 	radPitchCommand = flightParameters->glidePGain[1] * (radPitchAttitudeCommand   - radPitch)   - flightParameters->glideDGain[1] * rpsRate.y; 
 	radYawCommand   = flightParameters->glidePGain[2] * (radHeadingAttitudeCommand -radHeading)  - flightParameters->glideDGain[2] * rpsRate.z;
 	
+	GliderServoControl::mainWingLatch();
 	GliderServoControl::setPos(radPitchCommand,radRollCommand,radYawCommand);
 }
 

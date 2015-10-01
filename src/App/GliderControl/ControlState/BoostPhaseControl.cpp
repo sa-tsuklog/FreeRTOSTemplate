@@ -25,6 +25,7 @@ void BoostPhaseControl::control(){
 	float rollCommand = -pRollGain * radRoll - dRollGain * rpsRate.x;
 	float yawCommand = 0.0;
 	
+	GliderServoControl::mainWingLatch();
 	GliderServoControl::setPos(pitchCommand,rollCommand,yawCommand);
 }
 void BoostPhaseControl::reset(){

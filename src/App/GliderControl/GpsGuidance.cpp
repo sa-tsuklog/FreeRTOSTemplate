@@ -22,7 +22,12 @@ void GpsGuidance::clearWaypoints(){
 }
 
 void GpsGuidance::resetCurrentWaypoint(){
-	nextWaypoint = 0;
+	if(waypointCount > 1){
+		nextWaypoint = 1;		
+	}else{
+		nextWaypoint = 0;
+	}
+	
 }
 
 void GpsGuidance::setCurrentWaypoint(int waypointId){
@@ -92,6 +97,10 @@ void GpsGuidance::appendWaypoint(float relativePosX, float relativePosY){
 	waypointX[waypointCount] = relativePosX;
 	waypointY[waypointCount] = relativePosY;
 	waypointCount++;
+	
+	if(waypointCount > 1 && nextWaypoint == 0){
+		nextWaypoint = 1;
+	}
 }
 
 void GpsGuidance::confirmWaypoints(){

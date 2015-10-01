@@ -26,10 +26,10 @@ int GliderServoControl::surfaceToServoCh(Surface surface){
 }
 
 void GliderServoControl::mainWingOpen(){
-	nativeSetPos(MAIN_WING,1.0);
+	nativeSetPos(MAIN_WING,-1.0);
 }
 void GliderServoControl::mainWingLatch(){
-	nativeSetPos(MAIN_WING,0.0);
+	nativeSetPos(MAIN_WING,0.4);
 }
 void GliderServoControl::setPos(float pitchCommand,float rollCommand,float yawCommand){
 	if(fp == NULL){
@@ -51,8 +51,6 @@ void GliderServoControl::setPos(float pitchCommand,float rollCommand,float yawCo
 	nativeSetPos(LEFT_ELEVATOR,leftElevatorCommand);
 	
 	
-	Servo::GetInstance()->setPos(0,-pitchCommand+rollCommand);
-	Servo::GetInstance()->setPos(1, pitchCommand+rollCommand);
 	
 	decimator = (decimator+1)%50;
 	if(decimator % 5 == 3){

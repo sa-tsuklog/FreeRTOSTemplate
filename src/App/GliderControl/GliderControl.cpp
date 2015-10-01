@@ -100,6 +100,7 @@ void GliderControl::gliderControlTask(){
 		// control
 		/////////////////////////////////////
 		if(controlState == ControlState::LAUNCH_STANDBY){
+			GliderServoControl::mainWingLatch();
 			GliderServoControl::setPos(0,0,0);
 		}else if(controlState == ControlState::BOOST_PHASE){
 			boostPhaseControl.control();
@@ -180,7 +181,7 @@ void GliderControl::print(){
 	}
 	
 	if(this->printMode == GliderPrintMode::GPAIO){
-		if(decimator % 5 == 0){
+		if(decimator % 10 == 0){
 			printGpaio(stdout);
 		}
 	}

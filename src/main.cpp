@@ -78,10 +78,11 @@ int main(void) {
 	//CanBusMonitor::initCanBusMonitor();
 	
 	//SBusPropo::initSBusPropo();
-	xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL);
+	//xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL);
 	GliderControl::initGliderControl();
 	
 	vTaskStartScheduler();
+	
 	
 	while (1)
 	{

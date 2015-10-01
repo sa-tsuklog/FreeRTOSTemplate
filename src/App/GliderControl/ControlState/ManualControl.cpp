@@ -35,6 +35,11 @@ void ManualControl::control(ControlParams* params){
 	float rollCommand 	= powf((params->roll-128) /128.0,3) - rx*dxGain;
 	float yawCommand 	= powf((params->yaw-128)  /128.0,3) - rz*dzGain;
 	
+	if(params->throttle < 128){
+		GliderServoControl::mainWingOpen();
+	}else{
+		GliderServoControl::mainWingLatch();
+	}
 	GliderServoControl::setPos(pitchCommand,rollCommand,yawCommand);
 }
 void ManualControl::reset(){}

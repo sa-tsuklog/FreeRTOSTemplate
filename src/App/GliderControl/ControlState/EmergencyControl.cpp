@@ -13,6 +13,7 @@ EmergencyControl::EmergencyControl(){
 }
 
 void EmergencyControl::control(){
+	GliderServoControl::mainWingLatch();
 	GliderServoControl::setPos(1.0,0,0);
 }
 

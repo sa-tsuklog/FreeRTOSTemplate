@@ -18,7 +18,7 @@ COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App src/App/TankControl \
 			src/App/GliderControl src/App/GliderControl/ControlState
 
-TOOLDIR = ../../../../eclipse_stm32/launchpad/bin/
+TOOLDIR = ../../launchpad/bin/
 G++VER = 4.9.3
 USE_SH = 1
 ##########
