@@ -117,7 +117,48 @@ void Ad7176_2Seeker::initAd7176(){
 	write16(IFMODE,0x0040);		//DATA_STAT ON
 	
 	vTaskDelay(1);
-	write16(SETUPCON0,0x1000);	//external reference
+	//write16(SETUPCON0,0x1000);	//external reference
+	write16(SETUPCON0,0x1020);	//internal reference
+	vTaskDelay(1);
+	write16(SETUPCON1,0x1000);
+	vTaskDelay(1);
+	write16(SETUPCON2,0x1000);
+	vTaskDelay(1);
+	write16(SETUPCON3,0x1000);
+	vTaskDelay(1);
+	write16(FILTCON0,0x0007);	//10ksps
+	vTaskDelay(1);
+	write16(FILTCON1,0x0007);	//10ksps
+	vTaskDelay(1);
+	write16(FILTCON2,0x0007);	//10ksps
+	vTaskDelay(1);
+	write16(FILTCON3,0x0007);	//10ksps
+	vTaskDelay(1);
+	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4 
+	vTaskDelay(1);
+	write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
+	vTaskDelay(1);
+	write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
+	vTaskDelay(1);
+	write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
+	vTaskDelay(1);
+	write16(ADCMODE,0x800C);	//continuous conversion mode
+}
+
+void Ad7176_2Seeker::initAd7176ForSingleChannel(){
+	vTaskDelay(100);
+	resetIf();
+	vTaskDelay(10);
+	write16(GPIOCON,0x090D);
+	vTaskDelay(1);
+	write16(ADCMODE,0x802C);	//continuous conversion mode
+	vTaskDelay(1);
+	//write16(IFMODE,0x0000);			//DATA_STAT OFF
+	write16(IFMODE,0x0040);		//DATA_STAT ON
+	
+	vTaskDelay(1);
+	//write16(SETUPCON0,0x1000);	//external reference
+	write16(SETUPCON0,0x1020);	//internal reference
 	vTaskDelay(1);
 	write16(SETUPCON1,0x1000);
 	vTaskDelay(1);
@@ -145,28 +186,4 @@ void Ad7176_2Seeker::initAd7176(){
 	write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
 	vTaskDelay(1);
 	write16(ADCMODE,0x800C);	//continuous conversion mode
-}
-
-void Ad7176_2Seeker::ad7176_2Task(){
-	printf("init\r\n");
-	initAd7176();
-	printf("start\r\n");
-	unsigned char ch;
-	while(1){
-		for(int i=0;i<TMP_BUFFER_SIZE;i++){
-			unsigned int data = readAdData(&ch);
-			irBuf[i]=data;
-		}
-		for(int i=0;i<TMP_BUFFER_SIZE;i++){
-			printf("%d\t%d\r\n",i,irBuf[i]);
-			vTaskDelay(5);
-		}
-		
-		vTaskDelay(1000);
-	}
-
-}
-
-void Ad7176_2Seeker::prvAd7176_2TaskEntry(void* pvParameters){
-	Ad7176_2Seeker::GetInstance()->ad7176_2Task();
 }

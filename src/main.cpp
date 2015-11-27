@@ -22,6 +22,8 @@
 #include "MyLib/SBusPropo/SBusPropo.h"
 #include "App/GliderControl/GliderControl.h"
 #include "MyLib/Stdout/SerialCommand.h"
+
+#include "Test.h"
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)と
  *  stm32F429           (Xtal = 12MHz)での要変更箇所
@@ -71,10 +73,10 @@ int main(void) {
 	
 	//CAN1Class::GetInstance();
 	
-	Servo::GetInstance()->start();
+	//Servo::GetInstance()->start();
 	Util::initUtil();
 	Stdout::initStdout();
-	Gains::initGains();
+	//Gains::initGains();
 	Logger::initLogger();
 	//CmdServo::initCmdServo();
 	//CanBusMonitor::initCanBusMonitor();

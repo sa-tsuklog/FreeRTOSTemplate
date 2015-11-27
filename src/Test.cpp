@@ -54,6 +54,28 @@ void test(){
 	}
 }
 
+#define TMP_BUFFER_SIZE 2048
+unsigned int testBuf[TMP_BUFFER_SIZE];
+
+void seekerTest(){
+	printf("init\r\n");
+	Ad7176_2Seeker::GetInstance()->initAd7176();
+	printf("start\r\n");
+	unsigned char ch;
+	while(1){
+		for(int i=0;i<TMP_BUFFER_SIZE;i++){
+			unsigned int data = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
+			testBuf[i]=data;
+		}
+		for(int i=0;i<TMP_BUFFER_SIZE;i++){
+			printf("%d\r\n",testBuf[i]);
+			vTaskDelay(5);
+		}
+		
+		vTaskDelay(1000);
+	}
+}
+
 void prvTestTask(void* pvParamters){
 	test();
 }

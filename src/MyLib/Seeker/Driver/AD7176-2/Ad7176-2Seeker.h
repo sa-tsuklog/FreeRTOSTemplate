@@ -23,7 +23,7 @@ public:
 
 	// Class definition
 private:
-	void ad7176_2Task();
+	
 public:
 	void write8(char cmd,char data);
 	void write16(char cmd,unsigned short data);
@@ -35,7 +35,7 @@ public:
 	unsigned int readAdData(unsigned char* outChannel);
 	void resetIf();
 	void initAd7176();
-	static void prvAd7176_2TaskEntry(void* pvParameters);
+	void initAd7176ForSingleChannel();
 };
 
 

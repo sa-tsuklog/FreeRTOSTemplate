@@ -187,7 +187,7 @@ void GliderControl::controlStateUpdate(ControlParams* params){
 		Quaternion attitude = Gains::GetInstance()->getAttitude();
 		float pitch,roll,heading;
 		attitude.getRadPitchRollHeading(&pitch,&roll,&heading);
-		if(pitch < 0){
+		if(pitch < 20*M_PI/180){
 			controlState = ControlState::GLIDE_PHASE;
 		}
 	}else if(controlState == ControlState::GLIDE_PHASE){

@@ -13,7 +13,7 @@
 #include "math.h"
 
 BoostPhaseControl::BoostPhaseControl(){
-pRollGain = Util::GetInstance()->flashData.flightParameters.boostPGain[0];
+	pRollGain = Util::GetInstance()->flashData.flightParameters.boostPGain[0];
 	dRollGain = Util::GetInstance()->flashData.flightParameters.boostDGain[0];
 	pPitchGain = Util::GetInstance()->flashData.flightParameters.boostPGain[1];
 	dPitchGain = Util::GetInstance()->flashData.flightParameters.boostDGain[1];
