@@ -103,6 +103,7 @@ void Seeker::getDirectionFast(float* outUpDown,float* outLeftRight,float* outInt
 	quadrantSeekerFast.getDirection(outUpDown,outLeftRight,outIntensity);
 }
 
+
 float Seeker::getNoiseFloorSlow(){
 	return NOISE_FLOOR_SLOW;
 }
@@ -111,6 +112,12 @@ float Seeker::getNoiseFloorFast(){
 	return NOISE_FLOOR_FAST;
 }
 
+void Seeker::SeekerTaskEntry(void *pvParameters){
+	Seeker::GetInstance()->SeekerTask();
+}
+void Seeker::initSeeker(){
+	xTaskCreate(&Seeker::SeekerTaskEntry,"seeker",2048,NULL,4,NULL);
+}
 void Seeker::SeekerTaskEntry(void *pvParameters){
 	Seeker::GetInstance()->SeekerTask();
 }

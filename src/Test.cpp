@@ -62,6 +62,9 @@ void seekerTest(){
 	Ad7176_2Seeker::GetInstance()->initAd7176();
 	printf("start\r\n");
 	unsigned char ch;
+	
+	Servo::GetInstance()->start();
+	float pos = 1.0;
 	while(1){
 		for(int i=0;i<TMP_BUFFER_SIZE;i++){
 			unsigned int data = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
@@ -73,6 +76,8 @@ void seekerTest(){
 		}
 		
 		vTaskDelay(1000);
+		pos = pos*-1.0;
+		Servo::GetInstance()->setPos(0,pos);
 	}
 }
 

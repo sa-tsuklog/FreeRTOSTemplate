@@ -85,6 +85,11 @@ int main(void) {
 	xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
 	//GliderControl::initGliderControl();
 	
+	//GliderControl::initGliderControl();
+	
+	//Seeker::initSeeker();
+	//xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
+	
 	vTaskStartScheduler();
 	
 	

@@ -810,8 +810,6 @@ void SerialCommand::testCmd1(){
 		printf("%.2f\r\n",pos);
 		vTaskDelay(100);
 	}
-	
-	
 }
 /**
  * @brief デバッグ用コマンド2

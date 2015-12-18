@@ -1,13 +1,12 @@
 /*
- * Seeker.h
+ * Seeker.hpp
  *
- *  Created on: 2014/06/08
+ *  Created on: 2014/03/08
  *      Author: sa
  */
 
 #ifndef SEEKER_H_
 #define SEEKER_H_
-
 
 #include "FreeRTOS.h"
 #include "task.h"
