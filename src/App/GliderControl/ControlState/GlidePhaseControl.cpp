@@ -46,6 +46,11 @@ float GlidePhaseControl::getRadRollAttitudeCommand(float radHeading){
 	float radHeadingCommand = gpsGuidance->radVectorToNextWaypointFromPreviousWaypoint(mRelativePosition.x,mRelativePosition.y) - mDistanceFromCourse * (flightParameters->degPerMHeadingGain*M_PI/180);
 	float radHeadingError = radHeadingCommand - radHeading;
 	
+	if(radHeadingError < -M_PI){
+		radHeadingError += 2*M_PI;
+	}else if(radHeadingError > M_PI){
+		radHeadingError -= 2*M_PI;
+	}
 	
 	float radRollCommand = radHeadingError * flightParameters->degPerDegHeadingToRollGain;
 	if(radRollCommand < -flightParameters->degRollCommandLimit * M_PI/180){

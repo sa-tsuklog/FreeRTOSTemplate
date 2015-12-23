@@ -13,21 +13,21 @@
 
 Stdout::Stdout(){
 	////for normal usart.
-	//io = USART3Class::GetInstance();
+	io = USART3Class::GetInstance();
 	
 	////for usart via cmm920.
-	io = Cmm920::GetInstance();
+	//io = Cmm920::GetInstance();
 }
 
 void Stdout::initStdout(){
 	//task create.
 	
 	////for normal usart.
-	//xTaskCreate(&USART3Class::prvTxTask,"u3tx",512,NULL,2,&(Stdout::GetInstance()->u3txHandle));
+	xTaskCreate(&USART3Class::prvTxTask,"u3tx",512,NULL,2,&(Stdout::GetInstance()->u3txHandle));
 	
 	////for usart via cmm920.
-	xTaskCreate(&Cmm920::Cmm920TxTaskEntry,"u3tx",512,NULL,2,&(Stdout::GetInstance()->u3txHandle));
-	xTaskCreate(&Cmm920::Cmm920RxTaskEntry,"u3rx",512,NULL,3,&(Stdout::GetInstance()->u3rxHandle));
+//	xTaskCreate(&Cmm920::Cmm920TxTaskEntry,"u3tx",512,NULL,2,&(Stdout::GetInstance()->u3txHandle));
+//	xTaskCreate(&Cmm920::Cmm920RxTaskEntry,"u3rx",512,NULL,3,&(Stdout::GetInstance()->u3rxHandle));
 	
 	////for both normal and cmm920 uart.
 	xTaskCreate(&SerialCommand::prvSerialCommandTaskEntry,"cmd",1024,NULL,2,&(Stdout::GetInstance()->cmdHandle));

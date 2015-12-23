@@ -11,6 +11,7 @@
 #include "GliderServoControl.h"
 #include "ControlState/BoostPhaseControl.h"
 #include "ControlState/GlidePhaseControl.h"
+#include "ControlState/GlidePhaseHeadingHold.h"
 #include "ControlState/ManualControl.h"
 #include "ControlState/EmergencyControl.h"
 #include "ControlState/PitchAndHeadingHold.h"
@@ -59,11 +60,13 @@ GpsGuidance* GliderControl::getGpsGuidance(){
 }
 
 void GliderControl::gliderControlTask(){
+	float radHeadingAtLaunch=0.0;
 	Servo::GetInstance()->start();
 	ControlParams params = ControlParams(0,0,0,0,0,0,0,0,0,0);
 	
 	BoostPhaseControl boostPhaseControl = BoostPhaseControl();
-	GlidePhaseControl glidePhaseControl = GlidePhaseControl(&guidance); 
+	//GlidePhaseControl glidePhaseControl = GlidePhaseControl(&guidance); 
+	GlidePhaseHeadingHold glidePhaseControl = GlidePhaseHeadingHold(&guidance);
 	EmergencyControl emergencyControl = EmergencyControl();
 	ManualControl manualControl = ManualControl();
 	PitchAndHeadingHold pitchHeadingHold = PitchAndHeadingHold();
@@ -102,10 +105,12 @@ void GliderControl::gliderControlTask(){
 		if(controlState == ControlState::LAUNCH_STANDBY){
 			GliderServoControl::mainWingLatch();
 			GliderServoControl::setPos(0,0,0);
+			radHeadingAtLaunch = Gains::GetInstance()->getAttitude().getRadHeading();
 		}else if(controlState == ControlState::BOOST_PHASE){
 			boostPhaseControl.control();
 		}else if(controlState == ControlState::GLIDE_PHASE){
-			glidePhaseControl.control();
+			//glidePhaseControl.control();
+			glidePhaseControl.control(radHeadingAtLaunch);
 		}else if(controlState == ControlState::MANUAL_CONTROL){
 			manualControl.control(&params);
 		}else if(controlState == ControlState::PITCH_HEADING_HOLD){
@@ -208,7 +213,7 @@ void GliderControl::print(){
 
 void GliderControl::printGpaio(FILE* fp){
 	static int tmp=0;
-	tmp = (tmp+1)%100;
+	tmp = (tmp+1)%20;
 	//$GPAIO,Latitude,N/S,Longitude,E/W,height,HDOP,pitch,roll,yaw,SpeedX,SpeedY,SpeedZ,GpsValid,waypointId,controlState,checksum
 	Quaternion attitude = Gains::GetInstance()->getAttitude();
 	float pitch,roll,heading;
