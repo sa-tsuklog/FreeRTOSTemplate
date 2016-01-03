@@ -693,6 +693,22 @@ void SerialCommand::testCmd0(){
  * 関数の中身を書き換え、デバッグ用に使用可能
  */
 void SerialCommand::testCmd1(){
+	
+	float pos=0.0;
+	while(1){
+		char c = Stdout::GetInstance()->getChar();
+		if(c == 'w'){
+			pos += 0.05;
+		}else if(c == 's'){
+			pos -= 0.05;
+		}
+		Servo::GetInstance()->setPos(1,pos);
+		
+		printf("%.2f\r\n",pos);
+		vTaskDelay(100);
+	}
+	
+	
 }
 /**
  * @brief デバッグ用コマンド2
