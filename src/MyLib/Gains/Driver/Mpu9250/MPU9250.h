@@ -33,8 +33,10 @@ private:
 	static const float DEG_TEMP_OFFSET      =21.0;
 	float cmpsGain[3];
 	
-	static const int SAMPLES_FOR_CALIBRATION = 500;
+	static const int SAMPLES_FOR_CALIBRATION = 512;
+	static const int CMPS_CALBRATION_ITERETION = 500;
 	float calibrationBuf[3];
+	float cmpsCalibrationBuf[SAMPLES_FOR_CALIBRATION][3];
 	
 	float mpspsAcl[3];
 	float rpsRate[3];
@@ -44,6 +46,12 @@ private:
 	
 	SemaphoreHandle_t gyroCalibrationSem;
 	SemaphoreHandle_t aclCalibrationSem;
+	SemaphoreHandle_t cmpsCalibrationSem;
+	
+	void calibrateGyro();
+	void calibrateAcl();
+	void calibrateCmps();
+	void cmpsCalibrationCalcOneStep();
 public:
 	void init();
 	void waitNewData();
@@ -51,6 +59,7 @@ public:
 	
 	void startGyroCalibration();
 	void startAclCalibration();
+	void startCmpsCalibration();
 	
 	void prvMpu9250Task(void *pvParameters);
 };

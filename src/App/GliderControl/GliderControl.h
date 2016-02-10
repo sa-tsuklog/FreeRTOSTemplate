@@ -44,6 +44,7 @@ private:
 	static const int MS_CONTROL_INTERVAL = 20;
 	static const int MS_CONTROL_WATCHDOG_MAX = 1000;
 	static const int M_DISTANCE_LIMIT_FROM_COURCE = 10.0;
+	static const int MS_BOOST_PHASE0_TIME = 2000;
 	
 	FILE* log0;
 	GpsGuidance guidance;

@@ -413,18 +413,20 @@ void SerialCommand::setMpuAclBias(){
  * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setMpuCmpsBias(){
-	for(int i=0;i<3;i++){
-		float f;
-		printf("%d th axis:\r\n",i);
-		fflush(stdout);
-		char* biasString = Stdout::GetInstance()->readLine();
-		if(strlen(biasString)){
-			f = atof(biasString);
-			Util::GetInstance()->flashData.mpuCmpsBias[i] = f;
-		}
-		printf("%f\r\n",Util::GetInstance()->flashData.mpuCmpsBias[i]);
-	}
-	Util::GetInstance()->userflashFlush();
+//	for(int i=0;i<3;i++){
+//		float f;
+//		printf("%d th axis:\r\n",i);
+//		fflush(stdout);
+//		char* biasString = Stdout::GetInstance()->readLine();
+//		if(strlen(biasString)){
+//			f = atof(biasString);
+//			Util::GetInstance()->flashData.mpuCmpsBias[i] = f;
+//		}
+//		printf("%f\r\n",Util::GetInstance()->flashData.mpuCmpsBias[i]);
+//	}
+//  Util::GetInstance()->userflashFlush();
+	
+	Mpu9250::getInstance()->startCmpsCalibration();
 }
 
 /**
@@ -632,6 +634,8 @@ void SerialCommand::initializeUserFlash(){
 		Util::GetInstance()->flashData.mpuGyroTempCoefficient[i]=0.0;
 		Util::GetInstance()->flashData.mpuCmpsTempCoefficient[i]=0.0;
 	}
+	Util::GetInstance()->flashData.mpuCmpsMagnitude = 17.6;
+	
 	Util::GetInstance()->userflashFlush();
 }
 

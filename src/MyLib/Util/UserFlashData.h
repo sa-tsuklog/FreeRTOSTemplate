@@ -27,6 +27,7 @@ typedef struct{
 	float mpuAclTempCoefficient[3];
 	float mpuCmpsTempCoefficient[3];
 	FlightParameters flightParameters;
+	float mpuCmpsMagnitude;
 }UserflashData;
 
 #endif /* USERFLASHDATA_H_ */

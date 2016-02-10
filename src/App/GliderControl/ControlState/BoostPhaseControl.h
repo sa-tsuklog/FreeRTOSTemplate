@@ -14,9 +14,14 @@ class BoostPhaseControl:public ControllerInterface{
 private:
 	float dRollGain;
 	float pRollGain;
+	float dPitchGain;
+	float pPitchGain;
+	float dHeadingGain;
+	float pHeadingGain;
 public:
 	BoostPhaseControl();
 	void control();
+	void control(float radHeadingCommand);
 	void reset();
 };
 

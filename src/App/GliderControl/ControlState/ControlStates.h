@@ -12,6 +12,7 @@ class ControlState{
 public:
 	enum State{
 		LAUNCH_STANDBY,
+		BOOST_PHASE0,
 		BOOST_PHASE,
 		GLIDE_PHASE,
 		MANUAL_CONTROL,

@@ -9,6 +9,7 @@
 #include "GliderControl.h"
 #include "GliderControlTestBench.h"
 #include "GliderServoControl.h"
+#include "ControlState/BoostPhase0Control.h"
 #include "ControlState/BoostPhaseControl.h"
 #include "ControlState/GlidePhaseControl.h"
 #include "ControlState/GlidePhaseHeadingHold.h"
@@ -61,9 +62,12 @@ GpsGuidance* GliderControl::getGpsGuidance(){
 
 void GliderControl::gliderControlTask(){
 	float radHeadingAtLaunch=0.0;
+	float radPitchAtLaunch = 0.0;
+	
 	Servo::GetInstance()->start();
 	ControlParams params = ControlParams(0,0,0,0,0,0,0,0,0,0);
 	
+	BoostPhase0Control boostPhase0Control = BoostPhase0Control();
 	BoostPhaseControl boostPhaseControl = BoostPhaseControl();
 	//GlidePhaseControl glidePhaseControl = GlidePhaseControl(&guidance); 
 	GlidePhaseHeadingHold glidePhaseControl = GlidePhaseHeadingHold(&guidance);
@@ -106,8 +110,10 @@ void GliderControl::gliderControlTask(){
 			GliderServoControl::mainWingLatch();
 			GliderServoControl::setPos(0,0,0);
 			radHeadingAtLaunch = Gains::GetInstance()->getAttitude().getRadHeading();
+		}else if(controlState == ControlState::BOOST_PHASE0){
+			boostPhase0Control.control(radPitchAtLaunch,radHeadingAtLaunch);
 		}else if(controlState == ControlState::BOOST_PHASE){
-			boostPhaseControl.control();
+			boostPhaseControl.control(radHeadingAtLaunch);
 		}else if(controlState == ControlState::GLIDE_PHASE){
 			//glidePhaseControl.control();
 			glidePhaseControl.control(radHeadingAtLaunch);
@@ -129,6 +135,8 @@ void GliderControl::gliderControlTask(){
 }
 
 void GliderControl::controlStateUpdate(ControlParams* params){
+	static int msBoostPhase0Time=0;
+	
 	Quaternion mPosition = Gains::GetInstance()->getMRelativePos();
 	float mDistanceFromCource = guidance.mDistanceFromCurrentCourse(mPosition.x,mPosition.y); 
 	
@@ -144,8 +152,9 @@ void GliderControl::controlStateUpdate(ControlParams* params){
 			controlStateReturnPoint = controlState;
 		}
 		controlState = ControlState::PITCH_HEADING_HOLD;
-	}else if((params->mode & ControlParams::BIT_EMERGENCY) ||
-			(mDistanceFromCource > M_DISTANCE_LIMIT_FROM_COURCE )||
+	}else if(params->mode & ControlParams::BIT_EMERGENCY){
+		controlState = ControlState::EMERGENCY;
+	}else if((mDistanceFromCource > M_DISTANCE_LIMIT_FROM_COURCE )||
 			(mDistanceFromCource < -M_DISTANCE_LIMIT_FROM_COURCE)){
 		//controlState = ControlState::EMERGENCY;
 	}
@@ -156,8 +165,14 @@ void GliderControl::controlStateUpdate(ControlParams* params){
 	
 	
 	if(controlState == ControlState::LAUNCH_STANDBY){
+		msBoostPhase0Time = 0;
 		Quaternion acl = Gains::GetInstance()->getMpspsAcl();
 		if(acl.abs() > 9.8 * 3.0){
+			controlState = ControlState::BOOST_PHASE0;
+		}
+	}else if(controlState == ControlState::BOOST_PHASE0){
+		msBoostPhase0Time += MS_CONTROL_INTERVAL;
+		if(msBoostPhase0Time > MS_BOOST_PHASE0_TIME){
 			controlState = ControlState::BOOST_PHASE;
 		}
 	}else if(controlState == ControlState::BOOST_PHASE){

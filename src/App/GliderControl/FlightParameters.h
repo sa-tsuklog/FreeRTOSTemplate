@@ -11,6 +11,7 @@
 class FlightParameters{
 public:
 	float boostDGain[3];
+	float boostPGain[3];
 	float degGlideAngle;
 	float glidePGain[3];
 	float glideDGain[3];

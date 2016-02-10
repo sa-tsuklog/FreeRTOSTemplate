@@ -17,6 +17,7 @@
 Mpu9250::Mpu9250(){
 	gyroCalibrationSem = xSemaphoreCreateBinary();
 	aclCalibrationSem  = xSemaphoreCreateBinary();
+	cmpsCalibrationSem = xSemaphoreCreateBinary();
 }
 
 void Mpu9250::init(){
@@ -46,12 +47,15 @@ void Mpu9250::init(){
 
 	unsigned char asa[3];
 	I2C2Class::getInstance()->read(AK8963_ADDR,ASAX,&(asa[0]),1);
-	I2C2Class::getInstance()->read(AK8963_ADDR,ASAX,&(asa[1]),1);
-	I2C2Class::getInstance()->read(AK8963_ADDR,ASAX,&(asa[2]),1);
+	I2C2Class::getInstance()->read(AK8963_ADDR,ASAY,&(asa[1]),1);
+	I2C2Class::getInstance()->read(AK8963_ADDR,ASAZ,&(asa[2]),1);
 	
 	for(int i=0;i<3;i++){
 		cmpsGain[i] = (1.0 + (asa[i]-128.0)*0.5/128.0);
 	}
+	
+	
+	printf("%d,%d,%d\r\n",asa[0],asa[1],asa[2]);
 	
 	
 	I2C2Class::getInstance()->write1(AK8963_ADDR,CNTL1,0x01<<4 | 0x06);
@@ -68,6 +72,10 @@ void Mpu9250::startGyroCalibration(){
 void Mpu9250::startAclCalibration(){
 	xSemaphoreGive(aclCalibrationSem);
 }
+void Mpu9250::startCmpsCalibration(){
+	xSemaphoreGive(cmpsCalibrationSem);
+}
+
 void Mpu9250::readMpu9250(){
 	static int count=0;
 	
@@ -94,9 +102,9 @@ void Mpu9250::readMpu9250(){
 	rpsRate[1] = (-RPS_PER_LSB * ((short)(gyroBuf[0]<<8|gyroBuf[1]))) - flash->mpuGyroBias[1] - degTemp * flash->mpuGyroTempCoefficient[1];
 	rpsRate[2] = ( RPS_PER_LSB * ((short)(gyroBuf[4]<<8|gyroBuf[5]))) - flash->mpuGyroBias[2] - degTemp * flash->mpuGyroTempCoefficient[2];
 	
-	uTCmps[0] = (+UT_PER_LSB * ((short)(cmpsBuf[1]<<8|cmpsBuf[0]))) - flash->mpuCmpsBias[0] - degTemp * flash->mpuCmpsTempCoefficient[0];
-	uTCmps[1] = (-UT_PER_LSB * ((short)(cmpsBuf[3]<<8|cmpsBuf[2]))) - flash->mpuCmpsBias[1] - degTemp * flash->mpuCmpsTempCoefficient[1];
-	uTCmps[2] = (-UT_PER_LSB * ((short)(cmpsBuf[5]<<8|cmpsBuf[4]))) - flash->mpuCmpsBias[2] - degTemp * flash->mpuCmpsTempCoefficient[2];
+	uTCmps[0] = (+UT_PER_LSB * cmpsGain[0] * ((short)(cmpsBuf[1]<<8|cmpsBuf[0]))) - flash->mpuCmpsBias[0] - degTemp * flash->mpuCmpsTempCoefficient[0];
+	uTCmps[1] = (-UT_PER_LSB * cmpsGain[1] * ((short)(cmpsBuf[3]<<8|cmpsBuf[2]))) - flash->mpuCmpsBias[1] - degTemp * flash->mpuCmpsTempCoefficient[1];
+	uTCmps[2] = (-UT_PER_LSB * cmpsGain[2] * ((short)(cmpsBuf[5]<<8|cmpsBuf[4]))) - flash->mpuCmpsBias[2] - degTemp * flash->mpuCmpsTempCoefficient[2];
 	
 	if(Util::GetInstance()->flashData.imuType == ImuType::MPU9250_BMP850){
 		if(count % 2 == 0){
@@ -124,8 +132,8 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 	//FILE* fp = fopen("/log2","w");
 	
 	int j=0;
-	int gyroCalibrationCount = 0;
-	int aclCalibrationCount = 0;
+	
+	
 	I2C2Class::getInstance()->start();
 	
 	while(1){	
@@ -148,59 +156,9 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 		/////////////////////////////////////
 		// calibration
 		/////////////////////////////////////
-		if(xSemaphoreTake(gyroCalibrationSem,0) == pdTRUE){
-			printf("\r\ncalibration start\r\n");
-			
-			gyroCalibrationCount = SAMPLES_FOR_CALIBRATION;
-			for(int i=0;i<3;i++){
-				calibrationBuf[i]=0;
-				Util::GetInstance()->flashData.mpuGyroBias[i]=0;
-			}
-		}
-		if(gyroCalibrationCount != 0){
-			for(int i=0;i<3;i++){
-				calibrationBuf[i] += rpsRate[i];
-			}
-			gyroCalibrationCount--;
-			
-			if(gyroCalibrationCount==0){
-				for(int i=0;i<3;i++){
-					Util::GetInstance()->flashData.mpuGyroBias[i]=calibrationBuf[i]/SAMPLES_FOR_CALIBRATION;
-				}
-				Util::GetInstance()->userflashFlush();
-				
-				printf("\r\ncalibration end %.3f,%.3f,%.3f\r\n\r\n",Util::GetInstance()->flashData.mpuGyroBias[0],Util::GetInstance()->flashData.mpuGyroBias[1],Util::GetInstance()->flashData.mpuGyroBias[2]);
-				
-			}
-		}
-		if(xSemaphoreTake(aclCalibrationSem,0) == pdTRUE){
-			printf("\r\ncalibration start\r\n");
-			
-			aclCalibrationCount = SAMPLES_FOR_CALIBRATION;
-			for(int i=0;i<3;i++){
-				calibrationBuf[i]=0;
-				Util::GetInstance()->flashData.mpuAclBias[i]=0;
-			}
-		}
-		if(aclCalibrationCount != 0){
-			for(int i=0;i<3;i++){
-				calibrationBuf[i] += mpspsAcl[i];
-			}
-			aclCalibrationCount--;
-			
-			if(aclCalibrationCount==0){
-				printf("\r\n");
-				for(int i=0;i<3;i++){
-					if(calibrationBuf[i]/SAMPLES_FOR_CALIBRATION <1.0 && -1.0 < calibrationBuf[i]/SAMPLES_FOR_CALIBRATION){
-						Util::GetInstance()->flashData.mpuAclBias[i] = calibrationBuf[i]/SAMPLES_FOR_CALIBRATION;
-						
-						printf("axis%d:%.3f\r\n",i,Util::GetInstance()->flashData.mpuAclBias[i]);
-					}
-				}
-				printf("\r\n");
-				Util::GetInstance()->userflashFlush();
-			}
-		}
+		calibrateGyro();
+		calibrateAcl();
+		calibrateCmps();
 		
 		
 		if(j==0){
@@ -209,6 +167,158 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 		j=(j+1)%10;
 	}
 }
+
+void Mpu9250::calibrateGyro(){
+	static int gyroCalibrationCount = 0;
+	
+	if(xSemaphoreTake(gyroCalibrationSem,0) == pdTRUE){
+		printf("\r\ncalibration start\r\n");
+		
+		gyroCalibrationCount = SAMPLES_FOR_CALIBRATION;
+		for(int i=0;i<3;i++){
+			calibrationBuf[i]=0;
+			Util::GetInstance()->flashData.mpuGyroBias[i]=0;
+		}
+	}
+	if(gyroCalibrationCount != 0){
+		for(int i=0;i<3;i++){
+			calibrationBuf[i] += rpsRate[i];
+		}
+		gyroCalibrationCount--;
+		
+		if(gyroCalibrationCount==0){
+			for(int i=0;i<3;i++){
+				Util::GetInstance()->flashData.mpuGyroBias[i]=calibrationBuf[i]/SAMPLES_FOR_CALIBRATION;
+			}
+			Util::GetInstance()->userflashFlush();
+			
+			printf("\r\ncalibration end %.3f,%.3f,%.3f\r\n\r\n",Util::GetInstance()->flashData.mpuGyroBias[0],Util::GetInstance()->flashData.mpuGyroBias[1],Util::GetInstance()->flashData.mpuGyroBias[2]);
+			
+		}
+	}
+}
+
+void Mpu9250::calibrateAcl(){
+	static int aclCalibrationCount = 0;
+	
+	if(xSemaphoreTake(aclCalibrationSem,0) == pdTRUE){
+		printf("\r\ncalibration start\r\n");
+		
+		aclCalibrationCount = SAMPLES_FOR_CALIBRATION;
+		for(int i=0;i<3;i++){
+			calibrationBuf[i]=0;
+			Util::GetInstance()->flashData.mpuAclBias[i]=0;
+		}
+	}
+	if(aclCalibrationCount != 0){
+		for(int i=0;i<3;i++){
+			calibrationBuf[i] += mpspsAcl[i];
+		}
+		aclCalibrationCount--;
+		
+		if(aclCalibrationCount==0){
+			printf("\r\n");
+			for(int i=0;i<3;i++){
+				if(calibrationBuf[i]/SAMPLES_FOR_CALIBRATION <1.0 && -1.0 < calibrationBuf[i]/SAMPLES_FOR_CALIBRATION){
+					Util::GetInstance()->flashData.mpuAclBias[i] = calibrationBuf[i]/SAMPLES_FOR_CALIBRATION;
+					
+					printf("axis%d:%.3f\r\n",i,Util::GetInstance()->flashData.mpuAclBias[i]);
+				}
+			}
+			printf("\r\n");
+			Util::GetInstance()->userflashFlush();
+		}
+	}
+}
+
+void Mpu9250::calibrateCmps(){
+	static int cmpsCalibrationCount = 0;
+	
+	if(xSemaphoreTake(cmpsCalibrationSem,0) == pdTRUE){
+		printf("Rotate the sensor to calibrate\r\n");
+		cmpsCalibrationCount = SAMPLES_FOR_CALIBRATION;
+		for(int i=0;i<3;i++){
+			Util::GetInstance()->flashData.mpuCmpsBias[i]=0;
+		}
+	}
+	
+	if(cmpsCalibrationCount != 0){
+		cmpsCalibrationCount--;
+		
+		for(int i=0;i<3;i++){
+			cmpsCalibrationBuf[cmpsCalibrationCount][i] = uTCmps[i];
+		}
+		if(cmpsCalibrationCount == 0){
+			for(int i=0;i<CMPS_CALBRATION_ITERETION;i++){
+				cmpsCalibrationCalcOneStep();
+			}
+			
+			printf("bias = (");
+			for(int i=0;i<3;i++){
+				printf("%.3f,",Util::GetInstance()->flashData.mpuCmpsBias[i]);
+			}
+			printf("), ");
+			printf("magnitude = %.3f\r\n",Util::GetInstance()->flashData.mpuCmpsMagnitude);
+			
+			Util::GetInstance()->userflashFlush();
+		}
+	}
+}
+
+void Mpu9250::cmpsCalibrationCalcOneStep(){
+	float rTmp = Util::GetInstance()->flashData.mpuCmpsMagnitude;
+	float bx = Util::GetInstance()->flashData.mpuCmpsBias[0];
+	float by = Util::GetInstance()->flashData.mpuCmpsBias[1];
+	float bz = Util::GetInstance()->flashData.mpuCmpsBias[2];
+	
+	float rAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		rAve += sqrtf(powf(cmpsCalibrationBuf[i][0]-bx,2)+powf(cmpsCalibrationBuf[i][1]-by,2)+powf(cmpsCalibrationBuf[i][2]-bz,2));
+	}
+	rAve /= SAMPLES_FOR_CALIBRATION;
+	
+	float xAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		xAve += cmpsCalibrationBuf[i][0];
+	}
+	xAve /= SAMPLES_FOR_CALIBRATION;
+	
+	float yAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		yAve += cmpsCalibrationBuf[i][1];
+	}
+	yAve /= SAMPLES_FOR_CALIBRATION;
+	
+	float zAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		zAve += cmpsCalibrationBuf[i][2];
+	}
+	zAve /= SAMPLES_FOR_CALIBRATION;
+	
+	float laAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		laAve -= (cmpsCalibrationBuf[i][0]-bx)/sqrtf(powf(cmpsCalibrationBuf[i][0]-bx,2)+powf(cmpsCalibrationBuf[i][1]-by,2)+powf(cmpsCalibrationBuf[i][2]-bz,2));
+	}
+	laAve /= SAMPLES_FOR_CALIBRATION;
+	
+	float lbAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		lbAve -= (cmpsCalibrationBuf[i][1]-by)/sqrtf(powf(cmpsCalibrationBuf[i][0]-bx,2)+powf(cmpsCalibrationBuf[i][1]-by,2)+powf(cmpsCalibrationBuf[i][2]-bz,2));
+	}
+	lbAve /= SAMPLES_FOR_CALIBRATION;
+	
+	float lcAve = 0;
+	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+		lcAve -= (cmpsCalibrationBuf[i][2]-bz)/sqrtf(powf(cmpsCalibrationBuf[i][0]-bx,2)+powf(cmpsCalibrationBuf[i][1]-by,2)+powf(cmpsCalibrationBuf[i][2]-bz,2));
+	}
+	lcAve /= SAMPLES_FOR_CALIBRATION;
+	
+	Util::GetInstance()->flashData.mpuCmpsMagnitude =  rAve;
+	Util::GetInstance()->flashData.mpuCmpsBias[0] = xAve + rAve*laAve;
+	Util::GetInstance()->flashData.mpuCmpsBias[1] = yAve + rAve*lbAve;
+	Util::GetInstance()->flashData.mpuCmpsBias[2] = zAve + rAve*lcAve;
+}
+
 
 void prvMpu9250TaskEntry(void *pvParameters){
 	Mpu9250::getInstance()->prvMpu9250Task(pvParameters);
