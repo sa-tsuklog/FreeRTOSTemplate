@@ -3,6 +3,7 @@
 *.hex
 *.map
 *.bin
+*.d
 .cproject
 .project
 /.settings/
