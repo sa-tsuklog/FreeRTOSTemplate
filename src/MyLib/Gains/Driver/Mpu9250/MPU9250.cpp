@@ -202,7 +202,7 @@ void Mpu9250::calibrateAcl(){
 	static int aclCalibrationCount = 0;
 	
 	if(xSemaphoreTake(aclCalibrationSem,0) == pdTRUE){
-		printf("\r\ncalibration start\r\n");
+		printf("\r\nacl calibration start\r\n");
 		
 		aclCalibrationCount = SAMPLES_FOR_CALIBRATION;
 		for(int i=0;i<3;i++){
@@ -248,10 +248,51 @@ void Mpu9250::calibrateCmps(){
 		for(int i=0;i<3;i++){
 			cmpsCalibrationBuf[cmpsCalibrationCount][i] = uTCmps[i];
 		}
+		
+		
 		if(cmpsCalibrationCount == 0){
-			for(int i=0;i<CMPS_CALBRATION_ITERETION;i++){
-				cmpsCalibrationCalcOneStep();
+			float xMax,yMax,zMax,xMin,yMin,zMin;
+			xMax = yMax = zMax = -1000;
+			xMin = yMin = zMin = 1000;
+			
+			for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
+				if(cmpsCalibrationBuf[i][0] > xMax){
+					xMax = cmpsCalibrationBuf[i][0];
+				}
+				if(cmpsCalibrationBuf[i][0] < xMin){
+					xMin = cmpsCalibrationBuf[i][0];
+				}
+				if(cmpsCalibrationBuf[i][1] > yMax){
+					yMax = cmpsCalibrationBuf[i][1];
+				}
+				if(cmpsCalibrationBuf[i][1] < yMin){
+					yMin = cmpsCalibrationBuf[i][1];
+				}
+				if(cmpsCalibrationBuf[i][2] > zMax){
+					zMax = cmpsCalibrationBuf[i][2];
+				}
+				if(cmpsCalibrationBuf[i][2] < zMin){
+					zMin = cmpsCalibrationBuf[i][2];
+				}
 			}
+			
+			float bx,by,bz,mag;
+			
+			bx = (xMax+xMin)/2;
+			by = (yMax+yMin)/2;
+			bz = (zMax+zMin)/2;
+			
+			mag = 15.0;
+			for(int i=0;i<CMPS_CALBRATION_ITERETION;i++){
+				cmpsCalibrationCalcOneStep(&bx,&by,&bz,&mag);
+			}
+			
+			printf("bx,y,z = %.3f,%.3f,%.3f\r\n",bx,by,bz);
+			
+			Util::GetInstance()->flashData.mpuCmpsBias[0] = bx;
+			Util::GetInstance()->flashData.mpuCmpsBias[1] = by;
+			Util::GetInstance()->flashData.mpuCmpsBias[2] = bz;
+			Util::GetInstance()->flashData.mpuCmpsMagnitude = mag;
 			
 			printf("bias = (");
 			for(int i=0;i<3;i++){
@@ -263,13 +304,14 @@ void Mpu9250::calibrateCmps(){
 			Util::GetInstance()->userflashFlush();
 		}
 	}
+	
 }
 
-void Mpu9250::cmpsCalibrationCalcOneStep(){
-	float rTmp = Util::GetInstance()->flashData.mpuCmpsMagnitude;
-	float bx = Util::GetInstance()->flashData.mpuCmpsBias[0];
-	float by = Util::GetInstance()->flashData.mpuCmpsBias[1];
-	float bz = Util::GetInstance()->flashData.mpuCmpsBias[2];
+void Mpu9250::cmpsCalibrationCalcOneStep(float* ioBxBuf,float* ioByBuf,float* ioBzBuf,float* ioMagnitudeBuf){
+	float rTmp = *ioMagnitudeBuf;
+	float bx = *ioBxBuf;
+	float by = *ioByBuf;
+	float bz = *ioBzBuf;
 	
 	float rAve = 0;
 	for(int i=0;i<SAMPLES_FOR_CALIBRATION;i++){
@@ -313,10 +355,10 @@ void Mpu9250::cmpsCalibrationCalcOneStep(){
 	}
 	lcAve /= SAMPLES_FOR_CALIBRATION;
 	
-	Util::GetInstance()->flashData.mpuCmpsMagnitude =  rAve;
-	Util::GetInstance()->flashData.mpuCmpsBias[0] = xAve + rAve*laAve;
-	Util::GetInstance()->flashData.mpuCmpsBias[1] = yAve + rAve*lbAve;
-	Util::GetInstance()->flashData.mpuCmpsBias[2] = zAve + rAve*lcAve;
+	*ioMagnitudeBuf =  rAve;
+	*ioBxBuf = xAve + rAve*laAve;
+	*ioByBuf = yAve + rAve*lbAve;
+	*ioBzBuf = zAve + rAve*lcAve;
 }
 
 

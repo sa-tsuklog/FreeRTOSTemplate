@@ -51,7 +51,7 @@ private:
 	void calibrateGyro();
 	void calibrateAcl();
 	void calibrateCmps();
-	void cmpsCalibrationCalcOneStep();
+	void cmpsCalibrationCalcOneStep(float* ioBxBuf,float* ioByBuf,float* ioBzBuf,float* ioMagnitudeBuf);
 public:
 	void init();
 	void waitNewData();

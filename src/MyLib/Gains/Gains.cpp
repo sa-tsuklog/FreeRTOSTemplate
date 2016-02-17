@@ -566,9 +566,9 @@ void Gains::initGains(){
 	if(IMU_TYPE == ImuType::ADIS16488){
 		xTaskCreate(&ADIS16488::prvAdis16488Task,"adis",1024,NULL,4,&(Gains::GetInstance()->insHandle));
 	}else if(IMU_TYPE == ImuType::MPU9250){
-		xTaskCreate(prvMpu9250TaskEntry,"mpu",1024,NULL,4,&(Gains::GetInstance()->insHandle));
+		xTaskCreate(prvMpu9250TaskEntry,"mpu",1280,NULL,4,&(Gains::GetInstance()->insHandle));
 	}else if(IMU_TYPE == ImuType::MPU9250_BMP850){
-		xTaskCreate(prvMpu9250TaskEntry,"mpubmp",1024,NULL,4,&(Gains::GetInstance()->insHandle));
+		xTaskCreate(prvMpu9250TaskEntry,"mpubmp",1280,NULL,4,&(Gains::GetInstance()->insHandle));
 	}
 	if(GPS_TYPE == GpsType::USART_GPS){
 		xTaskCreate(&USART2Class::prvTxTask,"gpstx",512,USART2,3,&(Gains::GetInstance()->gpsHandleTx));

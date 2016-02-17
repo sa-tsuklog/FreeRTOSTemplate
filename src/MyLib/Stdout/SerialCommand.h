@@ -62,6 +62,7 @@ public:
 	static void calibrateMpuGyro();
 	static void setMpuAclBias();
 	static void setMpuCmpsBias();
+	static void calibrateMpuCmpsBias();
 	static void SerialCommand::setMpuTempCoeff();
 	static void setAdisCmpsBias();
 	static void showGainsConfig();

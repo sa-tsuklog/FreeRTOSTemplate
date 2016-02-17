@@ -389,18 +389,106 @@ void SerialCommand::calibrateMpuGyro(){
  * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setMpuAclBias(){
+//	for(int i=0;i<3;i++){
+//		float f;
+//		printf("%d th axis:\r\n",i);
+//		fflush(stdout);
+//		char* biasString = Stdout::GetInstance()->readLine();
+//		if(strlen(biasString)!=0){
+//			f = atof(biasString);
+//			Util::GetInstance()->flashData.mpuAclBias[i] = f;
+//		}
+//		printf("%f\r\n",Util::GetInstance()->flashData.mpuAclBias[i]);
+//	}
+//	Util::GetInstance()->userflashFlush();
+	
+	//Mpu9250::getInstance()->startAclCalibration();
+	
+	printf("acl calibration start\r\n");
+	float calibrationBuf;
+	
 	for(int i=0;i<3;i++){
-		float f;
-		printf("%d th axis:\r\n",i);
-		fflush(stdout);
-		char* biasString = Stdout::GetInstance()->readLine();
-		if(strlen(biasString)!=0){
-			f = atof(biasString);
-			Util::GetInstance()->flashData.mpuAclBias[i] = f;
-		}
-		printf("%f\r\n",Util::GetInstance()->flashData.mpuAclBias[i]);
+		Util::GetInstance()->flashData.mpuAclBias[i]=0.0;
 	}
-	Util::GetInstance()->userflashFlush();	
+	
+	
+	//x axis
+	printf("set the board to x+ axis and press enter\r\n");
+	Stdout::GetInstance()->readLine();
+	
+	calibrationBuf = 0.0;
+	
+	for(int i=0;i<100;i++){
+		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.x;
+		vTaskDelay(1);
+	}
+	
+	printf("set the board to x- axis and press enter\r\n");
+	Stdout::GetInstance()->readLine();
+	for(int i=0;i<100;i++){
+		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.x;
+		vTaskDelay(1);
+	}
+	
+	Util::GetInstance()->flashData.mpuAclBias[0] = calibrationBuf/200;
+	
+	//y axis
+	printf("set the board to y+ axis and press enter\r\n");
+	Stdout::GetInstance()->readLine();
+	
+	calibrationBuf = 0.0;
+	
+	for(int i=0;i<100;i++){
+		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.y;
+		vTaskDelay(1);
+	}
+	
+	printf("set the board to y- axis and press enter\r\n");
+	Stdout::GetInstance()->readLine();
+	for(int i=0;i<100;i++){
+		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.y;
+		vTaskDelay(1);
+	}
+	
+	Util::GetInstance()->flashData.mpuAclBias[1] = calibrationBuf/200;
+	
+	printf("set the board to z+ axis and press enter\r\n");
+	Stdout::GetInstance()->readLine();
+	
+	calibrationBuf = 0.0;
+	
+	for(int i=0;i<100;i++){
+		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.z;
+		vTaskDelay(1);
+	}
+	
+	printf("set the board to z- axis and press enter\r\n");
+	Stdout::GetInstance()->readLine();
+	for(int i=0;i<100;i++){
+		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.z;
+		vTaskDelay(1);
+	}
+	
+	Util::GetInstance()->flashData.mpuAclBias[2] = calibrationBuf/200;
+	
+	Util::GetInstance()->userflashFlush();
+	
+	printf("acl bias x:%f\r\n",Util::GetInstance()->flashData.mpuAclBias[0]);
+	printf("acl bias y:%f\r\n",Util::GetInstance()->flashData.mpuAclBias[1]);
+	printf("acl bias z:%f\r\n",Util::GetInstance()->flashData.mpuAclBias[2]);
+}
+
+/**
+ * @brief MPU-9250の地磁気センサの校正を行う
+ * 
+ * 補正値を浮動小数点数で入力する。
+ * 
+ * 補正値の推定は手動で行う必要がある。
+ * 
+ * 補正値はフラッシュに記録され、電源を切った後も有効である。
+ */
+void SerialCommand::calibrateMpuCmpsBias(){
+	Mpu9250::getInstance()->startCmpsCalibration();
 }
 
 /**
@@ -413,20 +501,18 @@ void SerialCommand::setMpuAclBias(){
  * 補正値はフラッシュに記録され、電源を切った後も有効である。
  */
 void SerialCommand::setMpuCmpsBias(){
-//	for(int i=0;i<3;i++){
-//		float f;
-//		printf("%d th axis:\r\n",i);
-//		fflush(stdout);
-//		char* biasString = Stdout::GetInstance()->readLine();
-//		if(strlen(biasString)){
-//			f = atof(biasString);
-//			Util::GetInstance()->flashData.mpuCmpsBias[i] = f;
-//		}
-//		printf("%f\r\n",Util::GetInstance()->flashData.mpuCmpsBias[i]);
-//	}
-//  Util::GetInstance()->userflashFlush();
-	
-	Mpu9250::getInstance()->startCmpsCalibration();
+	for(int i=0;i<3;i++){
+		float f;
+		printf("%d th axis:\r\n",i);
+		fflush(stdout);
+		char* biasString = Stdout::GetInstance()->readLine();
+		if(strlen(biasString)){
+			f = atof(biasString);
+			Util::GetInstance()->flashData.mpuCmpsBias[i] = f;
+		}
+		printf("%f\r\n",Util::GetInstance()->flashData.mpuCmpsBias[i]);
+	}
+  Util::GetInstance()->userflashFlush();
 }
 
 /**
@@ -635,6 +721,10 @@ void SerialCommand::initializeUserFlash(){
 		Util::GetInstance()->flashData.mpuCmpsTempCoefficient[i]=0.0;
 	}
 	Util::GetInstance()->flashData.mpuCmpsMagnitude = 17.6;
+	
+	for(int i=0;i<13;i++){
+		Util::GetInstance()->flashData.servoTrim[i] = 0.0;
+	}
 	
 	Util::GetInstance()->userflashFlush();
 }

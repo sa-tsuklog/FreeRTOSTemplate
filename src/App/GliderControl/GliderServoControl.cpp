@@ -12,44 +12,35 @@
 FILE* GliderServoControl::fp = NULL;
 
 int GliderServoControl::surfaceToServoCh(Surface surface){
-	if(surface == GliderServoControl::MAIN_WING){
+	if(surface == GliderServoControl::TOP_RIGHT){
 		return 0;
-	}else if(surface == GliderServoControl::RUDDER){
-		return 4;
-	}else if(surface == GliderServoControl::RIGHT_ELEVATOR){
-		return 5;
-	}else if(surface == GliderServoControl::LEFT_ELEVATOR){
-		return 6;
+	}else if(surface == GliderServoControl::BOTTOM_RIGHT){
+		return 1;
+	}else if(surface == GliderServoControl::BOTTOM_LEFT){
+		return 2;
+	}else if(surface == GliderServoControl::TOP_LEFT){
+		return 3;
 	}else{
-		return 0;
+		return 4;
 	}
 }
 
 void GliderServoControl::mainWingOpen(){
-	nativeSetPos(MAIN_WING,0.7);
+	
 }
 void GliderServoControl::mainWingLatch(){
-	nativeSetPos(MAIN_WING,0.2);
+	
 }
 void GliderServoControl::setPos(float pitchCommand,float rollCommand,float yawCommand){
 	if(fp == NULL){
 		fp = fopen("/log2","w");
 	}
-	
-	
 	static int decimator = 0;
 	
-	float rudderCommand = yawCommand - rollCommand;
-	float rightElevatorCommand = -pitchCommand - rollCommand - yawCommand/2;
-	float leftElevatorCommand = pitchCommand - rollCommand - yawCommand/2;
-	
-	
-	
-	
-	nativeSetPos(RUDDER,rudderCommand);
-	nativeSetPos(RIGHT_ELEVATOR,rightElevatorCommand);
-	nativeSetPos(LEFT_ELEVATOR,leftElevatorCommand);
-	
+	nativeSetPos(TOP_RIGHT,		-pitchCommand + rollCommand + yawCommand);
+	nativeSetPos(BOTTOM_RIGHT,  -pitchCommand + rollCommand - yawCommand);
+	nativeSetPos(BOTTOM_LEFT,	+pitchCommand + rollCommand - yawCommand);
+	nativeSetPos(TOP_LEFT,		+pitchCommand + rollCommand + yawCommand);
 	
 	
 	decimator = (decimator+1)%50;

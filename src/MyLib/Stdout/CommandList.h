@@ -36,6 +36,7 @@ command_t commandList[MAX_COMMAND_NUM] = {
 		{"calibrateMpuGyro",&SerialCommand::calibrateMpuGyro},
 		{"setMpuAclBias",&SerialCommand::setMpuAclBias},
 		{"setMpuCmpsBias",&SerialCommand::setMpuCmpsBias},
+		{"calibrateMpuCmpsBias",&SerialCommand::calibrateMpuCmpsBias},
 		{"setMpuTempCoeff",&SerialCommand::setMpuTempCoeff},
 		{"setAdisCmpsBias",&SerialCommand::setAdisCmpsBias},
 		{"showGainsConfig",&SerialCommand::showGainsConfig},
