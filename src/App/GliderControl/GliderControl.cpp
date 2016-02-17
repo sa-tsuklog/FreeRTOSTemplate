@@ -50,8 +50,8 @@ GliderControl::GliderControl(){
 	testBench = GliderControlTestBench();
 	
 	controlWatchdog = 0;
-	controlState = ControlState::EMERGENCY;
-	controlStateReturnPoint = ControlState::EMERGENCY;
+	controlState = ControlState::LAUNCH_STANDBY;
+	controlStateReturnPoint = ControlState::LAUNCH_STANDBY;
 	
 	log0 = fopen("/log0","w");
 }
