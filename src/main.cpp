@@ -32,8 +32,6 @@
 //TODO: 動作中にSDカードの抜き差しをした場合、最初にfopenした時の状態のつもりで動作している模様。
 //      抜いてから再度fopenしても、エラーメッセージが出ない。
 
-//rebase test. some change in master and should copied to tube launch
-
 extern unsigned int idle_count;
 void prvTaskA(void *pvParameters){
 	vTaskDelay(100);
