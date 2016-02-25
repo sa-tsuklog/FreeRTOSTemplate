@@ -19,6 +19,8 @@ public:
 			TOP_LEFT,
 		};
 private:
+	static const float SMOOTHING_FACTOR = 0.92; 
+	
 	static int surfaceToServoCh(Surface surface);
 	static FILE* fp;
 public:

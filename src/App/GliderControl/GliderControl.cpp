@@ -43,7 +43,7 @@ GliderControl::GliderControl(){
 	
 	printModeQueue = xQueueCreate(1,sizeof(GliderPrintMode::Mode));
 	vQueueAddToRegistry(printModeQueue,"gliderPrintMode");
-	printMode = GliderPrintMode::GPAIO;
+	printMode = GliderPrintMode::NONE;
 	
 	Servo::GetInstance();
 	

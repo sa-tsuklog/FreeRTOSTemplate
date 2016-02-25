@@ -8,7 +8,6 @@
 #include "SPI4.h"
 #include "Ad7176-2Seeker.h"
 #include "Ad7176-2RegisterDef.h"
-#include "Seeker.hpp"
 
 
 unsigned char txBuf[8];
@@ -125,22 +124,22 @@ void Ad7176_2Seeker::initAd7176(){
 	vTaskDelay(1);
 	write16(SETUPCON3,0x1000);
 	vTaskDelay(1);
-	write16(FILTCON0,0x0007);	//10ksps
+	write16(FILTCON0,0x0009);	//2.5ksps
 	vTaskDelay(1);
-	write16(FILTCON1,0x0007);	//10ksps
+	write16(FILTCON1,0x0009);	//2.5ksps
 	vTaskDelay(1);
-	write16(FILTCON2,0x0007);	//10ksps
+	write16(FILTCON2,0x0009);	//2.5ksps
 	vTaskDelay(1);
-	write16(FILTCON3,0x0007);	//10ksps
+	write16(FILTCON3,0x0009);	//2.5ksps
 	vTaskDelay(1);
 	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4 
 	vTaskDelay(1);
-//	write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
-//	vTaskDelay(1);
-//	write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
-//	vTaskDelay(1);
-//	write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
-//	vTaskDelay(1);
+	write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
+	vTaskDelay(1);
+	write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
+	vTaskDelay(1);
+	write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
+	vTaskDelay(1);
 	write16(ADCMODE,0x800C);	//continuous conversion mode
 }
 

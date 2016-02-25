@@ -10,7 +10,7 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    src/MyLib/SBusPropo src/MyLib/SBusPropo/Driver \
 		    src/MyLib/Servo src/MyLib/Servo/Driver \
 		    src/MyLib/Propo src/MyLib/Propo/Driver \
-		    src/MyLib/Seeker src/MyLib/Seeker/Driver/AD7176-2 \
+		    src/MyLib/Seeker src/MyLib/Seeker/Driver src/MyLib/Seeker/Driver/AD7176-2 \
 		    src/MyLib/SignalGenerator src/MyLib/SignalGenerator/Driver \
 		    src/MyLib/CAN src/MyLib/CAN/Driver
 		    

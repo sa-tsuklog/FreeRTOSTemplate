@@ -216,6 +216,9 @@ void SerialCommand::readFloatParam(const char* message,float* ptr){
 void SerialCommand::setFlightParameters(){
 	FlightParameters* params = &(Util::GetInstance()->flashData.flightParameters);
 	
+	readFloatParam("boost p gain, roll             \t",&(params->boostPGain[0]));
+	readFloatParam("boost p gain, pitch            \t",&(params->boostPGain[1]));
+	readFloatParam("boost p gain, yaw              \t",&(params->boostPGain[2]));
 	readFloatParam("boost d gain, roll             \t",&(params->boostDGain[0]));
 	readFloatParam("boost d gain, pitch            \t",&(params->boostDGain[1]));
 	readFloatParam("boost d gain, yaw              \t",&(params->boostDGain[2]));
@@ -236,6 +239,12 @@ void SerialCommand::setFlightParameters(){
 void SerialCommand::showFlightParameters(){
 	FlightParameters* params = &(Util::GetInstance()->flashData.flightParameters);
 	
+	printf("boost p gain, roll           \t:%.3f\r\n",(params->boostPGain[0]));
+	vTaskDelay(1);
+	printf("boost p gain, pitch          \t:%.3f\r\n",(params->boostPGain[1]));
+	vTaskDelay(1);
+	printf("boost p gain, yaw            \t:%.3f\r\n",(params->boostPGain[2]));
+	vTaskDelay(1);
 	printf("boost d gain, roll           \t:%.3f\r\n",(params->boostDGain[0]));
 	vTaskDelay(1);
 	printf("boost d gain, pitch          \t:%.3f\r\n",(params->boostDGain[1]));
