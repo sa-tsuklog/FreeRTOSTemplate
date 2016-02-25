@@ -7,13 +7,15 @@
 
 #include "system_stm32f4xx.h"
 
+#include "Test.h"
+
 #include "MyLib/Util/Util.h"
 #include "MyLib/Stdout/Stdout.h"
 #include "MyLib/Gains/Gains.h"
 #include "MyLib/Logger/Logger.h"
 #include "MyLib/Gains/Driver/Mpu9250/MPU9250.h"
 #include "MyLib/CmdServo/CmdServo.h"
-#include "MyLib/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
+#include "MyLib/Seeker/Seeker.h"
 #include "MyLib/SignalGenerator/Driver/DAC_TIM8.h"
 #include "MyLib/CAN/Driver/CAN1.h"
 #include "MyLib/CAN/CanBusMonitor.h"
@@ -76,9 +78,9 @@ int main(void) {
 	Logger::initLogger();
 	//CmdServo::initCmdServo();
 	//CanBusMonitor::initCanBusMonitor();
-	
+	Seeker::initSeeker();
 	//SBusPropo::initSBusPropo();
-	//xTaskCreate(prvTaskA,"test",2048,NULL,2,NULL);
+	xTaskCreate(prvTestTask,"test",2048,NULL,2,NULL);
 	GliderControl::initGliderControl();
 	
 	vTaskStartScheduler();

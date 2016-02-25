@@ -11,6 +11,5 @@
 #include "ControlParams.h"
 
 void prvTestTask(void* pvParamters);
-void setControlParms(ControlParams* controlParams);
 
 #endif /* TEST_H_ */
