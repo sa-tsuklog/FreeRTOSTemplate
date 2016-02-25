@@ -107,8 +107,8 @@ void GliderControl::gliderControlTask(){
 		// control
 		/////////////////////////////////////
 		if(controlState == ControlState::LAUNCH_STANDBY){
-			GliderServoControl::mainWingLatch();
-			GliderServoControl::setPos(0,0,0);
+			MissileServoControl::mainWingLatch();
+			MissileServoControl::setPos(0,0,0);
 			radHeadingAtLaunch = Gains::GetInstance()->getAttitude().getRadHeading();
 		}else if(controlState == ControlState::BOOST_PHASE0){
 			boostPhase0Control.control(radPitchAtLaunch,radHeadingAtLaunch);

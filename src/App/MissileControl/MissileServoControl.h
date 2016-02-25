@@ -1,12 +1,12 @@
 /*
- * GliderServoControl.h
+ * MissleServoControl.h
  *
  *  Created on: 2015/04/27
  *      Author: sa
  */
 
-#ifndef GLIDERSERVOCONTROL_H_
-#define GLIDERSERVOCONTROL_H_
+#ifndef MISSILESERVOCONTROL_H_
+#define MISSILESERVOCONTROL_H_
 
 #include <stdio.h>
 
@@ -31,4 +31,4 @@ public:
 	static void nativeSetPos(Surface surface,float pos); //low level control function
 };
 
-#endif /* GLIDERSERVOCONTROL_H_ */
+#endif /* MISSILERSERVOCONTROL_H_ */

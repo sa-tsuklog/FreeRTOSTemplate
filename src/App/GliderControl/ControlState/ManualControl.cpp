@@ -36,10 +36,10 @@ void ManualControl::control(ControlParams* params){
 	float yawCommand 	= powf((params->yaw-128)  /128.0,3) - rz*dzGain;
 	
 	if(params->throttle < 128){
-		GliderServoControl::mainWingOpen();
+		MissileServoControl::mainWingOpen();
 	}else{
-		GliderServoControl::mainWingLatch();
+		MissileServoControl::mainWingLatch();
 	}
-	GliderServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
 }
 void ManualControl::reset(){}

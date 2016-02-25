@@ -47,12 +47,12 @@ void GlidePhaseHeadingHold::control(float radHeadingCommand){
 	radYawCommand = -flightParameters->glideDGain[2] * rpsRate.z;
 	
 	if(wingLatchCount < 10){
-		GliderServoControl::mainWingOpen();
+		MissileServoControl::mainWingOpen();
 		wingLatchCount++;
 	}else{
-		GliderServoControl::mainWingLatch();
+		MissileServoControl::mainWingLatch();
 	}
-	GliderServoControl::setPos(radPitchCommand,radRollCommand,radYawCommand);
+	MissileServoControl::setPos(radPitchCommand,radRollCommand,radYawCommand);
 	
 	
 //	float radHeadingError = radHeadingCommand - radHeading;

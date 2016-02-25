@@ -34,8 +34,8 @@ void BoostPhase0Control::control(float radPitchCommand, float radHeadingCommand)
 	float rollCommand = -pRollGain * radRoll - dRollGain * rpsRate.x;
 	float yawCommand = -pHeadingGain * (radHeading-radHeadingCommand) - dHeadingGain * rpsRate.z;
 	
-	GliderServoControl::mainWingLatch();
-	GliderServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+	MissileServoControl::mainWingLatch();
+	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
 }
 void BoostPhase0Control::reset(){
 	
