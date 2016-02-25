@@ -55,6 +55,7 @@ void GliderServoControl::setPos(float pitchCommand,float rollCommand,float yawCo
 	decimator = (decimator+1)%50;
 	if(decimator % 5 == 3){
 		fprintf(fp,"$SVCMD,%.3f,%.3f,%.3f\r\n",pitchCommand,rollCommand,yawCommand);
+		//printf("%.3f,%.3f,%.3f\r\n",pitchCommand,rollCommand,yawCommand);
 	}
 }
 

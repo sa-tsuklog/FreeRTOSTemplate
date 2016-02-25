@@ -43,7 +43,7 @@ GliderControl::GliderControl(){
 	
 	printModeQueue = xQueueCreate(1,sizeof(GliderPrintMode::Mode));
 	vQueueAddToRegistry(printModeQueue,"gliderPrintMode");
-	printMode = GliderPrintMode::GPAIO;
+	printMode = GliderPrintMode::NONE;
 	
 	Servo::GetInstance();
 	
@@ -173,7 +173,7 @@ void GliderControl::controlStateUpdate(ControlParams* params){
 	}else if(controlState == ControlState::BOOST_PHASE0){
 		msBoostPhase0Time += MS_CONTROL_INTERVAL;
 		if(msBoostPhase0Time > MS_BOOST_PHASE0_TIME){
-			controlState = ControlState::BOOST_PHASE;
+			//controlState = ControlState::BOOST_PHASE;
 		}
 	}else if(controlState == ControlState::BOOST_PHASE){
 		Quaternion attitude = Gains::GetInstance()->getAttitude();
