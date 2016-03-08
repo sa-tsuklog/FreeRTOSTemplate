@@ -10,17 +10,15 @@
 
 #include <stdio.h>
 
-class MissileServoControl{
+class GliderServoControl{
 public:
 	enum Surface{
-			TOP_RIGHT,
-			BOTTOM_RIGHT,
-			BOTTOM_LEFT,
-			TOP_LEFT,
+			MAIN_WING,
+			RUDDER,
+			RIGHT_ELEVATOR,
+			LEFT_ELEVATOR
 		};
 private:
-	static const float SMOOTHING_FACTOR = 0.92; 
-	
 	static int surfaceToServoCh(Surface surface);
 	static FILE* fp;
 public:

@@ -30,12 +30,30 @@ void BoostPhase0Control::control(float radPitchCommand, float radHeadingCommand)
 	
 	Quaternion rpsRate = Gains::GetInstance()->getRpsRate();
 	
+	float headingError = radHeading-radHeadingCommand;
+	if(headingError < -M_PI){
+		headingError += 2*M_PI;
+	}else if(headingError > M_PI){
+		headingError -= 2*M_PI;
+	}
+	
+	
 	float pitchCommand = -pPitchGain * (radPitch-radPitchCommand) - dPitchGain * rpsRate.y;
 	float rollCommand = -pRollGain * radRoll - dRollGain * rpsRate.x;
-	float yawCommand = -pHeadingGain * (radHeading-radHeadingCommand) - dHeadingGain * rpsRate.z;
+	float yawCommand = -pHeadingGain * (headingError) - dHeadingGain * rpsRate.z;
 	
-	MissileServoControl::mainWingLatch();
-	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+	GliderServoControl::mainWingLatch();
+	GliderServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+	
+	
+//	static int decimation = 0;
+//	decimation = (decimation+1)%10;
+//	
+//	if(decimation == 0){
+//		printf("pitch:(%.3f,%.3f)\t roll:(%.3f,%.3f)\t heading:(%.3f,%.3f)\r\n",radPitch*180/M_PI,radPitchCommand*180/M_PI,radRoll*180/M_PI,0.0,radHeading*180/M_PI,radHeadingCommand*180/M_PI);
+//		printf("pitch %.3f\t roll %.3f\t yaw %.3f\r\n",pitchCommand,rollCommand,yawCommand);
+//	}
+	
 }
 void BoostPhase0Control::reset(){
 	

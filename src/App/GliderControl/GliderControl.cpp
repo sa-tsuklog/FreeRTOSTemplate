@@ -43,7 +43,7 @@ GliderControl::GliderControl(){
 	
 	printModeQueue = xQueueCreate(1,sizeof(GliderPrintMode::Mode));
 	vQueueAddToRegistry(printModeQueue,"gliderPrintMode");
-	printMode = GliderPrintMode::NONE;
+	printMode = GliderPrintMode::GPAIO;
 	
 	Servo::GetInstance();
 	
@@ -107,9 +107,10 @@ void GliderControl::gliderControlTask(){
 		// control
 		/////////////////////////////////////
 		if(controlState == ControlState::LAUNCH_STANDBY){
-			MissileServoControl::mainWingLatch();
-			MissileServoControl::setPos(0,0,0);
+			GliderServoControl::mainWingLatch();
+			GliderServoControl::setPos(0,0,0);
 			radHeadingAtLaunch = Gains::GetInstance()->getAttitude().getRadHeading();
+			radPitchAtLaunch   = Gains::GetInstance()->getAttitude().getRadPitch(radHeadingAtLaunch);
 		}else if(controlState == ControlState::BOOST_PHASE0){
 			boostPhase0Control.control(radPitchAtLaunch,radHeadingAtLaunch);
 		}else if(controlState == ControlState::BOOST_PHASE){
@@ -173,7 +174,7 @@ void GliderControl::controlStateUpdate(ControlParams* params){
 	}else if(controlState == ControlState::BOOST_PHASE0){
 		msBoostPhase0Time += MS_CONTROL_INTERVAL;
 		if(msBoostPhase0Time > MS_BOOST_PHASE0_TIME){
-			//controlState = ControlState::BOOST_PHASE;
+			controlState = ControlState::BOOST_PHASE;
 		}
 	}else if(controlState == ControlState::BOOST_PHASE){
 		Quaternion attitude = Gains::GetInstance()->getAttitude();

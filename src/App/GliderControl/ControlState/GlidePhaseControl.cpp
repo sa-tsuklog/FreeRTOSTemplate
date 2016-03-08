@@ -33,8 +33,8 @@ void GlidePhaseControl::control(){
 	radPitchCommand = flightParameters->glidePGain[1] * (radPitchAttitudeCommand- radPitch) - flightParameters->glideDGain[1] * rpsRate.y; 
 	radYawCommand = -flightParameters->glideDGain[2] * rpsRate.z;
 	
-	MissileServoControl::mainWingOpen();
-	MissileServoControl::setPos(radPitchCommand,radRollCommand,radYawCommand);
+	GliderServoControl::mainWingOpen();
+	GliderServoControl::setPos(radPitchCommand,radRollCommand,radYawCommand);
 }
 void GlidePhaseControl::reset(){
 }

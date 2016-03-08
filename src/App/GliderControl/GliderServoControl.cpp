@@ -9,61 +9,48 @@
 #include "GliderServoControl.h"
 #include "MyLib/Servo/Servo.h"
 
-FILE* MissileServoControl::fp = NULL;
+FILE* GliderServoControl::fp = NULL;
 
-int MissileServoControl::surfaceToServoCh(Surface surface){
-	if(surface == MissileServoControl::TOP_RIGHT){
+int GliderServoControl::surfaceToServoCh(Surface surface){
+	if(surface == GliderServoControl::MAIN_WING){
 		return 0;
-	}else if(surface == MissileServoControl::BOTTOM_RIGHT){
-		return 1;
-	}else if(surface == MissileServoControl::BOTTOM_LEFT){
-		return 2;
-	}else if(surface == MissileServoControl::TOP_LEFT){
-		return 3;
-	}else{
+	}else if(surface == GliderServoControl::RUDDER){
 		return 4;
+	}else if(surface == GliderServoControl::RIGHT_ELEVATOR){
+		return 5;
+	}else if(surface == GliderServoControl::LEFT_ELEVATOR){
+		return 6;
+	}else{
+		return 0;
 	}
 }
 
-void MissileServoControl::mainWingOpen(){
-	
-	
+void GliderServoControl::mainWingOpen(){
+	nativeSetPos(MAIN_WING,-1.0);
 }
-void MissileServoControl::mainWingLatch(){
-	
+void GliderServoControl::mainWingLatch(){
+	nativeSetPos(MAIN_WING,0.4);
 }
-void MissileServoControl::setPos(float pitchCommand,float rollCommand,float yawCommand){
-	static float lpfTopRight 	= 0;
-	static float lpfBottomRight = 0;
-	static float lpfBottomLeft	= 0;
-	static float lpfTopLeft 	= 0;
-	
-	
+void GliderServoControl::setPos(float pitchCommand,float rollCommand,float yawCommand){
 	if(fp == NULL){
 		fp = fopen("/log2","w");
 	}
+	
+	
 	static int decimator = 0;
 	
-	float topRightCommand 		= -pitchCommand + rollCommand + yawCommand;
-	float bottomRightCommand 	= -pitchCommand + rollCommand - yawCommand;
-	float bottomLeftCommand		= +pitchCommand + rollCommand - yawCommand;
-	float topLeftCommand		= +pitchCommand + rollCommand + yawCommand;
-	
-	lpfTopRight 	= lpfTopRight 	* SMOOTHING_FACTOR + topRightCommand 	* (1-SMOOTHING_FACTOR);
-	lpfBottomRight 	= lpfBottomRight* SMOOTHING_FACTOR + bottomRightCommand * (1-SMOOTHING_FACTOR);
-	lpfBottomLeft 	= lpfBottomLeft	* SMOOTHING_FACTOR + bottomLeftCommand 	* (1-SMOOTHING_FACTOR);
-	lpfTopLeft 		= lpfTopLeft	* SMOOTHING_FACTOR + topLeftCommand 	* (1-SMOOTHING_FACTOR);
+	float rudderCommand = -yawCommand + rollCommand;
+	float rightElevatorCommand = pitchCommand + rollCommand;
+	float leftElevatorCommand = -pitchCommand + rollCommand;
 	
 	
-//	nativeSetPos(TOP_RIGHT,		lpfTopRight);
-//	nativeSetPos(BOTTOM_RIGHT,  lpfBottomRight);
-//	nativeSetPos(BOTTOM_LEFT,	lpfBottomLeft);
-//	nativeSetPos(TOP_LEFT,		lpfTopLeft);
 	
-	nativeSetPos(TOP_RIGHT,		topRightCommand);
-	nativeSetPos(BOTTOM_RIGHT,  bottomRightCommand);
-	nativeSetPos(BOTTOM_LEFT,	bottomLeftCommand);
-	nativeSetPos(TOP_LEFT,		topLeftCommand);
+	
+	nativeSetPos(RUDDER,rudderCommand);
+	nativeSetPos(RIGHT_ELEVATOR,rightElevatorCommand);
+	nativeSetPos(LEFT_ELEVATOR,leftElevatorCommand);
+	
+	
 	
 	decimator = (decimator+1)%50;
 	if(decimator % 5 == 3){
@@ -73,6 +60,6 @@ void MissileServoControl::setPos(float pitchCommand,float rollCommand,float yawC
 }
 
 
-void MissileServoControl::nativeSetPos(Surface surface,float pos){
+void GliderServoControl::nativeSetPos(Surface surface,float pos){
 	Servo::GetInstance()->setPos(surfaceToServoCh(surface),pos);
 }

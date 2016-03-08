@@ -276,6 +276,7 @@ void KalmanFilter::initializeP(){
 //    this->errorP->nums[6][6] = 2*M_PI/32;//attitude x error
 //    this->errorP->nums[7][7] = 2*M_PI/32;//attitude y error
 //    this->errorP->nums[8][8] = 2*M_PI/32;//attitude z error
+    
     this->errorP->nums[0][0] = 20;//velocity x error
     this->errorP->nums[1][1] = 20;//velocity y error
     this->errorP->nums[2][2] = 20;//velocity z error

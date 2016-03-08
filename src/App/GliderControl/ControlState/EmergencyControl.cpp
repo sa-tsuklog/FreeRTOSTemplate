@@ -13,8 +13,8 @@ EmergencyControl::EmergencyControl(){
 }
 
 void EmergencyControl::control(){
-	MissileServoControl::mainWingLatch();
-	MissileServoControl::setPos(1.0,0,0);
+	GliderServoControl::mainWingLatch();
+	GliderServoControl::setPos(1.0,0,0);
 }
 
 void EmergencyControl::reset(){
