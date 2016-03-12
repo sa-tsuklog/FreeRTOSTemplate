@@ -18,6 +18,10 @@ Mpu9250::Mpu9250(){
 	gyroCalibrationSem = xSemaphoreCreateBinary();
 	aclCalibrationSem  = xSemaphoreCreateBinary();
 	cmpsCalibrationSem = xSemaphoreCreateBinary();
+	if(gyroCalibrationSem == NULL || aclCalibrationSem == NULL || cmpsCalibrationSem == NULL){
+		while(1);
+	}
+	
 }
 
 void Mpu9250::init(){

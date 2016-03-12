@@ -23,6 +23,8 @@ void vApplicationMallocFailedHook(void){
 }
 
 void vApplicationStackOverflowHook(void* ptr, char* taskname){
+	printf("%s\r\n",taskname);
+	vTaskDelay(100);
 	while(1);
 }
 

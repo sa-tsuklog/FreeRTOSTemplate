@@ -22,8 +22,8 @@ private:
 	static const int SPI_BUFFERSIZE = 32;
 	char m_txBuf[SPI_BUFFERSIZE];
 	char m_rxBuf[SPI_BUFFERSIZE];
-	xSemaphoreHandle m_rwSem;
-	xSemaphoreHandle m_dataReadySem;
+	SemaphoreHandle_t m_rwSem;
+	SemaphoreHandle_t m_dataReadySem;
 	void enableEXTI5();
 	void disableEXTI5();
 public:

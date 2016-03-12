@@ -155,36 +155,40 @@ SPI4Class::SPI4Class(){
 }
 
 int SPI4Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int byteRwLength){
+	if(byteRwLength > SPI_BUFFERSIZE){
+		byteRwLength = SPI_BUFFERSIZE;
+	}
+	
 	GPIO_ResetBits(GPIOE,GPIO_Pin_4);
-
+	
 	DMA_Cmd(DMA2_Stream0,DISABLE);
 	DMA_Cmd(DMA2_Stream1,DISABLE);
-
-	for(int i=0;i<byteRwLength && i < SPI_BUFFERSIZE;i++){
+	
+	for(int i=0;i<byteRwLength;i++){
 		m_txBuf[i] = writeData[i];
 	}
+	
 	DMA_SetCurrDataCounter(DMA2_Stream0,byteRwLength);
 	DMA_SetCurrDataCounter(DMA2_Stream1,byteRwLength);
+	
 	DMA_ClearITPendingBit(DMA2_Stream0,DMA_IT_TCIF0);
 	DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
-
+	
+	xSemaphoreTake(m_rwSem,0);
+		
 	DMA_Cmd(DMA2_Stream0,ENABLE);
 	DMA_Cmd(DMA2_Stream1,ENABLE);
-	
 
 	xSemaphoreTake(m_rwSem,portMAX_DELAY);
 
 	GPIO_SetBits(GPIOE,GPIO_Pin_4);
 
-	for(int i=0;i<byteRwLength && i < SPI_BUFFERSIZE;i++){
+	for(int i=0;i<byteRwLength;i++){
 		outReadData[i] = m_rxBuf[i];
 	}
-
-	if(byteRwLength < SPI_BUFFERSIZE){
-		return byteRwLength;
-	}else{
-		return SPI_BUFFERSIZE;
-	}
+	
+	return byteRwLength;
+	
 }
 
 void SPI4Class::enableEXTI5(){
@@ -196,18 +200,35 @@ void SPI4Class::disableEXTI5(){
 }
 
 void SPI4Class::waitForDataReady(){
+	static volatile int state = 0;
+	static volatile void* semAdr=0;
+	if(state == 0){
+		semAdr = &m_dataReadySem;
+		
+		printf("debug address = 0x%x\r\n",&state);
+		printf("sem address = 0x%x\r\n",&m_dataReadySem);
+	}
+	
+	state = 1;
 	EXTI_ClearITPendingBit(EXTI_Line5);
+	state = 2;
 	enableEXTI5();
+	state = 3;
 	GPIO_ResetBits(GPIOE,GPIO_Pin_4);
+	state = 4;
+	
+	
 	if(m_dataReadySem!=NULL){
 		xSemaphoreTake(m_dataReadySem,portMAX_DELAY);
 	}
+	state = 5;
 	disableEXTI5();
+	state = 6;
 }
 
 void SPI4Class::myEXTI5_IRQHandler(){
 	if(m_dataReadySem!=NULL){
-		BaseType_t isHigherPriorityWoken;
+		portBASE_TYPE isHigherPriorityWoken;
 		xSemaphoreGiveFromISR(m_dataReadySem,&isHigherPriorityWoken);
 		portEND_SWITCHING_ISR(isHigherPriorityWoken);
 	}
@@ -216,7 +237,7 @@ void SPI4Class::myEXTI5_IRQHandler(){
 
 void SPI4Class::myDMA2_Stream1_IRQHandler(){
 	if(DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF1)!=RESET){
-		BaseType_t isHigherPriorityWoken;
+		portBASE_TYPE isHigherPriorityWoken;
 		DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 		xSemaphoreGiveFromISR(m_rwSem,&isHigherPriorityWoken);
 		portEND_SWITCHING_ISR(isHigherPriorityWoken);

@@ -39,11 +39,18 @@
 GliderControl::GliderControl(){
 	guidance = GpsGuidance();
 	controlParamsQueue = xQueueCreate(1,sizeof(ControlParams));
+	if(controlParamsQueue == NULL){
+		while(1);
+	}
 	vQueueAddToRegistry(controlParamsQueue,"control");
 	
 	printModeQueue = xQueueCreate(1,sizeof(GliderPrintMode::Mode));
+	if(printModeQueue == NULL){
+		while(1);
+	}
+	
 	vQueueAddToRegistry(printModeQueue,"gliderPrintMode");
-	printMode = GliderPrintMode::GPAIO;
+	printMode = GliderPrintMode::NONE;
 	
 	Servo::GetInstance();
 	
@@ -292,5 +299,5 @@ void GliderControl::gliderControlTaskEntry(void *pvParameters){
 	GliderControl::GetInstance()->gliderControlTask();
 }
 void GliderControl::initGliderControl(){
-	xTaskCreate(&GliderControl::gliderControlTaskEntry,"gldr",2048,NULL,2,NULL);
+	xTaskCreate(&GliderControl::gliderControlTaskEntry,"gldr",1024,NULL,2,NULL);
 }

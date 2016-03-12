@@ -13,12 +13,12 @@
 
 class IoBaseType{
 public:
-	virtual char* readLine();
-	virtual char getChar();
-	virtual xQueueHandle getTxQueue();
-	virtual void myUSART3_IRQHandler();
-	virtual void myDMA1_Stream4IRQHandler();
-	virtual void setEcho(int newValue);
+	virtual char* readLine()=0;
+	virtual char getChar()=0;
+	virtual xQueueHandle getTxQueue()=0;
+	virtual void myUSART3_IRQHandler()=0;
+	virtual void myDMA1_Stream4IRQHandler()=0;
+	virtual void setEcho(int newValue)=0;
 };
 
 #endif /* IOBASETYPE_H_ */

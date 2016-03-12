@@ -44,6 +44,7 @@ private:
 	float getIntensityOfCh(int32_t ch);
 	
 	void SeekerTask();
+	void seekerPritRawData();
 public:
 	void getDirection(float* outUpDown,float* outLeftRight,float* outIntensity);
 	static void SeekerTaskEntry(void *pvParameters);

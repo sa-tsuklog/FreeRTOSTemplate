@@ -38,9 +38,17 @@ void test(){
 	vTaskDelay(MS_INITIAL_DELAY);
 	
 	while(1){
+		float upDownGain = 0.8;
+		float leftRightGain = 0.8;
+		
+		float radPitch,radRoll,radHeading;
+		
+		Gains::GetInstance()->getAttitude().getRadPitchRollHeading(&radPitch,&radRoll,&radHeading);
+		
 		
 		Seeker::GetInstance()->getDirection(&updown,&leftRight,&intensity);
-		printf("%.3f,%.3f,%.3f\r\n",updown,leftRight,intensity);
+		//printf("%.3f,%.3f,%.3f\r\n",updown*upDownGain-radPitch,leftRight*leftRightGain-radHeading,intensity);
+		
 		vTaskDelay(200);
 		
 	}

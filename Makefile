@@ -63,7 +63,7 @@ INCLUDE_DIRS  = 	-I ./Libraries/STM32F4xx_StdPeriph_Driver/inc \
 
 BOARD_OPTS = -DHSE_VALUE=12000000 -DSTM32F4XX -DSTM32F40_41xxx -DSTM32F429 -DUSE_32F429IDISCOVERY
 FIRMWARE_OPTS = -DUSE_STDPERIPH_DRIVER
-COMPILE_OPTS  = -O2 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions \
+COMPILE_OPTS  = -O3 -g3 -ffunction-sections -fdata-sections -fsigned-char -fno-exceptions \
 					-Wall -fmessage-length=0 $(INCLUDE_DIRS) $(BOARD_OPTS) $(FIRMWARE_OPTS) -mfpu=fpv4-sp-d16
 
 CC      = $(TOOLDIR)arm-none-eabi-gcc

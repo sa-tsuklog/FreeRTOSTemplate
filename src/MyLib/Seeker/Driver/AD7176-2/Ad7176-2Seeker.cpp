@@ -8,7 +8,7 @@
 #include "SPI4.h"
 #include "Ad7176-2Seeker.h"
 #include "Ad7176-2RegisterDef.h"
-
+#include "MyLib/Util/Util.h"
 
 unsigned char txBuf[8];
 unsigned char rxBuf[8];
@@ -85,10 +85,11 @@ unsigned int Ad7176_2Seeker::read32(char cmd){
 
 unsigned int Ad7176_2Seeker::readAdData(unsigned char* outChannel){
 	SPI4Class::GetInstance()->waitForDataReady();
-	unsigned int readData = read32(0x44);
+	uint32_t readData = read32(0x44);
 	*outChannel = (unsigned char)(readData&0x0F);
 	
 	return readData>>8;
+	//return 0;
 }
 
 void Ad7176_2Seeker::resetIf(){

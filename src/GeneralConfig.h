@@ -11,5 +11,4 @@
 static const int MS_INITIAL_DELAY = 100; 
 
 
-
 #endif /* GENERALCONFIG_H_ */
