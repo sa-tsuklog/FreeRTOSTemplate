@@ -36,8 +36,7 @@ private:
 	
 	Filter bandpass[4];
 	Filter allpass[4];
-	volatile float filteredI[4];
-	volatile float filteredQ[4];
+	float intensity[4];
 	
 	SemaphoreHandle_t dataUpdateMutex;
 	

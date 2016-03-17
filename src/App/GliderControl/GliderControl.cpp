@@ -50,7 +50,7 @@ GliderControl::GliderControl(){
 	}
 	
 	vQueueAddToRegistry(printModeQueue,"gliderPrintMode");
-	printMode = GliderPrintMode::NONE;
+	printMode = GliderPrintMode::GPAIO;
 	
 	Servo::GetInstance();
 	

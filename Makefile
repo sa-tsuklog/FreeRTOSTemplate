@@ -16,7 +16,8 @@ MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
 		    
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
 APPPATH = src/App src/App/TankControl \
-			src/App/GliderControl src/App/GliderControl/ControlState
+			src/App/GliderControl src/App/GliderControl/ControlState \
+			src/App/MissileControl src/App/MissileControl
 
 TOOLDIR = ../../launchpad/bin/
 G++VER = 4.9.3

@@ -69,7 +69,7 @@ SPI4Class::SPI4Class(){
 	SPI_InitTypeDef spi4;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI4,ENABLE);
-	spi4.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+	spi4.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
 	spi4.SPI_CPHA = SPI_CPHA_2Edge;
 	spi4.SPI_CPOL = SPI_CPOL_High;
 	spi4.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
@@ -144,12 +144,12 @@ SPI4Class::SPI4Class(){
 	NVIC_Init(&exti_nvicdef);
 	NVIC_SetPriority(EXTI9_5_IRQn,0xFF);
 
-	NVIC_InitTypeDef dma_nvicdef;
-	dma_nvicdef.NVIC_IRQChannel  = DMA2_Stream1_IRQn;
-	dma_nvicdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
-	dma_nvicdef.NVIC_IRQChannelSubPriority = 0xFF;
-	dma_nvicdef.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&dma_nvicdef);
+//	NVIC_InitTypeDef dma_nvicdef;
+//	dma_nvicdef.NVIC_IRQChannel  = DMA2_Stream1_IRQn;
+//	dma_nvicdef.NVIC_IRQChannelPreemptionPriority = 0xFF;
+//	dma_nvicdef.NVIC_IRQChannelSubPriority = 0xFF;
+//	dma_nvicdef.NVIC_IRQChannelCmd = ENABLE;
+//	NVIC_Init(&dma_nvicdef);
 	
 	NVIC_SetPriority(DMA2_Stream1_IRQn,0xFF);
 }
@@ -174,12 +174,13 @@ int SPI4Class::ReadWrite(unsigned char* outReadData,unsigned char* writeData,int
 	DMA_ClearITPendingBit(DMA2_Stream0,DMA_IT_TCIF0);
 	DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 	
-	xSemaphoreTake(m_rwSem,0);
+	//xSemaphoreTake(m_rwSem,0);
 		
 	DMA_Cmd(DMA2_Stream0,ENABLE);
 	DMA_Cmd(DMA2_Stream1,ENABLE);
 
-	xSemaphoreTake(m_rwSem,portMAX_DELAY);
+	//xSemaphoreTake(m_rwSem,portMAX_DELAY);
+	while(DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF0) == RESET){}
 
 	GPIO_SetBits(GPIOE,GPIO_Pin_4);
 
@@ -200,30 +201,16 @@ void SPI4Class::disableEXTI5(){
 }
 
 void SPI4Class::waitForDataReady(){
-	static volatile int state = 0;
-	static volatile void* semAdr=0;
-	if(state == 0){
-		semAdr = &m_dataReadySem;
-		
-		printf("debug address = 0x%x\r\n",&state);
-		printf("sem address = 0x%x\r\n",&m_dataReadySem);
-	}
-	
-	state = 1;
 	EXTI_ClearITPendingBit(EXTI_Line5);
-	state = 2;
 	enableEXTI5();
-	state = 3;
 	GPIO_ResetBits(GPIOE,GPIO_Pin_4);
-	state = 4;
 	
 	
 	if(m_dataReadySem!=NULL){
 		xSemaphoreTake(m_dataReadySem,portMAX_DELAY);
 	}
-	state = 5;
+	
 	disableEXTI5();
-	state = 6;
 }
 
 void SPI4Class::myEXTI5_IRQHandler(){

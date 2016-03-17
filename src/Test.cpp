@@ -47,7 +47,7 @@ void test(){
 		
 		
 		Seeker::GetInstance()->getDirection(&updown,&leftRight,&intensity);
-		//printf("%.3f,%.3f,%.3f\r\n",updown*upDownGain-radPitch,leftRight*leftRightGain-radHeading,intensity);
+		printf("%.3f,%.3f,%.3f\r\n",updown*upDownGain-radPitch,leftRight*leftRightGain-radHeading,intensity);
 		
 		vTaskDelay(200);
 		

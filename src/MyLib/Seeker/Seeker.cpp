@@ -27,8 +27,7 @@ Seeker::Seeker(){
 	}
 	
 	for(int i=0;i<4;i++){
-		filteredI[i] = 0.0;
-		filteredQ[i] = 0.0;
+		intensity[i] = 0;
 	}
 }
 
@@ -44,26 +43,19 @@ void Seeker::SeekerTask(){
 	
 	vTaskDelay(MS_INITIAL_DELAY);
 	
-	static int count = 0;
-	
 	while(1){
 		adData = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
-		//adData = Util::GetInstance()->getUsTime();
 		
 		if(ch >= 4){
 			continue;
 		}
 		
+		
 		float tmpI = bandpass[ch].bandpass((float)adData);
 		float tmpQ = allpass[ch].allpass(tmpI);
 		
+		intensity[ch] = sqrtf(tmpI*tmpI + tmpQ*tmpQ);
 		
-		xSemaphoreTake(dataUpdateMutex,portMAX_DELAY);
-		
-		filteredI[ch] = tmpI;
-		filteredQ[ch] = tmpQ;
-		
-		xSemaphoreGive(dataUpdateMutex);
 //		if(decimation == 0){
 //			printf("%f,%f\r\n",filteredI[ch],filteredQ[ch]);
 //		}
@@ -120,25 +112,14 @@ void Seeker::SeekerTask(){
 //}
 
 float Seeker::getIntensityOfCh(int32_t ch){
-	return sqrtf(filteredI[ch]*filteredI[ch] + filteredQ[ch]*filteredQ[ch]);
+	if(ch < 4 && ch >= 0){
+		return intensity[ch];
+	}else{
+		return 0;
+	}
 }
 
 void Seeker::getDirection(float* outUpDown,float* outLeftRight,float* outIntensity){
-	volatile float tmpI[4];
-	volatile float tmpQ[4];
-	
-	xSemaphoreTake(dataUpdateMutex,portMAX_DELAY);
-	for(int32_t i=0;i<4;i++){
-		tmpI[i] = filteredI[i];
-		tmpQ[i] = filteredQ[i];
-	}
-	xSemaphoreGive(dataUpdateMutex);
-	
-	float intensity[4];
-	for(int i=0;i<4;i++){
-		intensity[i] = sqrt(tmpI[i]*tmpI[i] + tmpQ[i]*tmpQ[i]);
-	}
-	
 	float sum = intensity[0] +intensity[1] +intensity[2] +intensity[3];
 	
 	*outUpDown   = (intensity[0] -intensity[1] -intensity[2] +intensity[3])/sum;
