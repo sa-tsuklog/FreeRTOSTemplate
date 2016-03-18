@@ -39,9 +39,9 @@ void GliderServoControl::setPos(float pitchCommand,float rollCommand,float yawCo
 	
 	static int decimator = 0;
 	
-	float rudderCommand = -yawCommand + rollCommand;
-	float rightElevatorCommand = pitchCommand + rollCommand;
-	float leftElevatorCommand = -pitchCommand + rollCommand;
+	float rudderCommand = yawCommand - rollCommand;
+	float rightElevatorCommand = -pitchCommand -yawCommand/2 - rollCommand;
+	float leftElevatorCommand = pitchCommand -yawCommand/2 - rollCommand;
 	
 	
 	
