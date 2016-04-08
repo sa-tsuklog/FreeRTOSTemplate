@@ -78,10 +78,10 @@ int main(void) {
 	Logger::initLogger();
 	//CmdServo::initCmdServo();
 	//CanBusMonitor::initCanBusMonitor();
-	//Seeker::initSeeker();
+	Seeker::initSeeker();
 	//SBusPropo::initSBusPropo();
-	//xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
-	GliderControl::initGliderControl();
+	xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
+	//GliderControl::initGliderControl();
 	
 	vTaskStartScheduler();
 	

@@ -125,13 +125,16 @@ void Ad7176_2Seeker::initAd7176(){
 	vTaskDelay(1);
 	write16(SETUPCON3,0x1000);
 	vTaskDelay(1);
-	write16(FILTCON0,0x0009);	//2.5ksps
+	
+	int filtconValue = 0x0007;
+	
+	write16(FILTCON0,filtconValue);	//10ksps/4
 	vTaskDelay(1);
-	write16(FILTCON1,0x0009);	//2.5ksps
+	write16(FILTCON1,filtconValue);	//10ksps/4
 	vTaskDelay(1);
-	write16(FILTCON2,0x0009);	//2.5ksps
+	write16(FILTCON2,filtconValue);	//10ksps/4
 	vTaskDelay(1);
-	write16(FILTCON3,0x0009);	//2.5ksps
+	write16(FILTCON3,filtconValue);	//10ksps/4
 	vTaskDelay(1);
 	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4 
 	vTaskDelay(1);

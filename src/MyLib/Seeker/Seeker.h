@@ -32,7 +32,7 @@ public:
 	// Class definition
 private:
 	static const float NORMALIZED_CENTER_FREQUENCY = 0.5/(2.5/2);
-	static const float Q_FACTOR = 20;
+	static const float Q_FACTOR = 250;
 	
 	Filter bandpass[4];
 	Filter allpass[4];

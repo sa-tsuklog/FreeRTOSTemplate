@@ -38,7 +38,7 @@ void Bmp085::init(){
 	I2C2Class::getInstance()->read(BMP085ADDR,MD,buf,2);
 	md = (((int16_t)buf[0])<<8)|((int16_t)buf[1]);
 	
-	for(int i=0;i<10;i++){
+	for(int i=0;i<20;i++){
 		startMeasureingTemp();
 		vTaskDelay(10);
 		updateTemp();
