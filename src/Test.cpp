@@ -46,7 +46,7 @@ void test(){
 		Gains::GetInstance()->getAttitude().getRadPitchRollHeading(&radPitch,&radRoll,&radHeading);
 		
 		
-		Seeker::GetInstance()->getDirection(&updown,&leftRight,&intensity);
+		Seeker::GetInstance()->getDirectionFast(&updown,&leftRight,&intensity);
 		printf("%.3f,\t%.3f,\t%.3f\r\n",updown*upDownGain-radPitch,leftRight*leftRightGain-radHeading,intensity);
 		
 		vTaskDelay(200);

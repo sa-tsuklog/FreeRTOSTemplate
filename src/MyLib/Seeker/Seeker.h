@@ -12,9 +12,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "semphr.h"
 
-#include "Driver/Filter.hpp"
+#include "QuadrantSeeker.h"
 
 class Seeker {
 	// Singleton pattern definition
@@ -32,20 +31,22 @@ public:
 	// Class definition
 private:
 	static const float NORMALIZED_CENTER_FREQUENCY = 0.5/(2.5/2);
-	static const float Q_FACTOR = 250;
+	static const float Q_FACTOR_SLOW = 100;
+	static const float Q_FACTOR_FAST = 10;
+	static const float NOISE_FLOOR_SLOW = 10;
+	static const float NOISE_FLOOR_FAST = 10;
 	
-	Filter bandpass[4];
-	Filter allpass[4];
-	float intensity[4];
-	
-	SemaphoreHandle_t dataUpdateMutex;
-	
-	float getIntensityOfCh(int32_t ch);
+	QuadrantSeeker quadrantSeekerSlow;
+	QuadrantSeeker quadrantSeekerFast;
 	
 	void SeekerTask();
 	void seekerPritRawData();
 public:
-	void getDirection(float* outUpDown,float* outLeftRight,float* outIntensity);
+	void getDirectionSlow(float* outUpDown,float* outLeftRight,float* outIntensity);
+	void getDirectionFast(float* outUpDown,float* outLeftRight,float* outIntensity);
+	float getNoiseFloorSlow();
+	float getNoiseFloorFast();
+	
 	static void SeekerTaskEntry(void *pvParameters);
 	static void initSeeker();
 };

@@ -16,19 +16,8 @@
 #include "MyLib/Util/Util.h"
 
 Seeker::Seeker(){
-	dataUpdateMutex = xSemaphoreCreateMutex();
-	if(dataUpdateMutex == NULL){
-		while(1){printf("mutex create failure\r\n");}
-	}
-	
-	for(int i=0;i<4;i++){
-		bandpass[i] = Filter(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR);
-		allpass[i] = Filter(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR);
-	}
-	
-	for(int i=0;i<4;i++){
-		intensity[i] = 0;
-	}
+	quadrantSeekerSlow = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_SLOW);
+	quadrantSeekerFast = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_FAST);
 }
 
 void Seeker::SeekerTask(){
@@ -46,15 +35,8 @@ void Seeker::SeekerTask(){
 	while(1){
 		adData = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
 		
-		if(ch >= 4){
-			continue;
-		}
-		
-		
-		float tmpI = bandpass[ch].bandpass((float)adData);
-		float tmpQ = allpass[ch].allpass(tmpI);
-		
-		intensity[ch] = sqrtf(tmpI*tmpI + tmpQ*tmpQ);
+		quadrantSeekerSlow.updateSeekerData(ch,(float)adData);
+		quadrantSeekerFast.updateSeekerData(ch,(float)adData);
 		
 //		if(decimation == 0){
 //			printf("%f,%f\r\n",filteredI[ch],filteredQ[ch]);
@@ -111,22 +93,22 @@ void Seeker::SeekerTask(){
 //	}
 //}
 
-float Seeker::getIntensityOfCh(int32_t ch){
-	if(ch < 4 && ch >= 0){
-		return intensity[ch];
-	}else{
-		return 0;
-	}
+
+
+void Seeker::getDirectionSlow(float* outUpDown,float* outLeftRight,float* outIntensity){
+	quadrantSeekerSlow.getDirection(outUpDown,outLeftRight,outIntensity);
 }
 
-void Seeker::getDirection(float* outUpDown,float* outLeftRight,float* outIntensity){
-	float sum = intensity[0] +intensity[1] +intensity[2] +intensity[3];
-	
-	*outUpDown   = (intensity[0] -intensity[1] -intensity[2] +intensity[3])/sum;
-	*outLeftRight= (intensity[0] +intensity[1] -intensity[2] -intensity[3])/sum;
-	*outIntensity= sum;
-	
-	//printf("%f,\t%f,\t%f,\t%f\r\n",intensity[0],intensity[1],intensity[2],intensity[3]);
+void Seeker::getDirectionFast(float* outUpDown,float* outLeftRight,float* outIntensity){
+	quadrantSeekerFast.getDirection(outUpDown,outLeftRight,outIntensity);
+}
+
+float Seeker::getNoiseFloorSlow(){
+	return NOISE_FLOOR_SLOW;
+}
+
+float Seeker::getNoiseFloorFast(){
+	return NOISE_FLOOR_FAST;
 }
 
 void Seeker::SeekerTaskEntry(void *pvParameters){
