@@ -118,9 +118,3 @@ void Seeker::SeekerTaskEntry(void *pvParameters){
 void Seeker::initSeeker(){
 	xTaskCreate(&Seeker::SeekerTaskEntry,"seeker",2048,NULL,4,NULL);
 }
-void Seeker::SeekerTaskEntry(void *pvParameters){
-	Seeker::GetInstance()->SeekerTask();
-}
-void Seeker::initSeeker(){
-	xTaskCreate(&Seeker::SeekerTaskEntry,"seeker",1024,NULL,4,NULL);
-}

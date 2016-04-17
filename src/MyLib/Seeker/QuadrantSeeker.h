@@ -10,7 +10,7 @@
 
 #include "stdint.h"
 
-#include "Filter.hpp"
+#include "Filter.h"
 
 class QuadrantSeeker{
 private:

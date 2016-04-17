@@ -19,7 +19,6 @@ private:
 	float dHeadingGain;
 	float pHeadingGain;
 	
-	float seekerNoiseFloor;
 public:
 	IrControl();
 	void control();

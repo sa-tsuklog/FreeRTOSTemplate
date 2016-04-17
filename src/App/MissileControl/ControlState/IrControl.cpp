@@ -13,7 +13,6 @@ IrControl::IrControl(){
 	//seekerNoiseFloor = Util::GetInstance()->flashData.seekerNoiseFloor;
 	
 	//TODO: flashから引っ張ってくる
-	seekerNoiseFloor = 200;
 	pPitchGain = 1;
 	pRollGain = 1;
 	pHeadingGain = 1;
@@ -28,9 +27,9 @@ void IrControl::control(){
 
 void IrControl::control(float radHeadingCommand){
 	float upDown,leftRight,intensity;
-	Seeker::GetInstance()->getDirection(&upDown,&leftRight,&intensity);
+	Seeker::GetInstance()->getDirectionSlow(&upDown,&leftRight,&intensity);
 	
-	if(intensity < seekerNoiseFloor){
+	if(intensity < Seeker::GetInstance()->getNoiseFloorSlow()){
 		pitchHeadingHold(radHeadingCommand);
 	}else{
 		terminal(upDown,leftRight);
