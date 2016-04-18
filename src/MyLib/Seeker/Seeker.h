@@ -32,8 +32,8 @@ private:
 	static const float NORMALIZED_CENTER_FREQUENCY = 0.5/(2.5/2);
 	static const float Q_FACTOR_SLOW = 100;
 	static const float Q_FACTOR_FAST = 10;
-	static const float NOISE_FLOOR_SLOW = 10;
-	static const float NOISE_FLOOR_FAST = 10;
+	static const float NOISE_FLOOR_SLOW = 600;	//4sigma
+	static const float NOISE_FLOOR_FAST = 2700;	//4sigma
 	
 	QuadrantSeeker quadrantSeekerSlow;
 	QuadrantSeeker quadrantSeekerFast;
