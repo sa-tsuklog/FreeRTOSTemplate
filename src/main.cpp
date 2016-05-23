@@ -22,6 +22,7 @@
 #include "MyLib/SBusPropo/SBusPropo.h"
 #include "App/GliderControl/GliderControl.h"
 #include "MyLib/Stdout/SerialCommand.h"
+#include "App/MissileControl/MissileControl.h"
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)と
  *  stm32F429           (Xtal = 12MHz)での要変更箇所
@@ -80,8 +81,9 @@ int main(void) {
 	//CanBusMonitor::initCanBusMonitor();
 	Seeker::initSeeker();
 	//SBusPropo::initSBusPropo();
-	xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
+	//xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
 	//GliderControl::initGliderControl();
+	MissileControl::initMissileControl();
 	
 	vTaskStartScheduler();
 	

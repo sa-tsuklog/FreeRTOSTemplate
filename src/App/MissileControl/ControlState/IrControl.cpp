@@ -27,13 +27,18 @@ void IrControl::control(){
 }
 
 void IrControl::control(float radHeadingCommand){
-	float upDown,leftRight,intensity;
-	Seeker::GetInstance()->getDirection(&upDown,&leftRight,&intensity);
+	float upDownSlow,leftRightSlow,intensitySlow;
+	float upDownFast,leftRightFast,intensityFast;
+	float noiseFloorSlow;
+	float noiseFloorFast;
 	
-	if(intensity < seekerNoiseFloor){
+	Seeker::GetInstance()->getDirectionSlow(&upDownSlow,&leftRightSlow,&intensitySlow);
+	Seeker::GetInstance()->getDirectionFast(&upDownFast,&leftRightFast,&intensityFast);
+	
+	if(intensitySlow < seekerNoiseFloor){
 		pitchHeadingHold(radHeadingCommand);
 	}else{
-		terminal(upDown,leftRight);
+		terminal(upDownSlow,leftRightSlow);
 	}
 	
 }

@@ -16,6 +16,8 @@
 #include "App/GliderControl/GpsGuidance.h"
 #include "App/GliderControl/FlightParameters.h"
 
+#include "App/MissileControl/MissileControl.h"
+
 #include "ControlParams.h"
 
 #include "App/TankControl/TankControl.h"
@@ -112,7 +114,8 @@ void SerialCommand::usctl(){
 			camMode);
 	
 	//TankControl::GetInstance()->setControlParms(&controlParams);
-	GliderControl::GetInstance()->setControlParams(&controlParams);
+	//GliderControl::GetInstance()->setControlParams(&controlParams);
+	MissileControl::GetInstance()->setControlParams(&controlParams);
 }
 
 /**
@@ -688,25 +691,32 @@ void SerialCommand::setPrintMode(char* arg){
 	
 	if(strncmp(arg,"none",4)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::NONE);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
 	}else if(strncmp(arg,"maritime",8)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::MARITIME);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
 	}else if(strncmp(arg,"eframe",6)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::E_FRAME);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
 	}else if(strncmp(arg,"ins",3)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::INS);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
 	}else if(strncmp(arg,"quat",4)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::QUATERNION);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
 	}else if(strncmp(arg,"gpaio",5)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::NONE);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::GPAIO);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::GPAIO);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::GPAIO);
 	}else if(strncmp(arg,"debug",5)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::DEBUG);
-		GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
 	}else{
 		printf("usage: setPrintMode none|maritime|eframe|ins|quat|gpaio|debug\r\n");
 	}
