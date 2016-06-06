@@ -47,12 +47,12 @@ void test(){
 		
 		
 		Seeker::GetInstance()->getDirectionSlow(&updown,&leftRight,&intensity);
-		printf("slow:%.3f,\t%.3f,\t%.3f,",updown*upDownGain-radPitch,leftRight*leftRightGain-radHeading,intensity);
+		printf("slow:%6.3f,\t%6.3f,\t%10.1f\t,",updown*upDownGain,leftRight*leftRightGain,intensity);
 		Seeker::GetInstance()->getDirectionFast(&updown,&leftRight,&intensity);
-		printf("fast:%.3f,\t%.3f,\t%.3f\r\n",updown*upDownGain-radPitch,leftRight*leftRightGain-radHeading,intensity);
+		printf("fast:%6.3f,\t%6.3f,\t%10.1f\r\n",updown*upDownGain,leftRight*leftRightGain,intensity);
 		
 		
-		vTaskDelay(200);
+		vTaskDelay(100);
 		
 	}
 }

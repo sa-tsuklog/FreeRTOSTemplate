@@ -30,6 +30,7 @@ public:
 	enum Mode{
 		NONE,
 		GPAIO,
+		SEEKER,
 	};
 };
 
@@ -66,6 +67,7 @@ private:
 	
 	void print();
 	void printGpaio(FILE* fp);
+	void printSeekerLog(FILE* fp);
 	void controlStateUpdate(ControlParams* params);
 	void MissileControlTask();
 public:

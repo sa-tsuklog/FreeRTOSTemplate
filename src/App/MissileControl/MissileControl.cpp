@@ -120,30 +120,22 @@ void MissileControl::MissileControlTask(){
 		
 		
 		
-		if(controlState == MissileControlState::LAUNCH_STANDBY){
-			printf("launch standby\r\n");
-		}else if(controlState == MissileControlState::BOOST_PHASE1){
-			printf("boost phase1\r\n");
-		}else if(controlState == MissileControlState::BOOST_PHASE2){
-			printf("boost phase2\r\n");
-		}else if(controlState == MissileControlState::TERMINAL){
-			float seekerUpDownSlow,seekerUpDownFast,seekerLeftRightSlow,seekerLeftRightFast,intensitySlow,intensityFast;
-			Seeker::GetInstance()->getDirectionSlow(&seekerUpDownSlow,&seekerLeftRightSlow,&intensitySlow);
-			Seeker::GetInstance()->getDirectionFast(&seekerUpDownFast,&seekerLeftRightFast,&intensityFast);
-			
-			if(intensityFast > Seeker::GetInstance()->getNoiseFloorFast()){
-				printf("terminal - fast\r\n");
-			}else if(intensitySlow > Seeker::GetInstance()->getNoiseFloorSlow()){
-				printf("terminal - slow\r\n");
-			}else{
-				printf("terminal - not detected\r\n");
-			}
-			
-		}else if(controlState == MissileControlState::MANUAL_CONTROL){
-			printf("manual control\r\n");
-		}else if(controlState == MissileControlState::EMERGENCY){
-			printf("emergency\r\n");
-		}
+//		if(controlState == MissileControlState::LAUNCH_STANDBY){
+//			printf("launch standby\r\n");
+//		}else if(controlState == MissileControlState::BOOST_PHASE1){
+//			printf("boost phase1\r\n");
+//		}else if(controlState == MissileControlState::BOOST_PHASE2){
+//			printf("boost phase2\r\n");
+//		}else if(controlState == MissileControlState::TERMINAL){
+//			float seekerUpDownSlow,seekerUpDownFast,seekerLeftRightSlow,seekerLeftRightFast,intensitySlow,intensityFast;
+//			Seeker::GetInstance()->getDirectionSlow(&seekerUpDownSlow,&seekerLeftRightSlow,&intensitySlow);
+//			Seeker::GetInstance()->getDirectionFast(&seekerUpDownFast,&seekerLeftRightFast,&intensityFast);
+//			
+//		}else if(controlState == MissileControlState::MANUAL_CONTROL){
+//			printf("manual control\r\n");
+//		}else if(controlState == MissileControlState::EMERGENCY){
+//			printf("emergency\r\n");
+//		}
 		
 		
 		
@@ -191,10 +183,9 @@ void MissileControl::controlStateUpdate(ControlParams* params){
 		msBoost2Time = 0;
 		Quaternion mpspsAcl = Gains::GetInstance()->getMpspsAcl();
 		
-//		if(mpspsAcl.x > MPSPS_LAUNCH_ACCEL_THRETHOLD){
-//			controlState = MissileControlState::BOOST_PHASE1;
-//		}
-		controlState = MissileControlState::TERMINAL;
+		if(mpspsAcl.x > MPSPS_LAUNCH_ACCEL_THRETHOLD){
+			controlState = MissileControlState::BOOST_PHASE1;
+		}
 	}else if(controlState == MissileControlState::BOOST_PHASE1){
 		msBoost1Time+=MS_CONTROL_INTERVAL;
 		
@@ -230,6 +221,12 @@ void MissileControl::print(){
 			printGpaio(stdout);
 		}
 	}
+	if(this->printMode == MissilePrintMode::SEEKER){
+		if(decimator % 10 == 0){
+			printSeekerLog(stdout);
+		}
+	}
+	
 	
 	if(decimator % 5 == 1){
 		Quaternion rpsRate = Gains::GetInstance()->getRpsRate();
@@ -247,6 +244,9 @@ void MissileControl::print(){
 	
 	if(decimator % 5 == 2){
 		printGpaio(log0);
+	}
+	if(decimator %5 == 3){
+		printSeekerLog(log0);
 	}
 	
 }
@@ -294,6 +294,14 @@ void MissileControl::printGpaio(FILE* fp){
 		fprintf(fp,"%.2f,",batteryVoltage);
 		fprintf(fp,"00\r\n");//checksum
 	}
+}
+
+void MissileControl::printSeekerLog(FILE* fp){
+	float upDownSlow,leftRightSlow,intensitySlow,upDownFast,leftRightFast,intensityFast;
+	Seeker::GetInstance()->getDirectionSlow(&upDownSlow,&leftRightSlow,&intensitySlow);
+	Seeker::GetInstance()->getDirectionFast(&upDownFast,&leftRightFast,&intensityFast);
+	
+	fprintf(fp,"$SEEKR,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\r\n",upDownSlow,leftRightSlow,intensitySlow,upDownFast,leftRightFast,intensityFast);
 }
 
 void MissileControl::setPrintMode(MissilePrintMode::Mode mode){

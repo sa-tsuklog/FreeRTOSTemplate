@@ -717,8 +717,12 @@ void SerialCommand::setPrintMode(char* arg){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::DEBUG);
 		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
 		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::NONE);
+	}else if(strncmp(arg,"seeker",6)==0){
+		Gains::GetInstance()->setPrintType(GainsPrintMode::NONE);
+		//GliderControl::GetInstance()->setPrintMode(GliderPrintMode::NONE);
+		MissileControl::GetInstance()->setPrintMode(MissilePrintMode::SEEKER);
 	}else{
-		printf("usage: setPrintMode none|maritime|eframe|ins|quat|gpaio|debug\r\n");
+		printf("usage: setPrintMode none|maritime|eframe|ins|quat|gpaio|debug|seeker\r\n");
 	}
 }
 
