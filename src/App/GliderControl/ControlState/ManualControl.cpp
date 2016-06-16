@@ -9,8 +9,8 @@
 #include "ManualControl.h"
 #include "../GliderServoControl.h"
 
-#include "MyLib/Gains/Gains.h"
-#include "Common/Quaternion.h"
+#include "Device/Gains/Gains.h"
+#include "Common/Math/Quaternion.h"
 
 ManualControl::ManualControl(){
 }

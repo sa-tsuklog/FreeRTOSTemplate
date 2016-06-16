@@ -10,12 +10,12 @@
 #include "MyFileHandle.h"
 #include "ff.h"
 
-#include "MyLib/Stdout/Stdout.h"
-#include "MyLib/Gains/Driver/Gps/USART2.h"
-#include "MyLib/CmdServo/Driver/USART1.h"
-#include "MyLib/Logger/Logger.h"
+#include "Device/Stdout/Stdout.h"
+#include "Device/Gains/Driver/Gps/USART2.h"
+#include "Device/CmdServo/Driver/USART1.h"
+#include "Device/Logger/Logger.h"
 
-#include "MyLib/Util/Util.h"
+#include "Device/Util/Util.h"
 
 #ifdef __cplusplus
  extern "C" {

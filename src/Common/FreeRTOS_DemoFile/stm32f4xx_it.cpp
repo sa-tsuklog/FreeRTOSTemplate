@@ -23,11 +23,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <pch.h>
-#include "MyLib/Gains/Driver/Mpu9250/I2C2.h"
-#include "MyLib/Gains/Driver/Adis16488/SPI2_TIM8.h"
-#include "MyLib/Seeker/Driver/AD7176-2/SPI4.h"
-#include "MyLib/Stdout/Stdout.h"
-#include "MyLib/SBusPropo/Driver/USART1Propo.h"
+#include "Device/Gains/Driver/Mpu9250/I2C2.h"
+#include "Device/Gains/Driver/Adis16488/SPI2_TIM8.h"
+#include "Device/Seeker/Driver/AD7176-2/SPI4.h"
+#include "Device/Stdout/Driver/USART3.h"
+#include "Device/SBusPropo/Driver/USART1Propo.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -199,7 +199,10 @@ void USART1_IRQHandler()
 }
 
 void USART3_IRQHandler(){
-	Stdout::GetInstance()->myUSART3IRQHandler();
+	if(USART_GetITStatus(USART3,USART_IT_RXNE) != RESET){
+		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
+	}
+	//USART3Class::GetInstance()->myUSART3_IRQHandler();
 }
 
 void DMA1_Stream1_IRQHandler()
@@ -216,7 +219,7 @@ void DMA1_Stream3_IRQHandler()
 }
 void DMA1_Stream4_IRQHandler()
 {
-	Stdout::GetInstance()->myDma1_Stream4IRQHandler();
+	USART3Class::GetInstance()->myDMA1_Stream4IRQHandler();
 }
 void DMA1_Stream7_IRQHandler()
 {

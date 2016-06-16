@@ -7,8 +7,8 @@
 
 #include "BoostPhase0Control.h"
 #include "math.h"
-#include "MyLib/Util/Util.h"
-#include "MyLib/Gains/Gains.h"
+#include "Device/Util/Util.h"
+#include "Device/Gains/Gains.h"
 #include "App/GliderControl/GliderServoControl.h"
 
 BoostPhase0Control::BoostPhase0Control(){

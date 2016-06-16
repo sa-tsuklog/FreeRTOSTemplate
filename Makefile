@@ -1,20 +1,23 @@
 ########## You only have to modify here when you add a new file.
 OSPATH = src/OS
-MYLIBPATH = src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
-		    src/MyLib/Gains src/MyLib/Gains/Driver/Adis16488 src/MyLib/Gains/Driver/Gps src/MyLib/Gains/Driver/Mpu9250 src/MyLib/Gains/Driver/SupersonicHeight src/MyLib/Gains/Driver/DummyGps \
-		    src/MyLib/Logger \
-		    src/MyLib/Stdout src/MyLib/Stdout/Driver src/MyLib/Stdout/DriverCmm920 \
-		    src/MyLib/Util src/MyLib/Util/Driver \
-		    src/MyLib/MoterDriver src/MyLib/MoterDriver/Driver \
-		    src/MyLib/CmdServo src/MyLib/CmdServo/Driver \
-		    src/MyLib/SBusPropo src/MyLib/SBusPropo/Driver \
-		    src/MyLib/Servo src/MyLib/Servo/Driver \
-		    src/MyLib/Propo src/MyLib/Propo/Driver \
-		    src/MyLib/Seeker src/MyLib/Seeker/Driver src/MyLib/Seeker/Driver/AD7176-2 \
-		    src/MyLib/SignalGenerator src/MyLib/SignalGenerator/Driver \
-		    src/MyLib/CAN src/MyLib/CAN/Driver
+MYLIBPATH = src/Device/CmdServo src/Device/CmdServo/Driver \
+		    src/Device/Gains src/Device/Gains/Driver/Adis16488 src/Device/Gains/Driver/Gps src/Device/Gains/Driver/Mpu9250 src/Device/Gains/Driver/SupersonicHeight src/Device/Gains/Driver/DummyGps \
+		    src/Device/Logger \
+		    src/Device/Stdout src/Device/Stdout/Driver \
+		    src/Device/Util src/Device/Util/Driver \
+		    src/Device/MoterDriver src/Device/MoterDriver/Driver \
+		    src/Device/CmdServo src/Device/CmdServo/Driver \
+		    src/Device/SBusPropo src/Device/SBusPropo/Driver \
+		    src/Device/Servo src/Device/Servo/Driver \
+		    src/Device/Propo src/Device/Propo/Driver \
+		    src/Device/Seeker src/Device/Seeker/Driver src/Device/Seeker/Driver/AD7176-2 \
+		    src/Device/SignalGenerator src/Device/SignalGenerator/Driver \
+		    src/Device/CAN src/Device/CAN/Driver
 		    
-COMPATH   = src/Common src/Common/FreeRTOS_DemoFile
+COMPATH   = src/Common src/Common/FreeRTOS_DemoFile \
+			src/Common/Math \
+			src/Common/Console/Ascii src/Common/Console/StreamReader src/Common/Console/StreamReader/lib \
+			src/Common/Console/StreamReader/Wrapper
 APPPATH = src/App src/App/TankControl \
 			src/App/GliderControl src/App/GliderControl/ControlState \
 			src/App/MissileControl src/App/MissileControl

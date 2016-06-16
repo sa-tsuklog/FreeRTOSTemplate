@@ -10,13 +10,13 @@
 #include "GeneralConfig.h"
 #include "ControlParams.h"
 
-#include "MyLib/MoterDriver/MoterDriver.h"
-#include "MyLib/CmdServo/CmdServo.h"
-#include "MyLib/Servo/Servo.h"
-#include "MyLib/Gains/Gains.h"
-#include "MyLib/Util/Util.h"
-#include "MyLib/Util/UserFlashData.h"
-#include "Common/Quaternion.h"
+#include "Device/MoterDriver/MoterDriver.h"
+#include "Device/CmdServo/CmdServo.h"
+#include "Device/Servo/Servo.h"
+#include "Device/Gains/Gains.h"
+#include "Device/Util/Util.h"
+#include "Device/Util/UserFlashData.h"
+#include "Common/Math/Quaternion.h"
 
 TankControl::TankControl(){
 }

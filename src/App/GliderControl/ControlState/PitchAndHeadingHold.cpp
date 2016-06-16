@@ -9,11 +9,11 @@
 #include "PitchAndHeadingHold.h"
 #include "../GliderServoControl.h"
 
-#include "MyLib/Util/Util.h"
-#include "MyLib/Util/UserFlashData.h"
-#include "MyLib/Gains/Gains.h"
+#include "Device/Util/Util.h"
+#include "Device/Util/UserFlashData.h"
+#include "Device/Gains/Gains.h"
 
-#include "Common/Quaternion.h"
+#include "Common/Math/Quaternion.h"
 
 PitchAndHeadingHold::PitchAndHeadingHold(){
 	flightParameters = &(Util::GetInstance()->flashData.flightParameters);

@@ -7,7 +7,7 @@
 
 #include "EmergencyControl.h"
 #include "../GliderServoControl.h"
-#include "MyLib/Gains/Gains.h"
+#include "Device/Gains/Gains.h"
 
 EmergencyControl::EmergencyControl(){
 }

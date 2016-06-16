@@ -6,12 +6,12 @@
  */
 
 #include "math.h"
-#include "Common/Quaternion.h"
+#include "Common/Math/Quaternion.h"
 
 #include "ControlElement.h"
 #include "MissileServoControl.h"
 
-#include "MyLib/Gains/Gains.h"
+#include "Device/Gains/Gains.h"
 
 static const float ControlElement::HOLD_ATTITUDE_P_GAIN[3] = {0.6,0.6,0.6};
 static const float ControlElement::HOLD_ATTITUDE_D_GAIN[3] = {0.6,0.6,0.6};

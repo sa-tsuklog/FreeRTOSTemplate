@@ -14,10 +14,10 @@
  */
 #include <pch.h>
 #include "GlidePhaseHeadingHold.h"
-#include "Common/Quaternion.h"
+#include "Common/Math/Quaternion.h"
 #include "../GliderServoControl.h"
-#include "MyLib/Gains/Gains.h"
-#include "MyLib/Util/Util.h"
+#include "Device/Gains/Gains.h"
+#include "Device/Util/Util.h"
 #include "../FlightParameters.h"
 
 

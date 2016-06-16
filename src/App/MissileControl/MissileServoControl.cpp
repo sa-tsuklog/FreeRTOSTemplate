@@ -7,7 +7,7 @@
 #include <pch.h>
 
 #include "MissileServoControl.h"
-#include "MyLib/Servo/Servo.h"
+#include "Device/Servo/Servo.h"
 
 FILE* MissileServoControl::fp = NULL;
 

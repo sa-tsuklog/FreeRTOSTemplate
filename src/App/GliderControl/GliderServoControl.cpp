@@ -7,7 +7,7 @@
 #include <pch.h>
 
 #include "GliderServoControl.h"
-#include "MyLib/Servo/Servo.h"
+#include "Device/Servo/Servo.h"
 
 FILE* GliderServoControl::fp = NULL;
 

@@ -17,13 +17,13 @@
 #include "ControlState/EmergencyControl.h"
 #include "ControlState/PitchAndHeadingHold.h"
 
-#include "Common/Quaternion.h"
-#include "MyLib/Gains/Gains.h"
-#include "MyLib/Gains/Driver/Gps/Gps.h"
-#include "MyLib/Gains/Driver/DummyGps/DummyGps.h" 
-#include "MyLib/Servo/Servo.h"
-#include "MyLib/Util/Util.h"
-#include "MyLib/Util/UserFlashData.h"
+#include "Common/Math/Quaternion.h"
+#include "Device/Gains/Gains.h"
+#include "Device/Gains/Driver/Gps/Gps.h"
+#include "Device/Gains/Driver/DummyGps/DummyGps.h" 
+#include "Device/Servo/Servo.h"
+#include "Device/Util/Util.h"
+#include "Device/Util/UserFlashData.h"
 #include "ControlParams.h"
 
 /* Servo Ch List

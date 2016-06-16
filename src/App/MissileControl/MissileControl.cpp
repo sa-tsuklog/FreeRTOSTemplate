@@ -14,11 +14,11 @@
 #include "ControlElement.h"
 #include "ControlParams.h"
 
-#include "MyLib/Gains/Gains.h"
-#include "MyLib/Gains/Driver/Gps/Gps.h"
-#include "MyLib/Gains/Driver/DummyGps/DummyGps.h"
-#include "MyLib/Util/Util.h"
-#include "MyLib/Seeker/Seeker.h"
+#include "Device/Gains/Gains.h"
+#include "Device/Gains/Driver/Gps/Gps.h"
+#include "Device/Gains/Driver/DummyGps/DummyGps.h"
+#include "Device/Util/Util.h"
+#include "Device/Seeker/Seeker.h"
 
 MissileControl::MissileControl(){
 	controlParamsQueue = xQueueCreate(1,sizeof(ControlParams));

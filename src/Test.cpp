@@ -8,26 +8,26 @@
 
 #include "Test.h"
 //dut
-#include "MyLib/Logger/Logger.h"
-#include "MyLib/Util/Util.h"
+#include "Device/Logger/Logger.h"
+#include "Device/Util/Util.h"
 
-#include "MyLib/MoterDriver/MoterDriver.h"
-#include "MyLib/Servo/Servo.h"
+#include "Device/MoterDriver/MoterDriver.h"
+#include "Device/Servo/Servo.h"
 
-#include "MyLib/Gains/Gains.h"
-#include "MyLib/Gains/ImuData.h"
-#include "Common/Quaternion.h"
+#include "Device/Gains/Gains.h"
+#include "Device/Gains/ImuData.h"
+#include "Common/Math/Quaternion.h"
 
-#include "MyLib/CmdServo/CmdServo.h"
+#include "Device/CmdServo/CmdServo.h"
 
-#include "MyLib/Propo/Driver/TIM3.h"
+#include "Device/Propo/Driver/TIM3.h"
 
-#include "MyLib/Propo/Propo.h"
+#include "Device/Propo/Propo.h"
 
-#include "MyLib/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
-#include "MyLib/SignalGenerator/Driver/DAC_TIM8.h"
+#include "Device/Seeker/Driver/AD7176-2/Ad7176-2Seeker.h"
+#include "Device/SignalGenerator/Driver/DAC_TIM8.h"
 
-#include "MyLib/Seeker/Seeker.h"
+#include "Device/Seeker/Seeker.h"
 
 void test(){
 	int i=0;

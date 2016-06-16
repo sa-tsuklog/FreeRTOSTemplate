@@ -10,7 +10,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-#include "Common/Quaternion.h"
+#include "Common/Math/Quaternion.h"
 #include "ControlParams.h"
 
 class TankControl {

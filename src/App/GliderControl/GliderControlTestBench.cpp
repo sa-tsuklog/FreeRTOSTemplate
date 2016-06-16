@@ -6,7 +6,7 @@
  */
 #include <pch.h>
 
-#include "MyLib/Gains/Gains.h"
+#include "Device/Gains/Gains.h"
 #include "GliderControlTestBench.h"
 #include "GpsGuidance.h"
 

@@ -8,7 +8,7 @@
 
 #include "GpsGuidance.h"
 
-#include "MyLib/Gains/Driver/Gps/Gps.h"
+#include "Device/Gains/Driver/Gps/Gps.h"
 
 //TODO:waypointのappend,clearをタスク間通信を使うようにする。
 

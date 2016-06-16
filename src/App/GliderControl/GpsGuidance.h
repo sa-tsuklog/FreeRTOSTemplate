@@ -8,7 +8,7 @@
 #ifndef GPS_GUIDANCE_H_
 #define GPS_GUIDANCE_H_
 
-#include "Common/Quaternion.h"
+#include "Common/Math/Quaternion.h"
 
 class GpsGuidance{
 private:
