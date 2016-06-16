@@ -199,10 +199,7 @@ void USART1_IRQHandler()
 }
 
 void USART3_IRQHandler(){
-	if(USART_GetITStatus(USART3,USART_IT_RXNE) != RESET){
-		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
-	}
-	//USART3Class::GetInstance()->myUSART3_IRQHandler();
+	USART3Class::GetInstance()->myUSART3_IRQHandler();
 }
 
 void DMA1_Stream1_IRQHandler()

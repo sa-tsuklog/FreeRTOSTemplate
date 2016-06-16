@@ -20,7 +20,13 @@ Stdout::Stdout(){
 	writer = USART3Class::GetInstance();
 	StreamReader* hwReader = USART3Class::GetInstance();
 	this->escReader = new EscapeSequenceReader(hwReader);
+	if(escReader == NULL){
+		while(1){}
+	}
 	reader = new EditableLineReader(escReader,StdoutConfig::LINE_BUF_SIZE,StdoutConfig::COMMAND_LOG_DEPTH,stdout);
+	if(reader == NULL){
+		while(1){}
+	}
 }
 
 Stdout::~Stdout(){
@@ -60,5 +66,5 @@ void Stdout::initStdout(){
 //	xTaskCreate(&Cmm920::Cmm920RxTaskEntry,"u3rx",512,NULL,3,&(Stdout::GetInstance()->u3rxHandle));
 	
 	////for both normal and cmm920 uart.
-	//xTaskCreate(&SerialCommand::prvSerialCommandTaskEntry,"cmd",1024,NULL,2,&(Stdout::GetInstance()->cmdHandle));
+	xTaskCreate(&SerialCommand::prvSerialCommandTaskEntry,"cmd",1024,NULL,2,&(Stdout::GetInstance()->cmdHandle));
 }

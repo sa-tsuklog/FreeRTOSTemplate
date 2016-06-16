@@ -166,14 +166,11 @@ void USART3Class::myDMA1_Stream4IRQHandler(){
 void USART3Class::myUSART3_IRQHandler(){
 	if(USART_GetITStatus(USART3,USART_IT_RXNE) != RESET){
 		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
+		USART_ClearFlag(USART3,USART_FLAG_RXNE);
+		
+		uint8_t c = USART_ReceiveData(USART3);
+		
+		portBASE_TYPE dummy;
+		xQueueSendFromISR(rxQueue,&c,&dummy);
 	}
-	
-//	if(USART_GetITStatus(USART3,USART_IT_RXNE) != RESET){
-//		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
-//
-//		uint8_t c = USART_ReceiveData(USART3);
-//		
-//		portBASE_TYPE dummy;
-//		xQueueSendFromISR(rxQueue,&c,&dummy);
-//	}
 }
