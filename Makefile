@@ -20,7 +20,8 @@ COMPATH   = src/Common src/Common/FreeRTOS_DemoFile \
 			src/Common/Console/StreamReader/Wrapper
 APPPATH = src/App src/App/TankControl \
 			src/App/GliderControl src/App/GliderControl/ControlState \
-			src/App/MissileControl src/App/MissileControl
+			src/App/MissileControl src/App/MissileControl \
+			src/App/SerialCommand
 
 TOOLDIR = ../../launchpad/bin/
 G++VER = 4.9.3

@@ -12,7 +12,7 @@
 #include "../Ascii/Ascii.h"
 #include "Interfaces/StreamReader.h"
 #include "EditableLineReader.h"
-#include "lib/CommandLog.h"
+#include "Lib/CommandLog.h"
 
 EditableLineReader::EditableLineReader(StreamReader* reader,uint32_t lineLength,uint32_t logDepth,FILE* echoFp){
 	this->reader = reader;

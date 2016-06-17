@@ -10,7 +10,7 @@
 
 #include "Interfaces/BufferedReader.h"
 #include "Interfaces/StreamReader.h"
-#include "lib/CommandLog.h"
+#include "Lib/CommandLog.h"
 
 class EditableLineReader:public BufferedReader{
 private:

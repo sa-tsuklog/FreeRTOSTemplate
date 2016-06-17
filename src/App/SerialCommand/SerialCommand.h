@@ -34,6 +34,7 @@ public:
 // Class definition
 private:
 	char* args;
+	TaskHandle_t cmdHandle;
 	static unsigned char hexToUchar(char* hexString);
 	static void readFloatParam(const char* message,float* ptr);
 public:
@@ -77,6 +78,8 @@ public:
 	static void testCmd0();
 	static void testCmd1();
 	static void testCmd2();
+	
+	static void initSerialCommand();
 };
 
 typedef struct{

@@ -834,6 +834,12 @@ void SerialCommand::testCmd1(){
  */
 void SerialCommand::testCmd2(){
 }
+
+void SerialCommand::initSerialCommand(){
+	xTaskCreate(&SerialCommand::prvSerialCommandTaskEntry,"cmd",1024,NULL,2,&(SerialCommand::GetInstance()->cmdHandle));
+}
+
+
 #ifdef __cplusplus
 }
 #endif

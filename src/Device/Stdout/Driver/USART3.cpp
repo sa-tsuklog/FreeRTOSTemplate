@@ -8,7 +8,6 @@
 
 #include <pch.h>
 #include "USART3.h"
-#include "Device/Stdout/SerialCommand.h"
 
 #include <pch.h>
 #include "USART3.h"

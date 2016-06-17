@@ -21,8 +21,8 @@
 #include "Device/CAN/CanBusMonitor.h"
 #include "Device/SBusPropo/SBusPropo.h"
 #include "App/GliderControl/GliderControl.h"
-#include "Device/Stdout/SerialCommand.h"
 #include "App/MissileControl/MissileControl.h"
+#include "App/SerialCommand/SerialCommand.h"
 /*
  *  stm32F407 Discovery (Xtal = 8MHz)と
  *  stm32F429           (Xtal = 12MHz)での要変更箇所
@@ -75,6 +75,7 @@ int main(void) {
 	Servo::GetInstance()->start();
 	Util::initUtil();
 	Stdout::initStdout();
+	SerialCommand::initSerialCommand();
 	Gains::initGains();
 	Logger::initLogger();
 	//CmdServo::initCmdServo();

@@ -32,7 +32,7 @@ public:
 	// Class definition
 private:
 	TaskHandle_t u3txHandle;
-	TaskHandle_t cmdHandle;
+	
 	
 	StreamReader* escReader;
 	BufferedReader* reader;
