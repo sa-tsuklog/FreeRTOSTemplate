@@ -33,7 +33,11 @@ Stdout::~Stdout(){
 	delete reader;
 }
 
-uint8_t Stdout::getChar(){
+uint32_t Stdout::getChar(uint32_t msBlockTime){
+	return reader->getChar(msBlockTime);
+}
+
+uint32_t Stdout::getChar(){
 	return reader->getChar();
 }
 

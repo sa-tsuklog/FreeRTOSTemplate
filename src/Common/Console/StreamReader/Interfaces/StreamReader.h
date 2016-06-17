@@ -14,6 +14,7 @@ class StreamReader{
 public:
 	StreamReader(){};
 	virtual ~StreamReader(){};
+	virtual uint32_t getChar(uint32_t msBlockTime) = 0;
 	virtual uint32_t getChar() = 0;
 };
 

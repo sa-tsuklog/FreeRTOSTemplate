@@ -5,6 +5,9 @@
  *      Author: sa
  */
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include "../../Ascii/Ascii.h"
 #include "EscapeSequenceReader.h"
 
@@ -13,16 +16,25 @@ EscapeSequenceReader::EscapeSequenceReader(StreamReader* parentReader){
 }
 
 uint32_t EscapeSequenceReader::getChar(){
-	uint32_t c1 = parentReader->getChar();
+	getChar(portMAX_DELAY);	
+}
+
+uint32_t EscapeSequenceReader::getChar(uint32_t msBlockTime){
+	uint32_t c1 = parentReader->getChar(msBlockTime);
 	uint8_t c2,c3,c4,c5;
 	
 	
 	if(c1 != Ascii::ESC){
 		return c1;
 	}else{
-		uint32_t c2 = parentReader->getChar();
-		uint32_t c3 = parentReader->getChar();
-		
+		uint32_t c2 = parentReader->getChar(msBlockTime);
+		if(c2 == EOF){
+			return EOF;
+		}
+		uint32_t c3 = parentReader->getChar(msBlockTime);
+		if(c3 == EOF){
+			return EOF;
+		}
 		
 		if((c2<<8 | c3) == Ascii::ARROW_UP){
 			return Ascii::ARROW_UP;
@@ -33,7 +45,11 @@ uint32_t EscapeSequenceReader::getChar(){
 		}else if((c2<<8 | c3) == Ascii::ARROW_RIGHT){
 			return Ascii::ARROW_RIGHT;
 		}else{
-			uint32_t c4 = parentReader->getChar();
+			uint32_t c4 = parentReader->getChar(msBlockTime);
+			if(c4 == EOF){
+				return EOF;
+			}
+			
 			if((c2<<16 | c3 <<8 | c4) == Ascii::INS){
 				return Ascii::INS;
 			}else if((c2<<16 | c3 <<8 | c4) == Ascii::HOME){
@@ -46,6 +62,10 @@ uint32_t EscapeSequenceReader::getChar(){
 				return Ascii::PAGEDN;
 			}else{
 				uint32_t c5 = parentReader->getChar();
+				if(c5 == EOF){
+					return EOF;
+				}
+				
 				if((c2<< 24 | c3<<16 | c4 <<8 | c5) == Ascii::F1){
 					return Ascii::F1;
 				}else if((c2<< 24 | c3<<16 | c4 <<8 | c5) == Ascii::F2){
@@ -76,5 +96,5 @@ uint32_t EscapeSequenceReader::getChar(){
 			}
 		}
 	}
-	
 }
+

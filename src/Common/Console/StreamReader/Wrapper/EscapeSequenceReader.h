@@ -18,6 +18,7 @@ public:
 	EscapeSequenceReader(StreamReader* parentReader);
 	~EscapeSequenceReader(){};
 	uint32_t getChar();
+	uint32_t getChar(uint32_t msBlockTime);
 	void setEcho(uint32_t newValue);
 };
 

@@ -31,7 +31,9 @@ public:
 	EditableLineReader(StreamReader* reader,uint32_t lineLength,uint32_t logDepth,FILE* echoFp);
 	~EditableLineReader();
 	
+	uint32_t getChar(uint32_t msBlockTime);
 	uint32_t getChar();
+	uint8_t* readLine(uint32_t msBlockTime);
 	uint8_t* readLine();
 };
 

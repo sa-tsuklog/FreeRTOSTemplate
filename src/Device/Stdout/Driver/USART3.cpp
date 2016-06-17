@@ -137,10 +137,19 @@ void USART3Class::Tx()
 	}
 }
 
-uint32_t USART3Class::getChar(){
+uint32_t USART3Class::getChar(uint32_t msBlockTime){
 	uint8_t c;
-	xQueueReceive(rxQueue,&c,portMAX_DELAY);
-	return c;
+	if(xQueueReceive(rxQueue,&c,msBlockTime) == pdTRUE){
+		return c;
+	}else{
+		return EOF;
+	}
+	
+	
+}
+
+uint32_t USART3Class::getChar(){
+	
 }
 
 void USART3Class::putChar(uint32_t c){

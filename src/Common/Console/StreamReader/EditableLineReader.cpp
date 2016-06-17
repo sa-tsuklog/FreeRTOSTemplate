@@ -5,6 +5,8 @@
  *      Author: sa
  */
 
+#include "FreeRTOS.h"
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
@@ -26,7 +28,7 @@ EditableLineReader::EditableLineReader(StreamReader* reader,uint32_t lineLength,
 	echo=0;
 }
 EditableLineReader::~EditableLineReader(){
-	
+	free(lineBuf);
 }
 
 void EditableLineReader::printArrowLeft(){
@@ -57,8 +59,12 @@ void EditableLineReader::printMoveCursorTo(uint32_t cursorPos){
 	}
 }
 
+uint32_t EditableLineReader::getChar(uint32_t msBlockTime){
+	return reader->getChar(msBlockTime);
+}
+
 uint32_t EditableLineReader::getChar(){
-	return reader->getChar();
+	return getChar(portMAX_DELAY);
 }
 uint8_t* EditableLineReader::readLine(){
 	int lineBufEnd = 0;

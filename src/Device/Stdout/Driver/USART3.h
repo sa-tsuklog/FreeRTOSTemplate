@@ -40,6 +40,7 @@ private:
 	char m_txBuf[StdoutConfig::TX_BUFFERSIZE];
 public:
 	virtual void Tx();	//length must be shorter than TX_BUFFERSIZE
+	virtual uint32_t getChar(uint32_t msBlockTime);
 	virtual uint32_t getChar();
 	virtual void putChar(uint32_t c);
 	xQueueHandle getTxQueue(){ return txQueue; }

@@ -40,7 +40,8 @@ private:
 public:
 	
 	uint8_t* readLine();
-	uint8_t getChar();
+	uint32_t getChar(uint32_t msBlockTime);
+	uint32_t getChar();
 	xQueueHandle getTxQueue();
 	void putChar(uint8_t c);
 	void setEcho(int newValue);
