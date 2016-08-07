@@ -10,6 +10,7 @@
 
 #include "Device/Gains/GainsConfig.h"
 #include "Device/Servo/Servo.h"
+#include "App/MissileControl/MissileFlightParameters.h"
 #include "App/GliderControl/FlightParameters.h"
 
 typedef struct{
@@ -28,6 +29,8 @@ typedef struct{
 	float mpuCmpsTempCoefficient[3];
 	FlightParameters flightParameters;
 	float mpuCmpsMagnitude;
+	MissileFlightParameters missileFlightParameters;
+	
 }UserflashData;
 
 #endif /* USERFLASHDATA_H_ */

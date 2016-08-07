@@ -100,6 +100,7 @@ uint8_t* EditableLineReader::readLine(){
 		}else if(c == '\r'){
 			//do nothing				
 		}else if(c == '\n'){
+			lineBuf[lineBufEnd] = 0;
 			if(lineBufEnd != 0){
 				if(echo && echoFp!=NULL){
 					for(int i=lineBufCursor;i<lineBufEnd;i++){
@@ -111,16 +112,14 @@ uint8_t* EditableLineReader::readLine(){
 					fflush(stdout);
 				}
 				
-				lineBuf[lineBufEnd] = 0;
-				
 				commandLog.appendCommandList(lineBuf);
-				
-				return lineBuf;
 			}else{
 				fputc('\r',echoFp);
 				fputc('\n',echoFp);
 				fflush(stdout);
 			}
+			
+			return lineBuf;
 		}else if(c == '\b'){
 			if(lineBufCursor>0){
 				for(int i= lineBufCursor; i<=lineBufEnd;i++){

@@ -68,6 +68,7 @@ void Mpu9250::init(){
 		Bmp085::GetInstance()->init();
 		paPressure = Bmp085::GetInstance()->getPaPressure();
 	}
+	
 }
 
 void Mpu9250::startGyroCalibration(){

@@ -14,11 +14,14 @@
 #include "ControlElement.h"
 #include "ControlParams.h"
 
+#include "GeneralConfig.h"
+
 #include "Device/Gains/Gains.h"
 #include "Device/Gains/Driver/Gps/Gps.h"
 #include "Device/Gains/Driver/DummyGps/DummyGps.h"
 #include "Device/Util/Util.h"
 #include "Device/Seeker/Seeker.h"
+#include "Device/Led/Led.h"
 
 MissileControl::MissileControl(){
 	controlParamsQueue = xQueueCreate(1,sizeof(ControlParams));
@@ -53,6 +56,19 @@ void MissileControl::MissileControlTask(){
 	
 	seekerUpDownSlowPrevious = seekerUpDownFastPrevious = seekerLeftRightSlowPrevious = seekerLeftRightFastPrevious = 0;
 	
+	vTaskDelay(MS_INITIAL_DELAY);
+	if(Util::GetInstance()->getVoltInputVoltage() < VOLTAGE_LIMIT){
+		uint32_t on = 0;
+		while(1){
+			//printf("%f\r\n",Util::GetInstance()->getVoltInputVoltage());
+			on ^= 1;
+			Led::GetInstance()->force(on);
+			vTaskDelay(500);
+		}
+	}
+	
+	
+	
 	while(1){
 		/////////////////////////////////////
 		// get control parameters
@@ -86,6 +102,7 @@ void MissileControl::MissileControlTask(){
 			float seekerUpDownSlow,seekerUpDownFast,seekerLeftRightSlow,seekerLeftRightFast,intensitySlow,intensityFast;
 			Seeker::GetInstance()->getDirectionSlow(&seekerUpDownSlow,&seekerLeftRightSlow,&intensitySlow);
 			Seeker::GetInstance()->getDirectionFast(&seekerUpDownFast,&seekerLeftRightFast,&intensityFast);
+			
 			
 			if(intensityFast > Seeker::GetInstance()->getNoiseFloorFast()){
 				//detected by fast seeker
@@ -319,7 +336,7 @@ void MissileControl::MissileControlTaskEntry(void *pvParameters){
 	MissileControl::GetInstance()->MissileControlTask();
 }
 void MissileControl::initMissileControl(){
-	xTaskCreate(&MissileControl::MissileControlTaskEntry,"ctrl",1024,NULL,2,NULL);
+	xTaskCreate(&MissileControl::MissileControlTaskEntry,"ctrl",2048,NULL,2,NULL);
 }
 
 

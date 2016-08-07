@@ -12,12 +12,22 @@
 #include "MissileServoControl.h"
 
 #include "Device/Gains/Gains.h"
-
-static const float ControlElement::HOLD_ATTITUDE_P_GAIN[3] = {0.6,0.6,0.6};
-static const float ControlElement::HOLD_ATTITUDE_D_GAIN[3] = {0.6,0.6,0.6};
+#include "MissileFlightParameters.h"
+#include "Device/Util/Util.h"
+#include "Device/Util/UserFlashData.h"
 
 ControlElement::ControlElement(){
-	
+	SURFACE_LIMIT = Util::GetInstance()->flashData.missileFlightParameters.surfaceLimit;
+	for(int i=0;i<3;i++){
+		HOLD_ATTITUDE_P_GAIN[i] = Util::GetInstance()->flashData.missileFlightParameters.holdAttitudePGain[i];
+		HOLD_ATTITUDE_D_GAIN[i] = Util::GetInstance()->flashData.missileFlightParameters.holdAttitudeDGain[i];
+	}
+	SEEKER_P_GAIN_H = Util::GetInstance()->flashData.missileFlightParameters.seekerPGainH;
+	SEEKER_D_GAIN_H = Util::GetInstance()->flashData.missileFlightParameters.seekerDGainH;
+	SEEKER_P_GAIN_L = Util::GetInstance()->flashData.missileFlightParameters.seekerPGainL;
+	SEEKER_D_GAIN_L = Util::GetInstance()->flashData.missileFlightParameters.seekerDGainL;
+	G_COMPENSATION_GAIN = Util::GetInstance()->flashData.missileFlightParameters.gCompensationGain;
+	MANUAL_CONTROL_D_GAIN = Util::GetInstance()->flashData.missileFlightParameters.manualControlDGain;
 }
 
 float ControlElement::limit(float value,float limit){
@@ -48,18 +58,18 @@ void ControlElement::holdAttitude(float radPitchCommand,float radHeadingCommand)
 	
 	float radHeadingError =  wrapAround(radHeadingCommand - radHeading, M_PI);
 	
-	float earthFramePitchCommand = (radPitchCommand   -radPitch)   *HOLD_ATTITUDE_P_GAIN[1]; 
-	float earthFrameYawCommand   = (radHeadingError)               *HOLD_ATTITUDE_P_GAIN[2]; 
+	float earthFramePitchCommand = (radPitchCommand   -radPitch)  * HOLD_ATTITUDE_P_GAIN[1]; 
+	float earthFrameYawCommand   = (radHeadingError)              * HOLD_ATTITUDE_P_GAIN[2]; 
 			
 	float pitchCommand = cosf(radRoll)*earthFramePitchCommand + sinf( radRoll)*earthFrameYawCommand       - rpsRate.y*HOLD_ATTITUDE_D_GAIN[1];
-	float rollCommand  = (0                 - radRoll)   *HOLD_ATTITUDE_P_GAIN[0]                         - rpsRate.x*HOLD_ATTITUDE_D_GAIN[0];
+	float rollCommand  = (0                 - radRoll) *  HOLD_ATTITUDE_P_GAIN[0]						  - rpsRate.x*HOLD_ATTITUDE_D_GAIN[0];
 	float yawCommand   = cosf(radRoll)*earthFrameYawCommand   + sinf(-radRoll)*earthFramePitchCommand     - rpsRate.z*HOLD_ATTITUDE_D_GAIN[2];
 	
 	pitchCommand = limit(pitchCommand,SURFACE_LIMIT);
 	rollCommand = limit(rollCommand,SURFACE_LIMIT);
 	yawCommand = limit(yawCommand,SURFACE_LIMIT);
 	
-	printf("%f,\t%f,\t%f,\t%f\r\n",earthFramePitchCommand,earthFrameYawCommand,pitchCommand,yawCommand);
+	//printf("%f,\t%f,\t%f,\t%f\r\n",earthFramePitchCommand,earthFrameYawCommand,pitchCommand,yawCommand);
 	
 	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
 }
@@ -85,11 +95,15 @@ void ControlElement::irTerminalGuidance(float seekerUpDown,float seekerLeftRight
 	float rollCommand  = (0                 - radRoll)   *HOLD_ATTITUDE_P_GAIN[0]          - rpsRate.x*HOLD_ATTITUDE_D_GAIN[0];
 	float yawCommand   = (seekerLeftRight*seekerPGain)+ (seekerLeftRightDelta*seekerDGain) - rpsRate.z*HOLD_ATTITUDE_D_GAIN[2] + sinf(-radRoll)*gCompensationMagnitude;
 	
+//	float pitchCommand = (seekerUpDown * seekerPGain) + (seekerUpDownDelta*seekerDGain);
+//	float rollCommand  = (0                 - radRoll)   *HOLD_ATTITUDE_P_GAIN[0];
+//	float yawCommand   = (seekerLeftRight*seekerPGain)+ (seekerLeftRightDelta*seekerDGain);
+	
 	pitchCommand = limit(pitchCommand,SURFACE_LIMIT);
 	rollCommand = limit(rollCommand,SURFACE_LIMIT);
 	yawCommand = limit(yawCommand,SURFACE_LIMIT);
 	
-	printf("%f,\t%f,\t%f,\t%f\r\n",seekerUpDown,seekerLeftRight,pitchCommand,yawCommand);
+	//printf("%f,\t%f,\t%f,\t%f\r\n",seekerUpDown,seekerLeftRight,pitchCommand,yawCommand);
 	
 	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
 	
@@ -115,4 +129,8 @@ void ControlElement::manualControl(ControlParams* params){
 			MissileServoControl::mainWingLatch();
 		}
 		MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+}
+
+void ControlElement::test(){
+	
 }

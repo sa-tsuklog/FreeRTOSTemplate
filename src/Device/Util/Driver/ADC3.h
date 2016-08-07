@@ -19,7 +19,8 @@ public:
 
 	// Class definition
 private:
-	static const float VOLT_PER_LSB = 3.3*11/0xFFF; 
+	static const float VOLT_PER_LSB = 3.3*11/0xFFFF; 
+	//static const float VOLT_PER_LSB = 1.0;
 public:
 	void startFirstConversion(); 
 	float getNextData();

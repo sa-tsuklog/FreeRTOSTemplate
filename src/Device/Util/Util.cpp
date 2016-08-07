@@ -28,6 +28,14 @@ Util::Util(){
 	
 	//task
 	//no tasks.
+	
+	//check flashData is smaller than flash size.
+	int byteFlashSize = FLASHClass::GetInstance()->getWordBlockSize()*4;
+	int byteDataSize = sizeof(UserflashData);
+	if(byteDataSize > byteFlashSize){
+		printf("warning: userFlash data size(%d byte) is larger than user flash size(%d byte)\r\n",byteDataSize,byteFlashSize);
+	}
+	
 }
 
 void Util::initFlashData(){

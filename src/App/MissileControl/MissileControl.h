@@ -50,6 +50,8 @@ public:
 
 	// Class definition
 private:
+	static const float VOLTAGE_LIMIT = 7.1;
+	
 	static const int MS_CONTROL_INTERVAL = 20;
 	static const int MPSPS_LAUNCH_ACCEL_THRETHOLD = 9.8*3.0;
 	static const int MS_BOOST1_LENGTH = 100;

@@ -16,9 +16,11 @@
 #include "Driver/Gps/USART2.h"
 #include "Driver/Mpu9250/MPU9250.h"
 #include "Driver/DummyGps/DummyGps.h"
+#include "Device/Led/Led.h"
 
 #include "App/GliderControl/GliderControl.h"
 #include "App/GliderControl/GpsGuidance.h"
+
 
 #include "Device/Util/Util.h"
 
@@ -70,6 +72,10 @@ void Gains::gainsTask(void *pvParameters){
 	
 	vTaskDelay(MS_INITIAL_DELAY);
 	
+	
+	
+	
+	
 	/////////////////////////////////////
 	//  wait for initial data
 	/////////////////////////////////////
@@ -117,7 +123,7 @@ void Gains::gainsTask(void *pvParameters){
 		imuData = tmpImuData;
 		xSemaphoreGive(dataUpdateMutex);
 		
-		GPIO_SetBits(GPIOB,GPIO_Pin_8);
+		Led::GetInstance()->set(1);
 		kf->predict(&tmpImuData.mpspsAcl,&tmpImuData.rpsRate);
 		
 		mPreviousHeight = mHeight;
@@ -182,7 +188,7 @@ void Gains::gainsTask(void *pvParameters){
 		
 		print();
 		
-		GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+		Led::GetInstance()->set(0);
 	}	
 }
 
@@ -248,11 +254,11 @@ void Gains::print(){
 				paPressure = 0;
 			}
 			
-			printf("%.3f,%.3f,%.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
-			printf("%.3f,%.3f,%.3f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
-			printf("%.3f,%.3f,%.3f\t",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
-			printf("%.3f\t",paPressure);
-			printf("%.3f\r\n",imuData.degTemp);
+			printf("%7.3f,%7.3f,%7.3f\t",imuData.mpspsAcl.x,imuData.mpspsAcl.y,imuData.mpspsAcl.z);
+			printf("%8.4f,%8.4f,%8.4f\t",imuData.rpsRate.x,imuData.rpsRate.y,imuData.rpsRate.z);
+			printf("%7.3f,%7.3f,%7.3f\t",imuData.uTCmps.x,imuData.uTCmps.y,imuData.uTCmps.z);
+			printf("%10.3f\t",paPressure);
+			printf("%7.3f\r\n",imuData.degTemp);
 		}
 	}else if(printMode == GainsPrintMode::QUATERNION){
 		if(decimator %2 == 0){

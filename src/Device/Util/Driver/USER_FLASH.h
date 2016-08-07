@@ -26,7 +26,7 @@ public:
 	}	
 	// Class definition
 private:
-	static const int WORD_BLOCK_SIZE = 0x100/4;	//512Byte = 128 WORD 
+	static const int WORD_BLOCK_SIZE = 0x200/4;	//512yte = 128 WORD 
 	
 	/* Adjust these parameters to the specification of the flash */
 #ifdef STM32F407

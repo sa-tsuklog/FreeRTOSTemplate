@@ -53,17 +53,7 @@ void prvTaskA(void *pvParameters){
 }
 
 void LEDInit(void) {
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 	
-	GPIO_InitTypeDef gpiob8;
-	GPIO_StructInit(&gpiob8);
-	gpiob8.GPIO_Pin = GPIO_Pin_8;
-	gpiob8.GPIO_Mode = GPIO_Mode_OUT;
-	gpiob8.GPIO_OType = GPIO_OType_PP;
-	gpiob8.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOB,&gpiob8);
-	
-	GPIO_SetBits(GPIOB,GPIO_Pin_8);
 }
 
 int main(void) {

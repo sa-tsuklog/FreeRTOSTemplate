@@ -17,7 +17,7 @@ KalmanFilter::KalmanFilter(float secTimeStep,Quaternion* velocity, Quaternion* p
 	this->secTimeStep = secTimeStep;
     //this->EARTH_RATE = new Quaternion(0,0,0,M_PI/24/60/60);
     //this->EARTH_RATE = new Quaternion(0,0,0,0);
-    this->GRAVITY = new Quaternion(0,0,0,-9.796);
+    this->GRAVITY = new Quaternion(0,0,0,-9.798);
     this->CMPS_BASE = new Quaternion(0.0f,0.6624362551216327f,-0.08216263629415599f,0.7445988914157886f);
     
     this->velocity = new Quaternion();

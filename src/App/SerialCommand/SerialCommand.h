@@ -33,6 +33,8 @@ public:
 
 // Class definition
 private:
+	static const float MPSPS_GRAVITY = 9.868;
+	
 	char* args;
 	TaskHandle_t cmdHandle;
 	static unsigned char hexToUchar(char* hexString);
@@ -56,6 +58,8 @@ public:
 	static void confirmWaypoints();
 	static void setFlightParameters();
 	static void showFlightParameters();
+	static void setMissileParameters();
+	static void showMissileParameters();
 	static void echoOn();
 	static void echoOff();
 	static void setServosTrim();

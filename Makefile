@@ -12,6 +12,7 @@ MYLIBPATH = src/Device/CmdServo src/Device/CmdServo/Driver \
 		    src/Device/Propo src/Device/Propo/Driver \
 		    src/Device/Seeker src/Device/Seeker/Driver src/Device/Seeker/Driver/AD7176-2 \
 		    src/Device/SignalGenerator src/Device/SignalGenerator/Driver \
+		    src/Device/Led src/Device/Led/Driver \
 		    src/Device/CAN src/Device/CAN/Driver
 		    
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile \

@@ -33,6 +33,8 @@ command_t commandList[MAX_COMMAND_NUM] = {
 		{"setPidGain",&SerialCommand::setPidGain},
 		{"setFlightParameters",&SerialCommand::setFlightParameters},
 		{"showFlightParameters",&SerialCommand::showFlightParameters},
+		{"setMissileParameters",&SerialCommand::setMissileParameters},
+		{"showMissileParameters",&SerialCommand::showMissileParameters},
 		{"calibrateMpuGyro",&SerialCommand::calibrateMpuGyro},
 		{"setMpuAclBias",&SerialCommand::setMpuAclBias},
 		{"setMpuCmpsBias",&SerialCommand::setMpuCmpsBias},

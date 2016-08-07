@@ -277,6 +277,61 @@ void SerialCommand::showFlightParameters(){
 	vTaskDelay(1);
 }
 
+void SerialCommand::setMissileParameters(){
+	MissileFlightParameters* params = &(Util::GetInstance()->flashData.missileFlightParameters);
+	
+	readFloatParam("surface limit                  \t",&(params->surfaceLimit));
+	readFloatParam("hold attitude p gain, roll     \t",&(params->holdAttitudePGain[0]));
+	readFloatParam("hold attitude p gain, pitch    \t",&(params->holdAttitudePGain[1]));
+	readFloatParam("hold attitude p gain, heading  \t",&(params->holdAttitudePGain[2]));
+	
+	readFloatParam("hold attitude d gain, roll     \t",&(params->holdAttitudeDGain[0]));
+	readFloatParam("hold attitude d gain, pitch    \t",&(params->holdAttitudeDGain[1]));
+	readFloatParam("hold attitude d gain, heading  \t",&(params->holdAttitudeDGain[2]));
+	
+	readFloatParam("seeker p gain h                \t",&(params->seekerPGainH));
+	readFloatParam("seeker d gain h                \t",&(params->seekerDGainH));
+	readFloatParam("seeker p gain l                \t",&(params->seekerPGainL));
+	readFloatParam("seeker d gain l                \t",&(params->seekerDGainL));
+	
+	readFloatParam("g compensation gain            \t",&(params->gCompensationGain));
+	readFloatParam("manual control d gain          \t",&(params->manualControlDGain));
+	
+	Util::GetInstance()->userflashFlush();
+}
+
+void SerialCommand::showMissileParameters(){
+	MissileFlightParameters* params = &(Util::GetInstance()->flashData.missileFlightParameters);
+	
+	printf("surface limit                \t:%.3f\r\n",(params->surfaceLimit));
+	vTaskDelay(1);
+	printf("hold attitude p gain, roll   \t:%.3f\r\n",(params->holdAttitudePGain[0]));
+	vTaskDelay(1);
+	printf("hold attitude p gain, pitch  \t:%.3f\r\n",(params->holdAttitudePGain[1]));
+	vTaskDelay(1);
+	printf("hold attitude p gain, heading\t:%.3f\r\n",(params->holdAttitudePGain[2]));
+	vTaskDelay(1);
+	printf("hold attitude d gain, roll   \t:%.3f\r\n",(params->holdAttitudeDGain[0]));
+	vTaskDelay(1);
+	printf("hold attitude d gain, pitch  \t:%.3f\r\n",(params->holdAttitudeDGain[1]));
+	vTaskDelay(1);
+	printf("hold attitude d gain, heading\t:%.3f\r\n",(params->holdAttitudeDGain[2]));
+	vTaskDelay(1);
+	printf("seeker p gain h              \t:%.3f\r\n",(params->seekerPGainH));
+	vTaskDelay(1);
+	printf("seeker d gain h              \t:%.3f\r\n",(params->seekerDGainH));
+	vTaskDelay(1);
+	printf("seeker p gain l              \t:%.3f\r\n",(params->seekerPGainL));
+	vTaskDelay(1);
+	printf("seeker d gain l              \t:%.3f\r\n",(params->seekerDGainL));
+	vTaskDelay(1);
+	printf("g compensation gain          \t:%.3f\r\n",(params->gCompensationGain));
+	vTaskDelay(1);
+	printf("manual control d gain        \t:%.3f\r\n",(params->manualControlDGain));
+	vTaskDelay(1);
+	fflush(stdout);
+	vTaskDelay(1);
+}
 
 /**
  * @brief コンソール入力時、入力した文字を標準出力に表示する
@@ -416,8 +471,10 @@ void SerialCommand::setMpuAclBias(){
 	
 	//Mpu9250::getInstance()->startAclCalibration();
 	
+	
+	
 	printf("acl calibration start\r\n");
-	float calibrationBuf;
+	float calibrationBufPlus,calibrationBufMinus;
 	
 	for(int i=0;i<3;i++){
 		Util::GetInstance()->flashData.mpuAclBias[i]=0.0;
@@ -428,60 +485,63 @@ void SerialCommand::setMpuAclBias(){
 	printf("set the board to x+ axis and press enter\r\n");
 	Stdout::GetInstance()->readLine();
 	
-	calibrationBuf = 0.0;
+	calibrationBufPlus = 0.0;
+	calibrationBufMinus = 0.0;
 	
 	for(int i=0;i<100;i++){
-		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.x;
+		calibrationBufPlus += Gains::GetInstance()->getImuData().mpspsAcl.x;
 		vTaskDelay(1);
 	}
 	
 	printf("set the board to x- axis and press enter\r\n");
 	Stdout::GetInstance()->readLine();
 	for(int i=0;i<100;i++){
-		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.x;
+		calibrationBufMinus += Gains::GetInstance()->getImuData().mpspsAcl.x;
 		vTaskDelay(1);
 	}
 	
-	Util::GetInstance()->flashData.mpuAclBias[0] = calibrationBuf/200;
+	Util::GetInstance()->flashData.mpuAclBias[0] = (calibrationBufPlus+calibrationBufMinus)/200;
 	
 	//y axis
 	printf("set the board to y+ axis and press enter\r\n");
 	Stdout::GetInstance()->readLine();
 	
-	calibrationBuf = 0.0;
+	calibrationBufPlus = 0.0;
+	calibrationBufMinus = 0.0;
 	
 	for(int i=0;i<100;i++){
-		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.y;
+		calibrationBufPlus += Gains::GetInstance()->getImuData().mpspsAcl.y;
 		vTaskDelay(1);
 	}
 	
 	printf("set the board to y- axis and press enter\r\n");
 	Stdout::GetInstance()->readLine();
 	for(int i=0;i<100;i++){
-		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.y;
+		calibrationBufMinus += Gains::GetInstance()->getImuData().mpspsAcl.y;
 		vTaskDelay(1);
 	}
 	
-	Util::GetInstance()->flashData.mpuAclBias[1] = calibrationBuf/200;
+	Util::GetInstance()->flashData.mpuAclBias[1] = (calibrationBufPlus + calibrationBufMinus)/200;
 	
 	printf("set the board to z+ axis and press enter\r\n");
 	Stdout::GetInstance()->readLine();
 	
-	calibrationBuf = 0.0;
+	calibrationBufPlus = 0.0;
+	calibrationBufMinus = 0.0;
 	
 	for(int i=0;i<100;i++){
-		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.z;
+		calibrationBufPlus += Gains::GetInstance()->getImuData().mpspsAcl.z;
 		vTaskDelay(1);
 	}
 	
 	printf("set the board to z- axis and press enter\r\n");
 	Stdout::GetInstance()->readLine();
 	for(int i=0;i<100;i++){
-		calibrationBuf += Gains::GetInstance()->getImuData().mpspsAcl.z;
+		calibrationBufMinus += Gains::GetInstance()->getImuData().mpspsAcl.z;
 		vTaskDelay(1);
 	}
 	
-	Util::GetInstance()->flashData.mpuAclBias[2] = calibrationBuf/200;
+	Util::GetInstance()->flashData.mpuAclBias[2] = (calibrationBufPlus+calibrationBufMinus)/200;
 	
 	Util::GetInstance()->userflashFlush();
 	
