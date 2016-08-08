@@ -49,7 +49,7 @@ float ControlElement::wrapAround(float value,float limit){
 }
 
 void ControlElement::controlSurfaceIdle(){
-	MissileServoControl::setPos(0,0,0);
+	MissileServoControl::GetInstance()->setPos(0,0,0);
 }
 void ControlElement::holdAttitude(float radPitchCommand,float radHeadingCommand){
 	float radPitch,radRoll,radHeading;
@@ -71,7 +71,7 @@ void ControlElement::holdAttitude(float radPitchCommand,float radHeadingCommand)
 	
 	//printf("%f,\t%f,\t%f,\t%f\r\n",earthFramePitchCommand,earthFrameYawCommand,pitchCommand,yawCommand);
 	
-	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+	MissileServoControl::GetInstance()->setPos(pitchCommand,rollCommand,yawCommand);
 }
 void ControlElement::irTerminalGuidance(float seekerUpDown,float seekerLeftRight,float seekerUpDownDelta, float seekerLeftRightDelta,bool highGain){
 	float seekerPGain;
@@ -105,7 +105,7 @@ void ControlElement::irTerminalGuidance(float seekerUpDown,float seekerLeftRight
 	
 	//printf("%f,\t%f,\t%f,\t%f\r\n",seekerUpDown,seekerLeftRight,pitchCommand,yawCommand);
 	
-	MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+	MissileServoControl::GetInstance()->setPos(pitchCommand,rollCommand,yawCommand);
 	
 }
 void ControlElement::manualControl(ControlParams* params){
@@ -124,11 +124,11 @@ void ControlElement::manualControl(ControlParams* params){
 		float yawCommand 	= powf((params->yaw-128)  /128.0,3) - rz*MANUAL_CONTROL_D_GAIN;
 		
 		if(params->throttle < 128){
-			MissileServoControl::mainWingOpen();
+			MissileServoControl::GetInstance()->mainWingOpen();
 		}else{
-			MissileServoControl::mainWingLatch();
+			MissileServoControl::GetInstance()->mainWingLatch();
 		}
-		MissileServoControl::setPos(pitchCommand,rollCommand,yawCommand);
+		MissileServoControl::GetInstance()->setPos(pitchCommand,rollCommand,yawCommand);
 }
 
 void ControlElement::test(){

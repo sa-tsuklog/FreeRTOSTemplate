@@ -9,8 +9,6 @@
 #include "MissileServoControl.h"
 #include "Device/Servo/Servo.h"
 
-FILE* MissileServoControl::fp = NULL;
-
 int MissileServoControl::surfaceToServoCh(Surface surface){
 	if(surface == MissileServoControl::TOP_RIGHT){
 		return 0;
@@ -38,10 +36,6 @@ void MissileServoControl::setPos(float pitchCommand,float rollCommand,float yawC
 	static float lpfBottomLeft	= 0;
 	static float lpfTopLeft 	= 0;
 	
-	
-	if(fp == NULL){
-		fp = fopen("/log2","w");
-	}
 	static int decimator = 0;
 	
 	float topRightCommand 		= -pitchCommand + rollCommand + yawCommand;
@@ -66,13 +60,20 @@ void MissileServoControl::setPos(float pitchCommand,float rollCommand,float yawC
 	nativeSetPos(TOP_LEFT,		topLeftCommand);
 	
 	decimator = (decimator+1)%50;
-	if(decimator % 5 == 3){
+	
+	if(fp != NULL){
+	//if(decimator % 5 == 3){
 		fprintf(fp,"$SVCMD,%.3f,%.3f,%.3f\r\n",pitchCommand,rollCommand,yawCommand);
 		//printf("%.3f,%.3f,%.3f\r\n",pitchCommand,rollCommand,yawCommand);
+	//}
 	}
 }
 
 
 void MissileServoControl::nativeSetPos(Surface surface,float pos){
 	Servo::GetInstance()->setPos(surfaceToServoCh(surface),pos);
+}
+
+void MissileServoControl::setLogOut(FILE* fp){
+	this->fp = fp;
 }

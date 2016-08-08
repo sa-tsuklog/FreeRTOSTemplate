@@ -13,6 +13,7 @@
 #include "MissileControl.h"
 #include "ControlElement.h"
 #include "ControlParams.h"
+#include "MissileServoControl.h"
 
 #include "GeneralConfig.h"
 
@@ -45,6 +46,7 @@ MissileControl::MissileControl(){
 	radPitchAtLaunch = 0;
 	
 	log0 = fopen("/log0","w");
+	MissileServoControl::GetInstance()->setLogOut(log0);
 }
 
 void MissileControl::MissileControlTask(){
@@ -245,26 +247,26 @@ void MissileControl::print(){
 	}
 	
 	
-	if(decimator % 5 == 1){
-		Quaternion rpsRate = Gains::GetInstance()->getRpsRate();
-		Quaternion mpspsAccel = Gains::GetInstance()->getMpspsAcl();
-		Quaternion uTCmps = Gains::GetInstance()->getUtCmps();
-		float paPressure = Gains::GetInstance()->getPaPressure();
-		int isPressureValid = Gains::GetInstance()->isPressureValid();
-		
-		fprintf(log0,"$GPINS,");
-		fprintf(log0,"%.3f,%.3f,%.3f,",mpspsAccel.x,mpspsAccel.y,mpspsAccel.z);
-		fprintf(log0,"%.3f,%.3f,%.3f,",rpsRate.x,rpsRate.y,rpsRate.z);
-		fprintf(log0,"%.3f,%.3f,%.3f,",uTCmps.x,uTCmps.y,uTCmps.z);
-		fprintf(log0,"%.3f,%d\r\n",paPressure,isPressureValid);
-	}
+	//if(decimator % 5 == 1){
+	Quaternion rpsRate = Gains::GetInstance()->getRpsRate();
+	Quaternion mpspsAccel = Gains::GetInstance()->getMpspsAcl();
+	Quaternion uTCmps = Gains::GetInstance()->getUtCmps();
+	float paPressure = Gains::GetInstance()->getPaPressure();
+	int isPressureValid = Gains::GetInstance()->isPressureValid();
 	
-	if(decimator % 5 == 2){
-		printGpaio(log0);
-	}
-	if(decimator %5 == 3){
-		printSeekerLog(log0);
-	}
+	fprintf(log0,"$GPINS,");
+	fprintf(log0,"%.3f,%.3f,%.3f,",mpspsAccel.x,mpspsAccel.y,mpspsAccel.z);
+	fprintf(log0,"%.3f,%.3f,%.3f,",rpsRate.x,rpsRate.y,rpsRate.z);
+	fprintf(log0,"%.3f,%.3f,%.3f,",uTCmps.x,uTCmps.y,uTCmps.z);
+	fprintf(log0,"%.3f,%d\r\n",paPressure,isPressureValid);
+	//}
+	
+	//if(decimator % 5 == 2){
+	printGpaio(log0);
+	//}
+	//if(decimator %5 == 3){
+	printSeekerLog(log0);
+	//}
 	
 }
 

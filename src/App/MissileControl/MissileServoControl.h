@@ -10,25 +10,44 @@
 
 #include <stdio.h>
 
-class MissileServoControl{
-public:
-	enum Surface{
-			TOP_RIGHT,
-			BOTTOM_RIGHT,
-			BOTTOM_LEFT,
-			TOP_LEFT,
-		};
+
+class MissileServoControl {
+	// Singleton pattern definition
 private:
-	static const float SMOOTHING_FACTOR = 0.92; 
-	
-	static int surfaceToServoCh(Surface surface);
-	static FILE* fp;
+	FILE* fp;
+	MissileServoControl(){
+		fp = NULL;
+	}
+	MissileServoControl(const MissileServoControl& rhs);
+	MissileServoControl& operator=(const MissileServoControl& rhs);
+	virtual ~MissileServoControl() {}
 public:
-	static void mainWingOpen();
-	static void mainWingLatch();
-	static void setPos(float pitchCommand,float rollCommand,float yawCommand);
+	static MissileServoControl* GetInstance() {
+		static MissileServoControl instance;
+		return &instance;
+	}
+
+	// Class definition
+	enum Surface{
+		TOP_RIGHT,
+		BOTTOM_RIGHT,
+		BOTTOM_LEFT,
+		TOP_LEFT,
+	};
+private:
+	const float SMOOTHING_FACTOR = 0.92; 
+		
+	int surfaceToServoCh(Surface surface);
 	
-	static void nativeSetPos(Surface surface,float pos); //low level control function
+public:
+	void setLogOut(FILE* fp);
+	void mainWingOpen();
+	void mainWingLatch();
+	void setPos(float pitchCommand,float rollCommand,float yawCommand);
+	
+	void nativeSetPos(Surface surface,float pos); //low level control function
+	
 };
+
 
 #endif /* MISSILERSERVOCONTROL_H_ */

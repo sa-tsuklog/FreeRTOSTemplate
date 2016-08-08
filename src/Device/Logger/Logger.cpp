@@ -139,7 +139,7 @@ void Logger::loggerTask(){
 			}
 		}
 		
-		vTaskDelay(25);
+		vTaskDelay(10);
 	}
 }
 
