@@ -126,23 +126,29 @@ void Ad7176_2Seeker::initAd7176(){
 	write16(SETUPCON3,0x1000);
 	vTaskDelay(1);
 	
-	int filtconValue = 0x0007;
+	//int filtconValue = 0x0000;//250ksps
+	int filtconValue = 0x0001;//125ksps
+	//int filtconValue = 0x0005;//25ksps
+	//int filtconValue = 0x0007;//10kksps
+	//int filtconValue = 0x0009;//2.5ksps
 	
-	write16(FILTCON0,filtconValue);	//10ksps/4
+	write16(FILTCON0,filtconValue);
+	
+	//write16(FILTCON0,filtconValue);	//10ksps/4
 	vTaskDelay(1);
-	write16(FILTCON1,filtconValue);	//10ksps/4
+	//write16(FILTCON1,filtconValue);	//10ksps/4
 	vTaskDelay(1);
-	write16(FILTCON2,filtconValue);	//10ksps/4
+	//write16(FILTCON2,filtconValue);	//10ksps/4
 	vTaskDelay(1);
-	write16(FILTCON3,filtconValue);	//10ksps/4
+	//write16(FILTCON3,filtconValue);	//10ksps/4
 	vTaskDelay(1);
 	write16(CHMAP0,0x8004);		//enable, AIN0 - AIN4 
 	vTaskDelay(1);
-	write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
+	//write16(CHMAP1,0x8024);		//enable, AIN1 - AIN4
 	vTaskDelay(1);
-	write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
+	//write16(CHMAP2,0x8044);		//enable, AIN2 - AIN4
 	vTaskDelay(1);
-	write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
+	//write16(CHMAP3,0x8064);		//enable, AIN3 - AIN4
 	vTaskDelay(1);
 	write16(ADCMODE,0x800C);	//continuous conversion mode
 }

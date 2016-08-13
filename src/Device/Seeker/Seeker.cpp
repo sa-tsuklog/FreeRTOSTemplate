@@ -16,8 +16,8 @@
 #include "Device/Util/Util.h"
 
 Seeker::Seeker(){
-	quadrantSeekerSlow = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_SLOW);
-	quadrantSeekerFast = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_FAST);
+//	quadrantSeekerSlow = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_SLOW);
+//	quadrantSeekerFast = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_FAST);
 }
 
 void Seeker::SeekerTask(){
@@ -45,53 +45,46 @@ void Seeker::SeekerTask(){
 	}
 }
 
-//void Seeker::seekerPritRawData(){
-//	int CH_NUM = 4;
-//	int BUFFER_PER_CH = 32;
-//	
-//	uint32_t buf[CH_NUM][BUFFER_PER_CH];
-//	int32_t index[CH_NUM];
-//	uint8_t ch;
-//	int32_t adData;
-//	
-//	Ad7176_2Seeker::GetInstance()->initAd7176();
-//		
-//	vTaskDelay(MS_INITIAL_DELAY);
-//	
-//	for(int i=0;i<CH_NUM;i++){
-//		for(int j=0;j<BUFFER_PER_CH;j++){
-//			buf[i][j] = 0;
-//		}
-//	}
-//	
-//	while(1){
-//		for(int i=0;i<CH_NUM;i++){
-//			index[i] = 0;
-//		}
-//		
+void Seeker::seekerPritRawData(){
+	int CH_NUM = 4;
+	int BUFFER_PER_CH = 4096;
+	
+	//uint32_t buf[CH_NUM][BUFFER_PER_CH];
+	uint32_t* buf=0x10000000;;
+	int32_t index;
+	uint8_t ch;
+	int32_t adData;
+	
+	Ad7176_2Seeker::GetInstance()->initAd7176();
+		
+	vTaskDelay(MS_INITIAL_DELAY);
+	
+	for(int i=0;i<BUFFER_PER_CH;i++){
+		buf[i] = 0;
+	}
+	
+	
+	while(1){
 //		ch = -1;
 //		while(ch != 3){
 //			adData = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
 //		}
-//		
-//		for(int i=0;i<CH_NUM*BUFFER_PER_CH;i++){
-//			adData = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
-//			buf[ch][index[ch]] = adData;
-//			
-//			if(index[ch] < BUFFER_PER_CH-1){
-//				index[ch]++;
-//			}
-//		}
-//		
-//		for(int i=0;i<BUFFER_PER_CH;i++){
-//			printf("%d,%d,%d,%d,%d\r\n",i,buf[0][i],buf[1][i],buf[2][i],buf[3][i]);
-//			vTaskDelay(1);
-//		}
-//		printf("\r\n\r\n\r\n");
-//		
-//		vTaskDelay(5000);
-//	}
-//}
+		
+		for(int i=0;i<BUFFER_PER_CH;i++){
+			adData = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
+			buf[i] = adData;
+			//printf("%d\r\n",i);
+		}
+		
+		for(int i=0;i<BUFFER_PER_CH;i++){
+			printf("%d,%d\r\n",i,buf[i]);
+			vTaskDelay(3);
+		}
+		printf("\r\n\r\n\r\n");
+		
+		vTaskDelay(5000);
+	}
+}
 
 
 
@@ -112,7 +105,8 @@ float Seeker::getNoiseFloorFast(){
 }
 
 void Seeker::SeekerTaskEntry(void *pvParameters){
-	Seeker::GetInstance()->SeekerTask();
+	//Seeker::GetInstance()->SeekerTask();
+	Seeker::GetInstance()->seekerPritRawData();
 }
 void Seeker::initSeeker(){
 	xTaskCreate(&Seeker::SeekerTaskEntry,"seeker",1024,NULL,4,NULL);
