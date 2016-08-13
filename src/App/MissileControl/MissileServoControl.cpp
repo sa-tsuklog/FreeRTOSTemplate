@@ -31,10 +31,10 @@ void MissileServoControl::mainWingLatch(){
 	
 }
 void MissileServoControl::setPos(float pitchCommand,float rollCommand,float yawCommand){
-	static float lpfTopRight 	= 0;
-	static float lpfBottomRight = 0;
-	static float lpfBottomLeft	= 0;
-	static float lpfTopLeft 	= 0;
+//	static float lpfTopRight 	= 0;
+//	static float lpfBottomRight = 0;
+//	static float lpfBottomLeft	= 0;
+//	static float lpfTopLeft 	= 0;
 	
 	static int decimator = 0;
 	
@@ -43,10 +43,10 @@ void MissileServoControl::setPos(float pitchCommand,float rollCommand,float yawC
 	float bottomLeftCommand		= +pitchCommand + rollCommand - yawCommand;
 	float topLeftCommand		= +pitchCommand + rollCommand + yawCommand;
 	
-	lpfTopRight 	= lpfTopRight 	* SMOOTHING_FACTOR + topRightCommand 	* (1-SMOOTHING_FACTOR);
-	lpfBottomRight 	= lpfBottomRight* SMOOTHING_FACTOR + bottomRightCommand * (1-SMOOTHING_FACTOR);
-	lpfBottomLeft 	= lpfBottomLeft	* SMOOTHING_FACTOR + bottomLeftCommand 	* (1-SMOOTHING_FACTOR);
-	lpfTopLeft 		= lpfTopLeft	* SMOOTHING_FACTOR + topLeftCommand 	* (1-SMOOTHING_FACTOR);
+//	lpfTopRight 	= lpfTopRight 	* SMOOTHING_FACTOR + topRightCommand 	* (1-SMOOTHING_FACTOR);
+//	lpfBottomRight 	= lpfBottomRight* SMOOTHING_FACTOR + bottomRightCommand * (1-SMOOTHING_FACTOR);
+//	lpfBottomLeft 	= lpfBottomLeft	* SMOOTHING_FACTOR + bottomLeftCommand 	* (1-SMOOTHING_FACTOR);
+//	lpfTopLeft 		= lpfTopLeft	* SMOOTHING_FACTOR + topLeftCommand 	* (1-SMOOTHING_FACTOR);
 	
 	
 //	nativeSetPos(TOP_RIGHT,		lpfTopRight);

@@ -98,8 +98,6 @@ void MissileControl::MissileControlTask(){
 			controlElement.controlSurfaceIdle();
 		}else if(controlState == MissileControlState::BOOST_PHASE1){
 			controlElement.controlSurfaceIdle();
-		}else if(controlState == MissileControlState::BOOST_PHASE2){
-			controlElement.holdAttitude(radPitchAtLaunch,radHeadingToTarget);
 		}else if(controlState == MissileControlState::TERMINAL){
 			float seekerUpDownSlow,seekerUpDownFast,seekerLeftRightSlow,seekerLeftRightFast,intensitySlow,intensityFast;
 			Seeker::GetInstance()->getDirectionSlow(&seekerUpDownSlow,&seekerLeftRightSlow,&intensitySlow);
@@ -209,12 +207,6 @@ void MissileControl::controlStateUpdate(ControlParams* params){
 		msBoost1Time+=MS_CONTROL_INTERVAL;
 		
 		if(msBoost1Time > MS_BOOST1_LENGTH){
-			controlState = MissileControlState::BOOST_PHASE2;
-		}
-	}else if(controlState == MissileControlState::BOOST_PHASE2){
-		msBoost2Time+=MS_CONTROL_INTERVAL;
-				
-		if(msBoost2Time > MS_BOOST2_LENGTH){
 			controlState = MissileControlState::TERMINAL;
 		}
 	}else if(controlState == MissileControlState::TERMINAL){

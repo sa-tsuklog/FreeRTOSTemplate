@@ -35,7 +35,7 @@ public:
 		TOP_LEFT,
 	};
 private:
-	const float SMOOTHING_FACTOR = 0.92; 
+	const float SMOOTHING_FACTOR = 0.95;
 		
 	int surfaceToServoCh(Surface surface);
 	
