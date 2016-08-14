@@ -8,7 +8,7 @@
 #include "math.h"
 
 #include "QuadrantSeeker.h"
-
+#include "stdio.h"
 
 
 QuadrantSeeker::QuadrantSeeker(){

@@ -127,8 +127,11 @@ void Ad7176_2Seeker::initAd7176(){
 	vTaskDelay(1);
 	
 	//int filtconValue = 0x0000;//250ksps
-	int filtconValue = 0x0001;//125ksps
-	//int filtconValue = 0x0005;//25ksps
+	//int filtconValue = 0x0001;//125ksps
+	//int filtconValue = 0x0002;//62.5ksps
+	//int filtconValue = 0x0003;//50ksps
+	//int filtconValue = 0x0004;//31.25ksps
+	int filtconValue = 0x0005;//25ksps
 	//int filtconValue = 0x0007;//10kksps
 	//int filtconValue = 0x0009;//2.5ksps
 	

@@ -16,8 +16,8 @@
 #include "Device/Util/Util.h"
 
 Seeker::Seeker(){
-//	quadrantSeekerSlow = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_SLOW);
-//	quadrantSeekerFast = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_FAST);
+	quadrantSeekerSlow = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_SLOW);
+	quadrantSeekerFast = QuadrantSeeker(NORMALIZED_CENTER_FREQUENCY,Q_FACTOR_FAST);
 }
 
 void Seeker::SeekerTask(){
@@ -86,6 +86,30 @@ void Seeker::seekerPritRawData(){
 	}
 }
 
+void Seeker::seekerPrintIntensity(){
+	static int decimation = 0;
+	
+	uint8_t ch;
+	uint32_t adData;
+	
+	//seekerPritRawData();
+	
+	Ad7176_2Seeker::GetInstance()->initAd7176();
+	
+	vTaskDelay(MS_INITIAL_DELAY);
+	
+	while(1){
+		adData = Ad7176_2Seeker::GetInstance()->readAdData(&ch);
+		
+		quadrantSeekerFast.updateSeekerData(ch,(float)adData);
+		
+		if(decimation == 0){
+			printf("%f\r\n",quadrantSeekerFast.getIntensityOfCh(0));
+			//printf("%d,%d\r\n",adData,ch);
+		}
+		decimation = (decimation+1)%3000;
+	}
+}
 
 
 void Seeker::getDirectionSlow(float* outUpDown,float* outLeftRight,float* outIntensity){
@@ -106,7 +130,8 @@ float Seeker::getNoiseFloorFast(){
 
 void Seeker::SeekerTaskEntry(void *pvParameters){
 	//Seeker::GetInstance()->SeekerTask();
-	Seeker::GetInstance()->seekerPritRawData();
+	//Seeker::GetInstance()->seekerPritRawData();
+	Seeker::GetInstance()->seekerPrintIntensity();
 }
 void Seeker::initSeeker(){
 	xTaskCreate(&Seeker::SeekerTaskEntry,"seeker",1024,NULL,4,NULL);

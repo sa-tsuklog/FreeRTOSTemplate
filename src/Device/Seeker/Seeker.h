@@ -30,7 +30,8 @@ public:
 
 	// Class definition
 private:
-	static const float NORMALIZED_CENTER_FREQUENCY = 0.5/(2.5/2);
+	//static const float NORMALIZED_CENTER_FREQUENCY = 0.5/(2.5/2);
+	static const float NORMALIZED_CENTER_FREQUENCY = 5.0/(25/2);
 	static const float Q_FACTOR_SLOW = 100;
 	static const float Q_FACTOR_FAST = 10;
 	static const float NOISE_FLOOR_SLOW = 600;	//4sigma
@@ -41,6 +42,7 @@ private:
 	
 	void SeekerTask();
 	void seekerPritRawData();
+	void seekerPrintIntensity();
 public:
 	void getDirectionSlow(float* outUpDown,float* outLeftRight,float* outIntensity);
 	void getDirectionFast(float* outUpDown,float* outLeftRight,float* outIntensity);

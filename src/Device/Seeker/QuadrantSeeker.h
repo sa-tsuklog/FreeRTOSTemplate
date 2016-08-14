@@ -18,11 +18,12 @@ private:
 	Filter allpass[4];
 	float intensity[4];
 	
-	float getIntensityOfCh(int32_t ch);
+	
 public:
 	QuadrantSeeker();
 	QuadrantSeeker(float normalizedCenterFreq,float qFactor);
 	
+	float getIntensityOfCh(int32_t ch);
 	void updateSeekerData(int32_t ch,float adData);
 	void getDirection(float* outUpDown,float* outLeftRight,float* outIntensity);
 };
