@@ -22,6 +22,7 @@
 #define LOGGER_CH1 "/log1"
 #define LOGGER_CH2 "/log2"
 #define LOGGER_CH3 "/log3"
+#define BLOCKING_STDOUT "/blockingStdout"
 
 int myRead (struct _reent *r, int file, char * ptr, int len);
 int myLseek (struct _reent *r, int file, int ptr, int dir);
@@ -30,6 +31,7 @@ int mySync(struct _reent *r,int file);
 int myOpen(struct _reent *r,const char *path,int mode);
 int myClose (struct _reent *r, int file);
 
+int initFatFs();
 int myFsync(FILE* fp);
 
 #ifdef __cplusplus

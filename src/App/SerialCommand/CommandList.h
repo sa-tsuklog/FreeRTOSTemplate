@@ -50,6 +50,8 @@ command_t commandList[MAX_COMMAND_NUM] = {
 		{"printTaskList",&SerialCommand::printTaskList},
 		{"runTimeStats",&SerialCommand::runTimeStats},
 		{"startTrace",&SerialCommand::startTrace},
+		{"ls",&SerialCommand::ls},
+		{"cat",&SerialCommand::cat},
 		{"testCmd0",&SerialCommand::testCmd0},
 		{"testCmd1",&SerialCommand::testCmd1},
 		{"testCmd2",&SerialCommand::testCmd2},

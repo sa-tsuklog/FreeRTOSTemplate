@@ -79,6 +79,8 @@ public:
 	static void printTaskList();
 	static void runTimeStats();
 	static void startTrace();
+	static void ls();
+	static void cat(char* arg);
 	static void testCmd0();
 	static void testCmd1();
 	static void testCmd2();

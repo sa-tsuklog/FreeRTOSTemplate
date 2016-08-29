@@ -21,6 +21,7 @@
 #include "ControlParams.h"
 
 #include "App/TankControl/TankControl.h"
+#include "FileOperation.h"
 
 #include "Test.h"
 
@@ -852,6 +853,13 @@ void SerialCommand::runTimeStats(){
 
 void SerialCommand::startTrace(){
 	Util::GetInstance()->traceStart();
+}
+
+void SerialCommand::ls(){
+	FileOperation::GetInstance()->ls();
+}
+void SerialCommand::cat(char* arg){
+	FileOperation::GetInstance()->cat(arg+1);
 }
 
 /**

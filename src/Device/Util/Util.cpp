@@ -13,6 +13,7 @@
 #include "Driver/USER_FLASH.h"
 #include <stdarg.h>
 
+#include "OS/MyFileHandle.h"
 
 Util::Util(){
 	printfMutex = xSemaphoreCreateMutex();

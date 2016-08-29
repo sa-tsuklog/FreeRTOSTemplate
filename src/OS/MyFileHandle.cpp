@@ -156,7 +156,6 @@ int myWrite (struct _reent *r, int file, char * ptr, int len)
 				if(xQueueSendToBackFromISR(Stdout::GetInstance()->getTxQueue(),&ptr[i],(BaseType_t *)pdFALSE)!=pdPASS){
 					ret--;
 				}else{
-					
 				}
 			}
 		}
@@ -181,7 +180,16 @@ int myWrite (struct _reent *r, int file, char * ptr, int len)
 		}
 	}else if(file == 5 || file == 6 || file ==7 || file == 8){//LOGGER_CH0-3
 		Logger::GetInstance()->appendLog(file-5,ptr,len);
-	
+	}else if(file == 9){//blocking stdout
+		ret = len;
+		if(Stdout::GetInstance()->getTxQueue() != NULL){
+			for(int i=0;i<len;i++){
+				if(xQueueSendToBack(Stdout::GetInstance()->getTxQueue(),&ptr[i],portMAX_DELAY)!=pdPASS){
+					ret--;
+				}else{
+				}
+			}
+		}
 	}else if(FILEHANDLE_OFFSET <= file && file < FILEHANDLE_OFFSET+MAX_FILEHANDLE_NUM){
 		int id = file - FILEHANDLE_OFFSET;
 		if(fileHandleInUse[id]==0){
@@ -208,6 +216,31 @@ int mySync(struct _reent *r,int file){
 	return 0;
 }
 
+int initFatFs(){
+	FRESULT res;
+	
+	//lazy initialization. mount drive.
+	if(fatfs == NULL){
+		fatfs = malloc(sizeof(FATFS));
+		if(fatfs == NULL){
+			printf("fatfs malloc error\r\n");
+			return -1;
+		}
+		
+		res = f_mount(fatfs,"sd",1);
+		
+		if(res != FR_OK){
+			free(fatfs);
+			fatfs = NULL;
+			
+			Util::GetInstance()->myFprintf(0,stdout,"sd not mounted\r\n");
+			return -1;
+		}
+	}
+	
+	return 0;
+}
+
 int myOpen(struct _reent *r,const char *path,int mode){
 	FRESULT res;
 	
@@ -223,24 +256,15 @@ int myOpen(struct _reent *r,const char *path,int mode){
 		return 7;
 	}else if(strncmp(path,LOGGER_CH3,strlen(LOGGER_CH3))==0){
 		return 8;
+	}else if(strncmp(path,BLOCKING_STDOUT,strlen(BLOCKING_STDOUT))==0){
+		return 9;
 	}
 	
 	
-	
-	//lazy initialization. mount drive.
-	if(fatfs == NULL){
-		fatfs = malloc(sizeof(FATFS));
-		
-		res = f_mount(fatfs,"sd",1);
-//		Util::GetInstance()->myFprintf(0,stdout,"mount:");
-//		printfFresult(res);
-		
-		if(res != FR_OK){
-			free(fatfs);
-			Util::GetInstance()->myFprintf(0,stdout,"not mounted\r\n");
-			return -1;
-		}
+	if(initFatFs() != 0){
+		return -1;
 	}
+
 	
 	//
 	int handleId;
