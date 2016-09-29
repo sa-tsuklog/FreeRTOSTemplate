@@ -2,6 +2,7 @@
 OSPATH = src/OS
 MYLIBPATH = src/Device/CmdServo src/Device/CmdServo/Driver \
 		    src/Device/Gains src/Device/Gains/Driver/Adis16488 src/Device/Gains/Driver/Gps src/Device/Gains/Driver/Mpu9250 src/Device/Gains/Driver/SupersonicHeight src/Device/Gains/Driver/DummyGps \
+		    src/Device/Gains/Driver/Imu \
 		    src/Device/Logger \
 		    src/Device/Stdout src/Device/Stdout/Driver \
 		    src/Device/Util src/Device/Util/Driver \
@@ -13,7 +14,8 @@ MYLIBPATH = src/Device/CmdServo src/Device/CmdServo/Driver \
 		    src/Device/Seeker src/Device/Seeker/Driver src/Device/Seeker/Driver/AD7176-2 \
 		    src/Device/SignalGenerator src/Device/SignalGenerator/Driver \
 		    src/Device/Led src/Device/Led/Driver \
-		    src/Device/CAN src/Device/CAN/Driver
+		    src/Device/CAN src/Device/CAN/Driver \
+		    src/Device/FpgaSeeker src/Device/FpgaSeeker/Driver
 		    
 COMPATH   = src/Common src/Common/FreeRTOS_DemoFile \
 			src/Common/Math \

@@ -20,6 +20,7 @@
 #include "Device/CAN/Driver/CAN1.h"
 #include "Device/CAN/CanBusMonitor.h"
 #include "Device/SBusPropo/SBusPropo.h"
+#include "Device/FpgaSeeker/FpgaSeeker.h"
 #include "App/GliderControl/GliderControl.h"
 #include "App/MissileControl/MissileControl.h"
 #include "App/SerialCommand/SerialCommand.h"
@@ -70,7 +71,8 @@ int main(void) {
 	Logger::initLogger();
 	//CmdServo::initCmdServo();
 	//CanBusMonitor::initCanBusMonitor();
-	Seeker::initSeeker();
+	//Seeker::initSeeker();
+	FpgaSeeker::initFpgaSeeker();
 	//SBusPropo::initSBusPropo();
 	//xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
 	//GliderControl::initGliderControl();
