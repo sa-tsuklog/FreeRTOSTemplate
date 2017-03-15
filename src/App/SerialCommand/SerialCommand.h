@@ -18,6 +18,10 @@ extern "C" {
  * handleSerialCommandからコマンド入力によって呼ばれる。
  */
 
+typedef struct{
+	const char* command;
+	void (*function)(char* arg);
+}command_t;
 
 class SerialCommand{
 private:
@@ -44,6 +48,8 @@ public:
 	void serialCommandTask(void* pvParameters);
 	void handleSerialCommand(char* line);
 	char* getArgs();
+	
+	command_t* getCommandList();
 	
 	static void usctl();
 	static void printHelp();
@@ -87,11 +93,6 @@ public:
 	
 	static void initSerialCommand();
 };
-
-typedef struct{
-	const char* command;
-	void (*function)(char* arg);
-}command_t;
 
 #ifdef __cplusplus
 }

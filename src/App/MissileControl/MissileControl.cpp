@@ -54,15 +54,15 @@ void MissileControl::MissileControlTask(){
 	lastWakeTime = xTaskGetTickCount();
 	ControlParams params = ControlParams(0,0,0,0,0,0,0,0,0,0);
 	ControlElement controlElement = ControlElement();
-	float seekerUpDownSlowPrevious,seekerUpDownFastPrevious,seekerLeftRightSlowPrevious,seekerLeftRightFastPrevious;
+	//float seekerUpDownSlowPrevious,seekerUpDownFastPrevious,seekerLeftRightSlowPrevious,seekerLeftRightFastPrevious;
 	
-	seekerUpDownSlowPrevious = seekerUpDownFastPrevious = seekerLeftRightSlowPrevious = seekerLeftRightFastPrevious = 0;
+	//seekerUpDownSlowPrevious = seekerUpDownFastPrevious = seekerLeftRightSlowPrevious = seekerLeftRightFastPrevious = 0;
 	
 	vTaskDelay(MS_INITIAL_DELAY);
 	if(Util::GetInstance()->getVoltInputVoltage() < VOLTAGE_LIMIT){
 		uint32_t on = 0;
 		while(1){
-			//printf("%f\r\n",Util::GetInstance()->getVoltInputVoltage());
+			printf("Low voltage:%f\r\n",Util::GetInstance()->getVoltInputVoltage());
 			on ^= 1;
 			Led::GetInstance()->force(on);
 			vTaskDelay(500);
@@ -99,37 +99,37 @@ void MissileControl::MissileControlTask(){
 		}else if(controlState == MissileControlState::BOOST_PHASE1){
 			controlElement.controlSurfaceIdle();
 		}else if(controlState == MissileControlState::TERMINAL){
-			float seekerUpDownSlow,seekerUpDownFast,seekerLeftRightSlow,seekerLeftRightFast,intensitySlow,intensityFast;
-			Seeker::GetInstance()->getDirectionSlow(&seekerUpDownSlow,&seekerLeftRightSlow,&intensitySlow);
-			Seeker::GetInstance()->getDirectionFast(&seekerUpDownFast,&seekerLeftRightFast,&intensityFast);
+//			float seekerUpDownSlow,seekerUpDownFast,seekerLeftRightSlow,seekerLeftRightFast,intensitySlow,intensityFast;
+//			Seeker::GetInstance()->getDirectionSlow(&seekerUpDownSlow,&seekerLeftRightSlow,&intensitySlow);
+//			Seeker::GetInstance()->getDirectionFast(&seekerUpDownFast,&seekerLeftRightFast,&intensityFast);
 			
 			
-			if(intensityFast > Seeker::GetInstance()->getNoiseFloorFast()){
-				//detected by fast seeker
-				float seekerUpDownFastDelta = (seekerUpDownFast - seekerUpDownFastPrevious)/MS_CONTROL_INTERVAL;
-				float seekerLeftRightFastDelta = (seekerLeftRightFast - seekerLeftRightFastPrevious)/MS_CONTROL_INTERVAL;
-				
-				radHeadingToTarget = Gains::GetInstance()->getAttitude().getRadHeading();
-				controlElement.irTerminalGuidance(seekerUpDownFast,seekerLeftRightFast,seekerUpDownFastDelta,seekerLeftRightFastDelta,true);
-			}else if(intensitySlow > Seeker::GetInstance()->getNoiseFloorSlow()){
-				//detected by slow(high process gain) seeker
-				float seekerUpDownSlowDelta = (seekerUpDownSlow - seekerUpDownSlowPrevious)/MS_CONTROL_INTERVAL;
-				float seekerLeftRightSlowDelta = (seekerLeftRightSlow - seekerLeftRightSlowPrevious)/MS_CONTROL_INTERVAL;
-				
-				radHeadingToTarget = Gains::GetInstance()->getAttitude().getRadHeading();
-				
-				controlElement.irTerminalGuidance(seekerUpDownSlow,seekerLeftRightSlow,seekerUpDownSlowDelta,seekerLeftRightSlowDelta,false);
-				
-			}else{
+//			if(intensityFast > Seeker::GetInstance()->getNoiseFloorFast()){
+//				//detected by fast seeker
+//				float seekerUpDownFastDelta = (seekerUpDownFast - seekerUpDownFastPrevious)/MS_CONTROL_INTERVAL;
+//				float seekerLeftRightFastDelta = (seekerLeftRightFast - seekerLeftRightFastPrevious)/MS_CONTROL_INTERVAL;
+//				
+//				radHeadingToTarget = Gains::GetInstance()->getAttitude().getRadHeading();
+//				controlElement.irTerminalGuidance(seekerUpDownFast,seekerLeftRightFast,seekerUpDownFastDelta,seekerLeftRightFastDelta,true);
+//			}else if(intensitySlow > Seeker::GetInstance()->getNoiseFloorSlow()){
+//				//detected by slow(high process gain) seeker
+//				float seekerUpDownSlowDelta = (seekerUpDownSlow - seekerUpDownSlowPrevious)/MS_CONTROL_INTERVAL;
+//				float seekerLeftRightSlowDelta = (seekerLeftRightSlow - seekerLeftRightSlowPrevious)/MS_CONTROL_INTERVAL;
+//				
+//				radHeadingToTarget = Gains::GetInstance()->getAttitude().getRadHeading();
+//				
+//				controlElement.irTerminalGuidance(seekerUpDownSlow,seekerLeftRightSlow,seekerUpDownSlowDelta,seekerLeftRightSlowDelta,false);
+//				
+//			}else{
 				//not detected.
-				controlElement.holdAttitude(0,radHeadingToTarget);
-			}
+			controlElement.holdAttitude(5*M_PI/180,radHeadingToTarget);
+			//}
 			
 			
-			seekerUpDownSlowPrevious = seekerUpDownSlow;
-			seekerUpDownFastPrevious = seekerUpDownFast;
-			seekerLeftRightSlowPrevious = seekerLeftRightSlow;
-			seekerLeftRightFastPrevious = seekerLeftRightFast;
+//			seekerUpDownSlowPrevious = seekerUpDownSlow;
+//			seekerUpDownFastPrevious = seekerUpDownFast;
+//			seekerLeftRightSlowPrevious = seekerLeftRightSlow;
+//			seekerLeftRightFastPrevious = seekerLeftRightFast;
 			
 		}else if(controlState == MissileControlState::MANUAL_CONTROL){
 			controlElement.manualControl(&params);

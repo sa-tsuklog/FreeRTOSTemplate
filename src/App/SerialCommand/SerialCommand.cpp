@@ -64,13 +64,21 @@ void SerialCommand::handleSerialCommand(char* line){
 	
 	while(commandList[i].command != NULL){
 		if(strncmp(line,commandList[i].command,strlen(commandList[i].command))==0){
-			args = line+strlen(commandList[i].command)+1;
-			(commandList[i].function)( line+strlen(commandList[i].command) );
+			if(line[strlen(commandList[i].command)]==0 || line[strlen(commandList[i].command)+1]==0){//no arg
+				args = "";
+			}else{
+				args = line+strlen(commandList[i].command)+1;
+			}
+			(commandList[i].function)( args );
 			return;
 		}
 		i++;
 	}
 	printf("invalid command:%s\r\n",line);
+}
+
+command_t* SerialCommand::getCommandList(){
+	return commandList;
 }
 
 /**
@@ -169,7 +177,7 @@ void SerialCommand::startLogging(char* arg){
 		return;
 	}
 	
-	Logger::GetInstance()->startLogging(arg+1);
+	Logger::GetInstance()->startLogging(arg);
 	
 }
 
@@ -194,7 +202,7 @@ void SerialCommand::resetGpsRef(){
 }
 
 void SerialCommand::setWaypoint(char* arg){
-	GliderControl::GetInstance()->getGpsGuidance()->appendWaypoint(arg+1);
+	GliderControl::GetInstance()->getGpsGuidance()->appendWaypoint(arg);
 }
 
 void SerialCommand::clearWaypoints(){
@@ -748,7 +756,6 @@ void SerialCommand::setPrintMode(char* arg){
 	if(arg[0] == 0){
 		return;
 	}
-	arg++;//skip first white space
 	
 	if(strncmp(arg,"none",4)==0){
 		Gains::GetInstance()->setPrintType(GainsPrintMode::NONE);
@@ -859,7 +866,7 @@ void SerialCommand::ls(){
 	FileOperation::GetInstance()->ls();
 }
 void SerialCommand::cat(char* arg){
-	FileOperation::GetInstance()->cat(arg+1);
+	FileOperation::GetInstance()->cat(arg);
 }
 
 /**

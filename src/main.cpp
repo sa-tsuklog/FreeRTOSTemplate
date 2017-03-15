@@ -72,7 +72,7 @@ int main(void) {
 	//CmdServo::initCmdServo();
 	//CanBusMonitor::initCanBusMonitor();
 	//Seeker::initSeeker();
-	FpgaSeeker::initFpgaSeeker();
+	//FpgaSeeker::initFpgaSeeker();
 	//SBusPropo::initSBusPropo();
 	//xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
 	//GliderControl::initGliderControl();
