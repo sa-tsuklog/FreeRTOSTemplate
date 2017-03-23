@@ -21,12 +21,15 @@ private:
 	
 	FILE* echoFp;
 	
+	int appendCharToLine(char c,int* ioLineBufCursor,int* ioLineBufEnd);
 	void printArrowLeft();
 	void printArrowRight();
 	void printLineClear();
 	void printNumberDititInAscii(uint32_t num);
 	void printNumberInAscii(uint32_t num);
 	void printMoveCursorTo(uint32_t cursorPos);
+	int handleTab(int* ioLineBufCursor,int* ioLineBufEnd);
+	void handleDoubleTab(int lineBufCursor,int lineBufEnd);
 public:
 	EditableLineReader(StreamReader* reader,uint32_t lineLength,uint32_t logDepth,FILE* echoFp);
 	~EditableLineReader();

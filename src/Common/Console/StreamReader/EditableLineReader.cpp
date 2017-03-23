@@ -15,6 +15,7 @@
 #include "Interfaces/StreamReader.h"
 #include "EditableLineReader.h"
 #include "Lib/CommandLog.h"
+#include "App/SerialCommand/SerialCommand.h"
 
 EditableLineReader::EditableLineReader(StreamReader* reader,uint32_t lineLength,uint32_t logDepth,FILE* echoFp){
 	this->reader = reader;
@@ -25,10 +26,37 @@ EditableLineReader::EditableLineReader(StreamReader* reader,uint32_t lineLength,
 		while(1);
 	}
 	this->echoFp = echoFp;
-	echo=0;
+	echo=1;
 }
 EditableLineReader::~EditableLineReader(){
 	free(lineBuf);
+}
+
+int EditableLineReader::appendCharToLine(char c,int* ioLineBufCursor,int* ioLineBufEnd){
+	if(*ioLineBufEnd >= lineLength){
+		return 0;
+	}
+	
+	for(int i=*ioLineBufEnd;i >= *ioLineBufCursor;i--){
+		lineBuf[i+1] = lineBuf[i];
+	}
+	
+	lineBuf[*ioLineBufCursor] = (uint8_t)c;
+	(*ioLineBufEnd)++;
+	(*ioLineBufCursor)++;
+	
+	
+	if(echo && echoFp!=NULL){
+		for(int i=*ioLineBufCursor-1;i<*ioLineBufEnd;i++){
+			fputc(lineBuf[i],echoFp);
+		}
+		for(int i=*ioLineBufCursor;i<*ioLineBufEnd;i++){
+			fputc('\b',echoFp);
+		}
+		fflush(echoFp);
+	}
+	
+	return 1;
 }
 
 void EditableLineReader::printArrowLeft(){
@@ -59,6 +87,98 @@ void EditableLineReader::printMoveCursorTo(uint32_t cursorPos){
 	}
 }
 
+int EditableLineReader::handleTab(int* ioLineBufCursor,int* ioLineBufEnd){
+	if(*ioLineBufCursor==0){
+		return 0;
+	}
+	
+	int i=0;
+	int matchCount = 0;
+	int lastMatchIndex = 0;
+	
+	command_t* commandList = SerialCommand::GetInstance()->getCommandList();
+	while(commandList[i].command != NULL){
+		if(strncmp((const char*)lineBuf,commandList[i].command,*ioLineBufCursor) == 0){
+			matchCount++;
+			lastMatchIndex = i;
+		}
+		i++;
+	}
+	
+	if(matchCount == 0){
+		return 0;
+	}else if(matchCount == 1){
+		
+		int appendedCharCount = 0; 
+
+		for(i = *ioLineBufCursor;i<strlen(commandList[lastMatchIndex].command);i++){
+			appendedCharCount += appendCharToLine(commandList[lastMatchIndex].command[i],ioLineBufCursor,ioLineBufEnd);
+		}
+		
+		return appendedCharCount;
+		
+		
+	}else{
+		int matchCount2;
+		int tmpCursor=*ioLineBufCursor;
+		
+		while(true){
+			i=0;
+			matchCount2 = 0;
+			while(commandList[i].command != NULL){
+				if(strncmp(commandList[lastMatchIndex].command,commandList[i].command,tmpCursor) == 0){
+					matchCount2++;
+				}
+				i++;
+			}
+			if(matchCount != matchCount2){
+				break;
+			}
+			tmpCursor++;
+		}
+		
+		int appendedCharCount = 0;
+		
+		for(i = *ioLineBufCursor;i<tmpCursor-1;i++){
+			appendedCharCount += appendCharToLine(commandList[lastMatchIndex].command[i],ioLineBufCursor,ioLineBufEnd);
+		}
+		
+		return appendedCharCount;
+	}
+}
+
+void EditableLineReader::handleDoubleTab(int lineBufCursor,int lineBufEnd){
+	if(echo && echoFp != NULL){
+		command_t* commandList = SerialCommand::GetInstance()->getCommandList();
+		
+		int i=0;
+		int matchCount = 0;
+		while(commandList[i].command != NULL){
+			if(strncmp((const char*)lineBuf,commandList[i].command,lineBufCursor) == 0){
+				fprintf(echoFp,"\r\n%s",commandList[i].command);
+				matchCount++;
+			}
+			i++;
+		}
+		
+		if(matchCount==0){
+			return;
+		}
+		
+		fprintf(echoFp,"\r\n");
+		fprintf(echoFp,"\r\n");
+		fprintf(echoFp,">>");
+		for(i=0;i<lineBufEnd;i++){
+			fputc(lineBuf[i],echoFp);
+		}
+		printMoveCursorTo(lineBufCursor+3);
+		
+		fflush(echoFp);
+	}
+	
+	
+}
+
 uint32_t EditableLineReader::getChar(uint32_t msBlockTime){
 	return reader->getChar(msBlockTime);
 }
@@ -66,6 +186,11 @@ uint32_t EditableLineReader::getChar(uint32_t msBlockTime){
 uint32_t EditableLineReader::getChar(){
 	return getChar(portMAX_DELAY);
 }
+
+void appdendCharToLine(char c,int* ioLineBufCursor,int* ioLineBufEnd){
+	
+}
+
 uint8_t* EditableLineReader::readLine(){
 	int lineBufEnd = 0;
 	int lineBufCursor = 0;
@@ -73,30 +198,23 @@ uint8_t* EditableLineReader::readLine(){
 
 	uint32_t c;
 	
+	int tabCount = 0;
+	
+	if(echo && echoFp!=NULL){
+		fprintf(echoFp,">>");
+		fflush(echoFp);
+	}
 	
 	while(1){		
 		c = getChar();
+		
+		if(c != '\t'){
+			tabCount = 0;
+		}
+		
+		
 		if(' '<=c && c<='~'){
-			if(lineBufEnd < lineLength){
-				for(int i=lineBufEnd;i >= lineBufCursor;i--){
-					lineBuf[i+1] = lineBuf[i];
-				}
-				
-				lineBuf[lineBufCursor] = (uint8_t)c;
-				lineBufEnd++;
-				lineBufCursor++;
-				
-				
-				if(echo && echoFp!=NULL){
-					for(int i=lineBufCursor-1;i<lineBufEnd;i++){
-						fputc(lineBuf[i],echoFp);
-					}
-					for(int i=lineBufCursor;i<lineBufEnd;i++){
-						fputc('\b',echoFp);
-					}
-					fflush(stdout);
-				}
-			}
+			appendCharToLine(c,&lineBufCursor,&lineBufEnd);
 		}else if(c == '\r'){
 			//do nothing				
 		}else if(c == '\n'){
@@ -109,14 +227,14 @@ uint8_t* EditableLineReader::readLine(){
 					
 					fputc('\r',echoFp);
 					fputc('\n',echoFp);
-					fflush(stdout);
+					fflush(echoFp);
 				}
 				
 				commandLog.appendCommandList(lineBuf);
 			}else{
 				fputc('\r',echoFp);
 				fputc('\n',echoFp);
-				fflush(stdout);
+				fflush(echoFp);
 			}
 			
 			return lineBuf;
@@ -140,7 +258,7 @@ uint8_t* EditableLineReader::readLine(){
 					for(int i=lineBufCursor;i<lineBufEnd;i++){
 						fputc('\b',echoFp);
 					}
-					fflush(stdout);
+					fflush(echoFp);
 				}
 			}
 		}else if(c == Ascii::DEL){
@@ -159,7 +277,7 @@ uint8_t* EditableLineReader::readLine(){
 					for(int i=lineBufCursor;i<lineBufEnd;i++){
 						fputc('\b',echoFp);
 					}
-					fflush(stdout);
+					fflush(echoFp);
 				}
 			}
 		}else if(c == Ascii::ARROW_LEFT){
@@ -168,7 +286,7 @@ uint8_t* EditableLineReader::readLine(){
 				
 				if(echo && echoFp!=NULL){
 					printArrowLeft();
-					fflush(stdout);
+					fflush(echoFp);
 				}
 			}
 			
@@ -178,7 +296,7 @@ uint8_t* EditableLineReader::readLine(){
 				
 				if(echo && echoFp!=NULL){
 					printArrowRight();
-					fflush(stdout);
+					fflush(echoFp);
 				}
 			}
 			
@@ -198,10 +316,11 @@ uint8_t* EditableLineReader::readLine(){
 			if(echo && echoFp!=NULL){
 				printLineClear();
 				printMoveCursorTo(0);
+				fprintf(echoFp,">>");
 				for(int i=0;i<cmdLength;i++){
 					fputc(lineBuf[i],echoFp);
 				}
-				fflush(stdout);
+				fflush(echoFp);
 			}
 		}else if(c == Ascii::ARROW_DOWN){
 			uint8_t* loggedCommand = commandLog.getNextCommand(lineBuf);
@@ -219,25 +338,53 @@ uint8_t* EditableLineReader::readLine(){
 			if(echo && echoFp!=NULL){
 				printLineClear();
 				printMoveCursorTo(0);
+				fprintf(echoFp,">>");
 				for(int i=0;i<cmdLength;i++){
 					fputc(lineBuf[i],echoFp);
 				}
-				fflush(stdout);
+				fflush(echoFp);
 			}
 		}else if(c == Ascii::HOME){
-			lineBufCursor=0;
-			
+//			lineBufCursor=0;
+//			
+//			if(echo && echoFp!=NULL){
+//				printMoveCursorTo(0);
+//				fflush(echoFp);
+//			}
 			if(echo && echoFp!=NULL){
-				printMoveCursorTo(0);
-				fflush(stdout);
-			}		
+				while(lineBufCursor != 0){
+					lineBufCursor--;
+					printArrowLeft();
+					fflush(echoFp);
+				}
+			}
 		}else if(c == Ascii::END){
-			lineBufCursor=lineBufEnd;
+//			lineBufCursor=lineBufEnd;
+//			
+//			if(echo && echoFp!=NULL){
+//				printMoveCursorTo(lineBufEnd+1);
+//				fflush(echoFp);
+//			}
+			if(echo && echoFp != NULL){
+				while(lineBufCursor != lineBufEnd){
+					lineBufCursor++;
+					printArrowRight();
+					fflush(echoFp);
+				}
+			}
+		}else if(c == '\t'){
+			int charAdded = handleTab(&lineBufCursor,&lineBufEnd);
 			
-			if(echo && echoFp!=NULL){
-				printMoveCursorTo(lineBufEnd+1);
-				fflush(stdout);
-			}			
+			if(charAdded != 0){
+				tabCount = 0;
+			}else{
+				tabCount++;
+			}
+			
+			if(tabCount >= 2){
+				handleDoubleTab(lineBufCursor,lineBufEnd);
+			}
+			
 		}else{
 			//do nothing.
 		}

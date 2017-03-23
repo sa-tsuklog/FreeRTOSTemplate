@@ -1,6 +1,8 @@
 #ifndef __HAL_SERIAL_COMMAND_H__
 #define __HAL_SERIAL_COMMAND_H__
 
+#include "FreeRTOS.h"
+#include "task.h"
 #include "stm32f4xx.h"
 
 #ifdef __cplusplus

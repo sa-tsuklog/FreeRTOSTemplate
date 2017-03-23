@@ -76,7 +76,7 @@ int main(void) {
 	//SBusPropo::initSBusPropo();
 	//xTaskCreate(prvTestTask,"test",1024,NULL,2,NULL);
 	//GliderControl::initGliderControl();
-	MissileControl::initMissileControl();
+	//MissileControl::initMissileControl();
 	
 	vTaskStartScheduler();
 	

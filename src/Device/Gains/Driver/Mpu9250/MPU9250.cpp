@@ -141,7 +141,7 @@ void Mpu9250::prvMpu9250Task(void* pvParameters){
 	
 	I2C2Class::getInstance()->start();
 	
-	while(1){	
+	while(1){
 		/////////////////////////////////////
 		// read and enque
 		/////////////////////////////////////
