@@ -273,38 +273,33 @@ void MissileControl::printGpaio(FILE* fp){
 	Quaternion mRelativePos = Gains::GetInstance()->getMRelativePos();
 	Quaternion mpsSpeed = Gains::GetInstance()->getMpsSpeed();
 	float batteryVoltage = Util::GetInstance()->getVoltInputVoltage();
+	float height = mRelativePos.z;
+		
+		
+	int degX1MLattitude;
+	int degX1MLongitude;
+	int gpsValid;
 	
 	if(Util::GetInstance()->flashData.gpsType == GpsType::USART_GPS){
-		int degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
-		int degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);				
+		degX1MLattitude = Gps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
+		degX1MLongitude = Gps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);				
 		
-		
-		float height =  mRelativePos.z;
-		int gpsValid = Gains::GetInstance()->isGpsValid();
-		
-		fprintf(fp,"$GPAIO,%d%.6f,N,%d%.6f,E,%.2f,1,",degX1MLattitude/1000000,60.0*(degX1MLattitude%1000000)/1000000,degX1MLongitude/1000000,60.0*(degX1MLongitude%1000000)/1000000,height);//lattitude,longitude,height,HDOP
-		fprintf(fp,"%.3f,%.3f,%.3f,",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);//pitch,roll,heading
-		fprintf(fp,"%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);//SpeedX,Y,Z
-		fprintf(fp,"%d,",gpsValid);//GpsValid
-		fprintf(fp,"%d,",0);
-		fprintf(fp,"%d,",controlState);
-		fprintf(fp,"%.2f,",batteryVoltage);
-		fprintf(fp,"%02d\r\n",tmp);//checksum
+		gpsValid = Gains::GetInstance()->isGpsValid();
 	}else{
-		int degX1MLattitude = DummyGps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
-		int degX1MLongitude = DummyGps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);
-		float height =  mRelativePos.z;
+		degX1MLattitude = DummyGps::GetInstance()->mPosXToDegX1M_Latitude(mRelativePos.x);
+		degX1MLongitude = DummyGps::GetInstance()->mPosYToDegX1M_Longitude(mRelativePos.y);
 		
-		//fprintf(fp,"$GPAIO,%d%.6f,N,%d%.6f,E,%.2f,1,",0,0.0,0,0.0,0.0);//lattitude,longitude,height,HDOP
-		fprintf(fp,"$GPAIO,%d%.6f,N,%d%.6f,E,%.2f,1,",degX1MLattitude/1000000,60.0*(degX1MLattitude%1000000)/1000000,degX1MLongitude/1000000,60.0*(degX1MLongitude%1000000)/1000000,height);//lattitude,longitude,height,HDOP
-		fprintf(fp,"%.3f,%.3f,%.3f,",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);//pitch,roll,heading
-		fprintf(fp,"%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);//SpeedX,Y,Z
-		fprintf(fp,"%d,",1);//GpsValid
-		fprintf(fp,"%d,",0);
-		fprintf(fp,"%d,",controlState);
-		fprintf(fp,"%.2f,",batteryVoltage);
-		fprintf(fp,"00\r\n");//checksum
+		gpsValid = 1;
 	}
+	
+	fprintf(fp,"$GPAIO,%d%08.6f,N,%d%08.6f,E,%.2f,1,",degX1MLattitude/1000000,60.0*(degX1MLattitude%1000000)/1000000,degX1MLongitude/1000000,60.0*(degX1MLongitude%1000000)/1000000,height);//lattitude,longitude,height,HDOP
+	fprintf(fp,"%.3f,%.3f,%.3f,",pitch*180/M_PI,roll*180/M_PI,heading*180/M_PI);//pitch,roll,heading
+	fprintf(fp,"%.3f,%.3f,%.3f,",mpsSpeed.x,mpsSpeed.y,mpsSpeed.z);//SpeedX,Y,Z
+	fprintf(fp,"%d,",gpsValid);//GpsValid
+	fprintf(fp,"%d,",0);
+	fprintf(fp,"%d,",controlState);
+	fprintf(fp,"%.2f,",batteryVoltage);
+	fprintf(fp,"%02d\r\n",tmp);//checksum
 }
 
 void MissileControl::printSeekerLog(FILE* fp){
