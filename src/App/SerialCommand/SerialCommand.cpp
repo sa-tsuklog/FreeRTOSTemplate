@@ -178,7 +178,6 @@ void SerialCommand::startLogging(char* arg){
 	}
 	
 	Logger::GetInstance()->startLogging(arg);
-	
 }
 
 /**
@@ -310,35 +309,39 @@ void SerialCommand::setMissileParameters(){
 }
 
 void SerialCommand::showMissileParameters(){
+	printMissileParameters(stdout);
+}
+
+void SerialCommand::printMissileParameters(FILE* fp){
 	MissileFlightParameters* params = &(Util::GetInstance()->flashData.missileFlightParameters);
-	
-	printf("surface limit                \t:%.3f\r\n",(params->surfaceLimit));
+		
+	fprintf(fp,"surface limit                \t:%.3f\r\n",(params->surfaceLimit));
 	vTaskDelay(1);
-	printf("hold attitude p gain, roll   \t:%.3f\r\n",(params->holdAttitudePGain[0]));
+	fprintf(fp,"hold attitude p gain, roll   \t:%.3f\r\n",(params->holdAttitudePGain[0]));
 	vTaskDelay(1);
-	printf("hold attitude p gain, pitch  \t:%.3f\r\n",(params->holdAttitudePGain[1]));
+	fprintf(fp,"hold attitude p gain, pitch  \t:%.3f\r\n",(params->holdAttitudePGain[1]));
 	vTaskDelay(1);
-	printf("hold attitude p gain, heading\t:%.3f\r\n",(params->holdAttitudePGain[2]));
+	fprintf(fp,"hold attitude p gain, heading\t:%.3f\r\n",(params->holdAttitudePGain[2]));
 	vTaskDelay(1);
-	printf("hold attitude d gain, roll   \t:%.3f\r\n",(params->holdAttitudeDGain[0]));
+	fprintf(fp,"hold attitude d gain, roll   \t:%.3f\r\n",(params->holdAttitudeDGain[0]));
 	vTaskDelay(1);
-	printf("hold attitude d gain, pitch  \t:%.3f\r\n",(params->holdAttitudeDGain[1]));
+	fprintf(fp,"hold attitude d gain, pitch  \t:%.3f\r\n",(params->holdAttitudeDGain[1]));
 	vTaskDelay(1);
-	printf("hold attitude d gain, heading\t:%.3f\r\n",(params->holdAttitudeDGain[2]));
+	fprintf(fp,"hold attitude d gain, heading\t:%.3f\r\n",(params->holdAttitudeDGain[2]));
 	vTaskDelay(1);
-	printf("seeker p gain h              \t:%.3f\r\n",(params->seekerPGainH));
+	fprintf(fp,"seeker p gain h              \t:%.3f\r\n",(params->seekerPGainH));
 	vTaskDelay(1);
-	printf("seeker d gain h              \t:%.3f\r\n",(params->seekerDGainH));
+	fprintf(fp,"seeker d gain h              \t:%.3f\r\n",(params->seekerDGainH));
 	vTaskDelay(1);
-	printf("seeker p gain l              \t:%.3f\r\n",(params->seekerPGainL));
+	fprintf(fp,"seeker p gain l              \t:%.3f\r\n",(params->seekerPGainL));
 	vTaskDelay(1);
-	printf("seeker d gain l              \t:%.3f\r\n",(params->seekerDGainL));
+	fprintf(fp,"seeker d gain l              \t:%.3f\r\n",(params->seekerDGainL));
 	vTaskDelay(1);
-	printf("g compensation gain          \t:%.3f\r\n",(params->gCompensationGain));
+	fprintf(fp,"g compensation gain          \t:%.3f\r\n",(params->gCompensationGain));
 	vTaskDelay(1);
-	printf("manual control d gain        \t:%.3f\r\n",(params->manualControlDGain));
+	fprintf(fp,"manual control d gain        \t:%.3f\r\n",(params->manualControlDGain));
 	vTaskDelay(1);
-	fflush(stdout);
+	fflush(fp);
 	vTaskDelay(1);
 }
 

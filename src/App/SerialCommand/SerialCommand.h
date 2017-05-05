@@ -94,6 +94,8 @@ public:
 	static void testCmd2();
 	
 	static void initSerialCommand();
+	
+	static void printMissileParameters(FILE* fp);
 };
 
 #ifdef __cplusplus

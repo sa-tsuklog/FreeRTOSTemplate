@@ -31,6 +31,8 @@ Logger::Logger(){
 	
 	filenameQueue = xQueueCreate(MAX_FILENAME_LENGTH,sizeof(char));
 	vQueueAddToRegistry(filenameQueue,"logFile");
+	
+	logOverrunOccured = 0;
 }
 
 void Logger::startLogging(char* filename){
@@ -54,38 +56,40 @@ void Logger::appendLog(int bufNumber,char* string,int len){
 		return;
 	}
 	if(len > uxQueueSpacesAvailable(buf[bufNumber])){
+		//printf("log overrun\r\n");
+		logOverrunOccured++;
 		return;
 	}
 	
 	for(int i=0;i<len;i++){
 		if(xQueueSend(buf[bufNumber],&(string[i]),0) != pdTRUE){
+			//printf("log overrun\r\n");
+			logOverrunOccured++;
 			break;
 		}
 	}
 }
 
 int Logger::fileOpen(){
-	int index=0;
+	int index = 0;
 	char c;
-	while(xQueueReceive(filenameQueue,&c,0)==pdTRUE){
+	while(xQueueReceive(filenameQueue,&c,0) == pdTRUE){
 		filenameBuf[index] = c;
 		index++;
 	}
 	filenameBuf[index] = 0;
 	
-	FILE* tmpFp = fopen(filenameBuf,"w");
-	fclose(tmpFp); 
+	fp2 = fopen(filenameBuf,"wb");
 	
-	FRESULT res = f_open(&fp,filenameBuf,FA_WRITE|FA_CREATE_ALWAYS);
-	
-	if(res == FR_OK){
+	if(fp2 != NULL){
 		return 1;
 	}else{
 		return 0;
 	}
+	
 }
 int Logger::fileClose(){
-	f_close(&fp);
+	fclose(fp2);
 	return 1;
 }
 
@@ -95,13 +99,13 @@ int Logger::flushBuffers(int bufNumber){
 	if((charCount = uxQueueMessagesWaiting(buf[bufNumber]))!=0){
 		for(int i=0;i<charCount;i++){
 			xQueueReceive(buf[bufNumber],&c,0);
-			lineBuf[i] = c; 
+			lineBuf[i] = c;
 		}
-		//Util::GetInstance()->myFprintf(0,fp,lineBuf);
-		UINT bw;
-		f_write(&fp,lineBuf,charCount,&bw);
+		
+		fwrite(lineBuf,sizeof(char),charCount,fp2);
 	}
-	f_sync(&fp);
+	
+	fflush(fp2);
 	return 1;
 }
 
@@ -114,6 +118,7 @@ void Logger::loggerTask(){
 		
 		if(logState == logIdle){//when not logging
 			if(xSemaphoreTake(startLoggingSem,0)==pdTRUE){
+				logOverrunOccured = 0;
 				if(fileOpen() == 1){
 					//clearing sem and queues
 					xSemaphoreTake(stopLoggingSem,0);
@@ -139,6 +144,10 @@ void Logger::loggerTask(){
 				//clearing sem and queues
 				xSemaphoreTake(startLoggingSem,0);
 				xQueueReset(filenameQueue);
+				if(logOverrunOccured){
+					printf("warning: overrun occured %d times\r\n",logOverrunOccured);
+				}
+				
 			}
 		}
 		

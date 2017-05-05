@@ -38,8 +38,9 @@ public:
 private:
 	TaskHandle_t logHandle;
 	
-	FIL fp;
+	FILE* fp2;
 	LogState logState;
+	int logOverrunOccured;
 	
 	static const int MAX_FILENAME_LENGTH = 32;
 	QueueHandle_t filenameQueue;

@@ -29,6 +29,7 @@
 
 int fileHandleInUse[MAX_FILEHANDLE_NUM];
 FIL fileHandles[MAX_FILEHANDLE_NUM];
+SemaphoreHandle_t fopenMutex = NULL;
 
 FATFS* fatfs=NULL;
 void printfFresult(FRESULT res){
@@ -233,11 +234,11 @@ int initFatFs(){
 			free(fatfs);
 			fatfs = NULL;
 			
-			Util::GetInstance()->myFprintf(0,stdout,"sd not mounted\r\n");
+			Util::GetInstance()->myFprintf(0,stdout,"sd not mounted:%x\r\n",res);
 			return -1;
 		}
 	}
-	
+	//Util::GetInstance()->myFprintf(0,stdout,"sd correctly mounted:%x\r\n",res);
 	return 0;
 }
 
@@ -260,14 +261,26 @@ int myOpen(struct _reent *r,const char *path,int mode){
 		return 9;
 	}
 	
+	if(fopenMutex == NULL){
+		fopenMutex = xSemaphoreCreateMutex();
+	}
 	
-	if(initFatFs() != 0){
+	if(fopenMutex == NULL){
+		printf("error mutex null in MyFileHandle\r\n");
 		return -1;
 	}
-
+	xSemaphoreTake(fopenMutex,portMAX_DELAY);
+	
+	
 	
 	//
 	int handleId;
+	
+	
+	if(initFatFs() != 0){
+		xSemaphoreGive(fopenMutex);
+		return -1;
+	}
 	
 	//search file handle not in use.
 	for(handleId = 0;handleId < MAX_FILEHANDLE_NUM;handleId++){
@@ -277,6 +290,8 @@ int myOpen(struct _reent *r,const char *path,int mode){
 	}
 	if(handleId == MAX_FILEHANDLE_NUM){
 		Util::GetInstance()->myFprintf(0,stdout,"cannot open\r\n");
+		xSemaphoreGive(fopenMutex);
+		
 		return -1;
 	}
 	
@@ -293,14 +308,19 @@ int myOpen(struct _reent *r,const char *path,int mode){
 		if(mode & O_APPEND){
 			res = f_lseek(&fileHandles[handleId],f_size(&fileHandles[handleId]));
 			if(res != FR_OK){
+				xSemaphoreGive(fopenMutex);
 				return -1;
 			}
 		}
 		
 		fileHandleInUse[handleId] = 1;
+		
+		xSemaphoreGive(fopenMutex);
 		return handleId+FILEHANDLE_OFFSET;
 	}else{
 		fileHandleInUse[handleId] = 0;
+		
+		xSemaphoreGive(fopenMutex);
 		return -1;
 	}
 }
@@ -323,7 +343,17 @@ int myClose (struct _reent *r, int file)
 	FIL* fp = &fileHandles[id];
 	FRESULT res = f_close(fp);
 	
+	
+	if(fopenMutex == NULL){
+		return -1;
+	}
+	
+	xSemaphoreTake(fopenMutex,portMAX_DELAY);
+	
 	fileHandleInUse[id] = 0;
+	
+	xSemaphoreGive(fopenMutex);
+	
 	
 	if(res == FR_OK){
 		//Util::GetInstance()->myFprintf(0,stdout,"id %d closed\r\n",id);
