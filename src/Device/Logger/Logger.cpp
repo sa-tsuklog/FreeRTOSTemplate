@@ -34,13 +34,17 @@ Logger::Logger(){
 }
 
 void Logger::startLogging(char* filename){
+	if(logState == logIdle){
 	for(int i=0;i<MAX_FILENAME_LENGTH;i++){
 		if(filename[i] == 0){
 			break;
 		}
 		xQueueSendToBack(filenameQueue,&(filename[i]),0);
 	}
-	xSemaphoreGive(startLoggingSem);
+		xSemaphoreGive(startLoggingSem);
+	}else{
+		printf("logging task is already running\r\n");
+	}
 }
 void Logger::stopLogging(){
 	xSemaphoreGive(stopLoggingSem);
@@ -77,7 +81,6 @@ int Logger::fileOpen(){
 	if(res == FR_OK){
 		return 1;
 	}else{
-		Util::GetInstance()->myFprintf(0,stdout,"cannot open file%s\r\n",filenameBuf);
 		return 0;
 	}
 }
@@ -119,9 +122,9 @@ void Logger::loggerTask(){
 					}
 					logState = Logging;
 					Util::GetInstance()->myFprintf(0,stdout,"log start\r\n");
+				}else{
+					Util::GetInstance()->myFprintf(0,stdout,"cannot open file%s\r\n",filenameBuf);
 				}
-				
-				
 			}
 		}
 		if(logState == Logging){//when logging.
